@@ -1,0 +1,928 @@
+******************************Code dossier et contrôle d'accès******************
+********************************************************************************
+
+# Implémentation du Système de Code Dossier avec Contrôle d'Accès
+
+Voici comment implémenter le système de codification des dossiers et le contrôle d'accès par ministère en utilisant Laravel 12 et Livewire.
+
+## 1. Modèle et Migration pour DossierMobilite
+
+### Migration
+```bash
+php artisan make:migration create_dossier_mobilites_table
+```
+
+```php
+Schema::create('dossier_mobilites', function (Blueprint $table) {
+    $table->id();
+    $table->string('code_dossier')->unique();
+    $table->foreignId('ministere_id')->constrained();
+    $table->foreignId('type_mobilite_id')->constrained();
+    $table->foreignId('agent_id')->constrained();
+    $table->string('statut')->default('en_attente');
+    $table->year('annee');
+    $table->json('historique_statut')->nullable();
+    $table->softDeletes();
+    $table->timestamps();
+});
+```
+
+### Modèle DossierMobilite
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class DossierMobilite extends Model
+{
+    use SoftDeletes;
+
+    protected $fillable = [
+        'code_dossier',
+        'ministere_id',
+        'type_mobilite_id',
+        'agent_id',
+        'statut',
+        'annee',
+        'historique_statut'
+    ];
+
+    protected $casts = [
+        'historique_statut' => 'array'
+    ];
+
+    // Relation avec le ministère
+    public function ministere()
+    {
+        return $this->belongsTo(Ministere::class);
+    }
+
+    // Relation avec le type de mobilité
+    public function typeMobilite()
+    {
+        return $this->belongsTo(TypeMobilite::class);
+    }
+
+    // Relation avec l'agent
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class);
+    }
+
+    // Génération automatique du code dossier
+    public static function genererCodeDossier($ministereCode, $typeMobiliteCode, $annee)
+    {
+        $lastNumber = self::where('annee', $annee)
+                        ->where('code_dossier', 'like', $ministereCode.$typeMobiliteCode.$annee.'%')
+                        ->count() + 1;
+
+        return strtoupper($ministereCode)
+               . strtoupper($typeMobiliteCode)
+               . $annee
+               . str_pad($lastNumber, 5, '0', STR_PAD_LEFT);
+    }
+}
+```
+
+## 2. Système de Code Dossier (Livewire Component)
+
+### Composant Create
+```php
+<?php
+
+namespace App\Livewire\DossierMobilite;
+
+use Livewire\Component;
+use App\Models\DossierMobilite;
+use App\Models\Ministere;
+use App\Models\TypeMobilite;
+
+class Create extends Component
+{
+    public $ministere_id;
+    public $type_mobilite_id;
+    public $agent_id;
+    public $code_dossier;
+    public $annee;
+
+    protected $rules = [
+        'ministere_id' => 'required|exists:ministeres,id',
+        'type_mobilite_id' => 'required|exists:type_mobilites,id',
+        'agent_id' => 'required|exists:agents,id',
+    ];
+
+    public function mount()
+    {
+        $this->annee = now()->year;
+    }
+
+    public function updatedMinistereId()
+    {
+        $this->generateCodeDossier();
+    }
+
+    public function updatedTypeMobiliteId()
+    {
+        $this->generateCodeDossier();
+    }
+
+    protected function generateCodeDossier()
+    {
+        if ($this->ministere_id && $this->type_mobilite_id) {
+            $ministere = Ministere::find($this->ministere_id);
+            $typeMobilite = TypeMobilite::find($this->type_mobilite_id);
+            
+            $this->code_dossier = DossierMobilite::genererCodeDossier(
+                $ministere->code,
+                $typeMobilite->code,
+                $this->annee
+            );
+        }
+    }
+
+    public function save()
+    {
+        $this->validate();
+
+        $dossier = DossierMobilite::create([
+            'code_dossier' => $this->code_dossier,
+            'ministere_id' => $this->ministere_id,
+            'type_mobilite_id' => $this->type_mobilite_id,
+            'agent_id' => $this->agent_id,
+            'annee' => $this->annee,
+            'statut' => 'en_attente',
+            'historique_statut' => [
+                [
+                    'statut' => 'en_attente',
+                    'date' => now()->toDateTimeString(),
+                    'user_id' => auth()->id()
+                ]
+            ]
+        ]);
+
+        session()->flash('success', 'Dossier créé avec succès: ' . $this->code_dossier);
+        return redirect()->route('dossiers.show', $dossier->id);
+    }
+
+    public function render()
+    {
+        return view('livewire.dossier-mobilite.create', [
+            'ministeres' => Ministere::all(),
+            'typesMobilite' => TypeMobilite::all(),
+            'agents' => Agent::all()
+        ]);
+    }
+}
+```
+
+## 3. Contrôle d'Accès par Ministère
+
+### Policy pour DossierMobilite
+```bash
+php artisan make:policy DossierMobilitePolicy --model=DossierMobilite
+```
+
+```php
+<?php
+
+namespace App\Policies;
+
+use App\Models\User;
+use App\Models\DossierMobilite;
+
+class DossierMobilitePolicy
+{
+    public function view(User $user, DossierMobilite $dossier)
+    {
+        // L'admin peut tout voir
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        // Le ministère propriétaire peut voir
+        if ($user->ministere_id === $dossier->ministere_id) {
+            return true;
+        }
+
+        // Vérifier si le dossier concerne le ministère de l'utilisateur
+        // (par exemple pour les mobilités inter-ministerielles)
+        // Cette logique dépend de votre modèle de données
+        // Exemple simplifié:
+        return $dossier->ministere_destination_id === $user->ministere_id;
+    }
+
+    public function update(User $user, DossierMobilite $dossier)
+    {
+        return $user->ministere_id === $dossier->ministere_id;
+    }
+}
+```
+
+### Middleware pour vérifier l'accès
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use App\Models\DossierMobilite;
+use Symfony\Component\HttpFoundation\Response;
+
+class CheckDossierAccess
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $dossierId = $request->route('dossier');
+        $dossier = DossierMobilite::findOrFail($dossierId);
+
+        if (!auth()->user()->can('view', $dossier)) {
+            abort(403, 'Accès non autorisé à ce dossier.');
+        }
+
+        return $next($request);
+    }
+}
+```
+
+## 4. Composant d'Affichage avec Contrôle d'Accès
+
+### Composant Show
+```php
+<?php
+
+namespace App\Livewire\DossierMobilite;
+
+use Livewire\Component;
+use App\Models\DossierMobilite;
+
+class Show extends Component
+{
+    public DossierMobilite $dossier;
+    public $currentStatut;
+    public $commentaire;
+
+    protected $rules = [
+        'currentStatut' => 'required|in:en_attente,en_cours,valide,rejete',
+        'commentaire' => 'nullable|string|max:500',
+    ];
+
+    public function mount(DossierMobilite $dossier)
+    {
+        $this->authorize('view', $dossier);
+        $this->dossier = $dossier;
+        $this->currentStatut = $dossier->statut;
+    }
+
+    public function updateStatut()
+    {
+        $this->validate();
+
+        $historique = $this->dossier->historique_statut ?? [];
+        $historique[] = [
+            'statut' => $this->currentStatut,
+            'date' => now()->toDateTimeString(),
+            'user_id' => auth()->id(),
+            'commentaire' => $this->commentaire
+        ];
+
+        $this->dossier->update([
+            'statut' => $this->currentStatut,
+            'historique_statut' => $historique
+        ]);
+
+        session()->flash('success', 'Statut mis à jour avec succès.');
+    }
+
+    public function render()
+    {
+        return view('livewire.dossier-mobilite.show');
+    }
+}
+```
+
+## 5. Vue du Dossier
+
+```html
+<div>
+    <div class="container mx-auto px-4 py-8">
+        @if(session('success'))
+            <div class="alert alert-success mb-6">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h2 class="text-xl font-semibold">
+                    Dossier: {{ $dossier->code_dossier }}
+                </h2>
+                <span class="badge badge-{{ $dossier->statut_class }}">
+                    {{ $dossier->statut }}
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+                <!-- Informations de base -->
+                <div class="col-span-1">
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="font-medium">Ministère</h3>
+                            <p>{{ $dossier->ministere->nom }}</p>
+                        </div>
+                        <div>
+                            <h3 class="font-medium">Type de mobilité</h3>
+                            <p>{{ $dossier->typeMobilite->nom }}</p>
+                        </div>
+                        <div>
+                            <h3 class="font-medium">Agent concerné</h3>
+                            <p>{{ $dossier->agent->full_name }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Historique des statuts -->
+                <div class="col-span-2">
+                    <h3 class="font-medium mb-4">Historique du dossier</h3>
+                    <div class="space-y-4">
+                        @foreach(array_reverse($dossier->historique_statut ?? []) as $historique)
+                            <div class="border-l-4 border-primary pl-4 py-2">
+                                <div class="flex justify-between">
+                                    <span class="font-medium">{{ $historique['statut'] }}</span>
+                                    <span class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($historique['date'])->format('d/m/Y H:i') }}
+                                    </span>
+                                </div>
+                                @if($historique['commentaire'])
+                                    <p class="text-sm mt-1">{{ $historique['commentaire'] }}</p>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Formulaire de changement de statut -->
+                    @if(auth()->user()->can('update', $dossier))
+                        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                            <h3 class="font-medium mb-2">Changer le statut</h3>
+                            <form wire:submit="updateStatut" class="space-y-4">
+                                <select wire:model="currentStatut" class="select select-bordered w-full">
+                                    <option value="en_attente">En attente</option>
+                                    <option value="en_cours">En cours</option>
+                                    <option value="valide">Validé</option>
+                                    <option value="rejete">Rejeté</option>
+                                </select>
+                                <textarea 
+                                    wire:model="commentaire" 
+                                    class="textarea textarea-bordered w-full" 
+                                    placeholder="Commentaire (optionnel)"
+                                ></textarea>
+                                <button type="submit" class="btn btn-primary">
+                                    Mettre à jour
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+## 6. Routes Finales
+
+```php
+Route::get('/dossiers', \App\Livewire\DossierMobilite\Index::class)->name('dossiers.index');
+Route::get('/dossiers/create', \App\Livewire\DossierMobilite\Create::class)->name('dossiers.create');
+Route::get('/dossiers/{dossier}', \App\Livewire\DossierMobilite\Show::class)
+     ->name('dossiers.show')
+     ->middleware(['auth', 'can:view,dossier']);
+```
+
+## 7. Fonctionnalités Clés Implémentées
+
+1. **Génération automatique du code dossier** selon le format spécifié
+2. **Contrôle d'accès par ministère** avec système de permissions
+3. **Historique des changements de statut** avec traçabilité complète
+4. **Interface réactive** avec Livewire
+5. **Validation en temps réel** des données
+6. **Sécurité renforcée** avec policies et middleware
+
+Ce système répond à tous vos besoins spécifiques tout en restant flexible pour les évolutions futures.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*******Avec blade uniquement*****
+*********************************
+
+
+# CRUD Classique avec Laravel 10 et Blade (sans Livewire)
+
+Voici comment implémenter le système de gestion des dossiers de mobilité avec le format de code spécifique et le contrôle d'accès par ministère, en utilisant une approche classique Laravel avec Blade.
+
+## 1. Modèle et Migration
+
+### Migration `create_dossier_mobilites_table.php`
+```php
+Schema::create('dossier_mobilites', function (Blueprint $table) {
+    $table->id();
+    $table->string('code_dossier', 25)->unique();
+    $table->foreignId('ministere_id')->constrained();
+    $table->foreignId('type_mobilite_id')->constrained();
+    $table->foreignId('agent_id')->constrained();
+    $table->string('statut')->default('en_attente');
+    $table->year('annee');
+    $table->json('historique_statut')->nullable();
+    $table->softDeletes();
+    $table->timestamps();
+});
+```
+
+### Modèle `DossierMobilite.php`
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class DossierMobilite extends Model
+{
+    use SoftDeletes;
+
+    protected $fillable = [
+        'code_dossier',
+        'ministere_id',
+        'type_mobilite_id',
+        'agent_id',
+        'statut',
+        'annee',
+        'historique_statut'
+    ];
+
+    protected $casts = [
+        'historique_statut' => 'array'
+    ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $ministere = Ministere::find($model->ministere_id);
+            $typeMobilite = TypeMobilite::find($model->type_mobilite_id);
+            
+            $model->code_dossier = self::genererCodeDossier(
+                $ministere->code,
+                $typeMobilite->code,
+                $model->annee
+            );
+        });
+    }
+
+    public static function genererCodeDossier($ministereCode, $typeMobiliteCode, $annee)
+    {
+        $lastNumber = self::where('annee', $annee)
+                        ->where('code_dossier', 'like', $ministereCode.$typeMobiliteCode.$annee.'%')
+                        ->count() + 1;
+
+        return strtoupper($ministereCode)
+               . strtoupper($typeMobiliteCode)
+               . $annee
+               . str_pad($lastNumber, 5, '0', STR_PAD_LEFT);
+    }
+
+    // Relations
+    public function ministere()
+    {
+        return $this->belongsTo(Ministere::class);
+    }
+
+    public function typeMobilite()
+    {
+        return $this->belongsTo(TypeMobilite::class);
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class);
+    }
+
+    // Méthode pour vérifier l'accès
+    public function userCanAccess(User $user)
+    {
+        return $user->hasRole('admin') || 
+               $user->ministere_id === $this->ministere_id ||
+               $this->ministere_destination_id === $user->ministere_id;
+    }
+}
+```
+
+## 2. Controller
+
+### DossierMobiliteController.php
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\DossierMobilite;
+use App\Models\Ministere;
+use App\Models\TypeMobilite;
+use App\Models\Agent;
+use Illuminate\Http\Request;
+
+class DossierMobiliteController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function index(Request $request)
+    {
+        $query = DossierMobilite::query();
+
+        // Filtrage par ministère pour les non-admins
+        if (!auth()->user()->hasRole('admin')) {
+            $query->where(function($q) {
+                $q->where('ministere_id', auth()->user()->ministere_id)
+                  ->orWhere('ministere_destination_id', auth()->user()->ministere_id);
+            });
+        }
+
+        // Recherche
+        if ($request->has('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('code_dossier', 'like', '%'.$request->search.'%')
+                  ->orWhereHas('agent', function($q) use ($request) {
+                      $q->where('nom', 'like', '%'.$request->search.'%')
+                        ->orWhere('prenom', 'like', '%'.$request->search.'%');
+                  });
+            });
+        }
+
+        $dossiers = $query->with(['ministere', 'typeMobilite', 'agent'])
+                         ->latest()
+                         ->paginate(10);
+
+        return view('dossiers.index', compact('dossiers'));
+    }
+
+    public function create()
+    {
+        $ministeres = Ministere::all();
+        $typesMobilite = TypeMobilite::all();
+        $agents = Agent::all();
+
+        return view('dossiers.create', compact('ministeres', 'typesMobilite', 'agents'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'ministere_id' => 'required|exists:ministeres,id',
+            'type_mobilite_id' => 'required|exists:type_mobilites,id',
+            'agent_id' => 'required|exists:agents,id',
+            'annee' => 'required|digits:4|integer|min:2023|max:'.(date('Y')+1),
+        ]);
+
+        $dossier = DossierMobilite::create([
+            'ministere_id' => $request->ministere_id,
+            'type_mobilite_id' => $request->type_mobilite_id,
+            'agent_id' => $request->agent_id,
+            'annee' => $request->annee,
+            'statut' => 'en_attente',
+            'historique_statut' => [
+                [
+                    'statut' => 'en_attente',
+                    'date' => now()->toDateTimeString(),
+                    'user_id' => auth()->id()
+                ]
+            ]
+        ]);
+
+        return redirect()->route('dossiers.show', $dossier->id)
+                         ->with('success', 'Dossier créé avec succès: ' . $dossier->code_dossier);
+    }
+
+    public function show(DossierMobilite $dossier)
+    {
+        if (!$dossier->userCanAccess(auth()->user())) {
+            abort(403, 'Accès non autorisé à ce dossier.');
+        }
+
+        return view('dossiers.show', compact('dossier'));
+    }
+
+    public function edit(DossierMobilite $dossier)
+    {
+        if (!$dossier->userCanAccess(auth()->user())) {
+            abort(403, 'Accès non autorisé à ce dossier.');
+        }
+
+        $ministeres = Ministere::all();
+        $typesMobilite = TypeMobilite::all();
+        $agents = Agent::all();
+
+        return view('dossiers.edit', compact('dossier', 'ministeres', 'typesMobilite', 'agents'));
+    }
+
+    public function update(Request $request, DossierMobilite $dossier)
+    {
+        if (!$dossier->userCanAccess(auth()->user())) {
+            abort(403, 'Accès non autorisé à ce dossier.');
+        }
+
+        $request->validate([
+            'ministere_id' => 'required|exists:ministeres,id',
+            'type_mobilite_id' => 'required|exists:type_mobilites,id',
+            'agent_id' => 'required|exists:agents,id',
+            'statut' => 'required|in:en_attente,en_cours,valide,rejete',
+            'commentaire' => 'nullable|string|max:500',
+        ]);
+
+        $historique = $dossier->historique_statut ?? [];
+        $historique[] = [
+            'statut' => $request->statut,
+            'date' => now()->toDateTimeString(),
+            'user_id' => auth()->id(),
+            'commentaire' => $request->commentaire
+        ];
+
+        $dossier->update([
+            'ministere_id' => $request->ministere_id,
+            'type_mobilite_id' => $request->type_mobilite_id,
+            'agent_id' => $request->agent_id,
+            'statut' => $request->statut,
+            'historique_statut' => $historique
+        ]);
+
+        return redirect()->route('dossiers.show', $dossier->id)
+                         ->with('success', 'Dossier mis à jour avec succès.');
+    }
+
+    public function destroy(DossierMobilite $dossier)
+    {
+        if (!$dossier->userCanAccess(auth()->user())) {
+            abort(403, 'Accès non autorisé à ce dossier.');
+        }
+
+        $dossier->delete();
+
+        return redirect()->route('dossiers.index')
+                         ->with('success', 'Dossier supprimé avec succès.');
+    }
+}
+```
+
+## 3. Vues Blade
+
+### Layout de base `resources/views/layouts/app.blade.php`
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Mobilités</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    @stack('styles')
+</head>
+<body>
+    <div class="container py-4">
+        @include('partials.navbar')
+        
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @yield('content')
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
+</body>
+</html>
+```
+
+### Index `resources/views/dossiers/index.blade.php`
+```html
+@extends('layouts.app')
+
+@section('content')
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Liste des Dossiers de Mobilité</h5>
+        <a href="{{ route('dossiers.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nouveau Dossier
+        </a>
+    </div>
+
+    <div class="card-body">
+        <form method="GET" action="{{ route('dossiers.index') }}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Rechercher..." value="{{ request('search') }}">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Code Dossier</th>
+                        <th>Ministère</th>
+                        <th>Type Mobilité</th>
+                        <th>Agent</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($dossiers as $dossier)
+                        <tr>
+                            <td>{{ $dossier->code_dossier }}</td>
+                            <td>{{ $dossier->ministere->nom }}</td>
+                            <td>{{ $dossier->typeMobilite->nom }}</td>
+                            <td>{{ $dossier->agent->full_name }}</td>
+                            <td>
+                                <span class="badge bg-{{ $dossier->statut === 'valide' ? 'success' : ($dossier->statut === 'rejete' ? 'danger' : 'warning') }}">
+                                    {{ $dossier->statut }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ route('dossiers.show', $dossier->id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('dossiers.edit', $dossier->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('dossiers.destroy', $dossier->id) }}" method="POST" style="display: inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center">Aucun dossier trouvé</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            {{ $dossiers->links() }}
+        </div>
+    </div>
+</div>
+@endsection
+```
+
+### Show `resources/views/dossiers/show.blade.php`
+```html
+@extends('layouts.app')
+
+@section('content')
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Dossier: {{ $dossier->code_dossier }}</h5>
+        <span class="badge bg-{{ $dossier->statut === 'valide' ? 'success' : ($dossier->statut === 'rejete' ? 'danger' : 'warning') }}">
+            {{ $dossier->statut }}
+        </span>
+    </div>
+
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h6>Informations de base</h6>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>Ministère:</strong> {{ $dossier->ministere->nom }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Type de mobilité:</strong> {{ $dossier->typeMobilite->nom }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Agent concerné:</strong> {{ $dossier->agent->full_name }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Année:</strong> {{ $dossier->annee }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <h6>Historique du dossier</h6>
+        <div class="list-group mb-4">
+            @foreach(array_reverse($dossier->historique_statut ?? []) as $historique)
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ $historique['statut'] }}</strong>
+                        <small class="text-muted">
+                            {{ \Carbon\Carbon::parse($historique['date'])->format('d/m/Y H:i') }}
+                        </small>
+                    </div>
+                    @if($historique['commentaire'])
+                        <p class="mb-0 mt-1">{{ $historique['commentaire'] }}</p>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+
+        @if(auth()->user()->can('update', $dossier))
+            <div class="card">
+                <div class="card-header">Changer le statut</div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('dossiers.update', $dossier->id) }}">
+                        @csrf
+                        @method('PUT')
+                        <div class="mb-3">
+                            <label for="statut" class="form-label">Nouveau statut</label>
+                            <select name="statut" id="statut" class="form-select">
+                                <option value="en_attente" {{ $dossier->statut === 'en_attente' ? 'selected' : '' }}>En attente</option>
+                                <option value="en_cours" {{ $dossier->statut === 'en_cours' ? 'selected' : '' }}>En cours</option>
+                                <option value="valide" {{ $dossier->statut === 'valide' ? 'selected' : '' }}>Validé</option>
+                                <option value="rejete" {{ $dossier->statut === 'rejete' ? 'selected' : '' }}>Rejeté</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="commentaire" class="form-label">Commentaire</label>
+                            <textarea name="commentaire" id="commentaire" rows="3" class="form-control"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                    </form>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <div class="card-footer">
+        <a href="{{ route('dossiers.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>
+@endsection
+```
+
+## 4. Routes
+
+```php
+Route::resource('dossiers', DossierMobiliteController::class)
+     ->middleware('auth');
+
+// Protection supplémentaire pour les méthodes show, edit, update, destroy
+Route::middleware(['can:view,dossier'])->group(function () {
+    Route::get('/dossiers/{dossier}', [DossierMobiliteController::class, 'show'])->name('dossiers.show');
+    Route::get('/dossiers/{dossier}/edit', [DossierMobiliteController::class, 'edit'])->name('dossiers.edit');
+    Route::put('/dossiers/{dossier}', [DossierMobiliteController::class, 'update'])->name('dossiers.update');
+    Route::delete('/dossiers/{dossier}', [DossierMobiliteController::class, 'destroy'])->name('dossiers.destroy');
+});
+```
+
+## 5. Fonctionnalités Clés Implémentées
+
+1. **Génération automatique du code dossier** selon le format spécifié (CodeMinistere+TypeMobilité+ANNEE+numéroAutoIncremente)
+2. **Contrôle d'accès par ministère** avec vérification des permissions
+3. **Historique complet des changements de statut** avec commentaires
+4. **Système de recherche et pagination**
+5. **Validation des données côté serveur**
+6. **Protection CSRF** intégrée
+7. **Interface responsive** avec Bootstrap 5
+
+Cette implémentation classique avec Laravel 10 et Blade répond à toutes vos exigences tout en restant simple à maintenir et à faire évoluer.
+*****************************************************************************************************************************************************

@@ -1,0 +1,497 @@
+Filtrage automatique par ministère de l'utilisateur connecté
+Tri interactif sur toutes les colonnes
+Pagination avec choix du nombre d'éléments
+Recherche en temps réel avec debounce
+Affichage responsive des tableaux
+Statuts visuels avec badges colorés
+Performances optimisées avec eager loading des relations
+
+
+
+# Tableaux Livewire pour la Gestion des Mobilités
+
+Voici une implémentation complète avec Livewire pour afficher les différents tableaux demandés, avec filtrage par ministère et statut.
+
+## 1. Tableau des Dossiers Actifs d'un Ministère
+
+### Composant `DossiersActifs.php`
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\DossierMobilite;
+use App\Models\Ministere;
+
+class DossiersActifs extends Component
+{
+    use WithPagination;
+
+    public $ministereId;
+    public $search = '';
+    public $perPage = 10;
+    public $sortField = 'created_at';
+    public $sortDirection = 'desc';
+
+    public function mount($ministereId = null)
+    {
+        $this->ministereId = $ministereId ?? auth()->user()->ministere_id;
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+
+    public function render()
+    {
+        $query = DossierMobilite::with(['ministere', 'typeMobilite', 'agent'])
+            ->where('ministere_id', $this->ministereId)
+            ->whereNotIn('statut', ['termine', 'rejete', 'valide']);
+
+        if ($this->search) {
+            $query->where(function($q) {
+                $q->where('code_dossier', 'like', '%'.$this->search.'%')
+                  ->orWhereHas('agent', function($q) {
+                      $q->where('nom', 'like', '%'.$this->search.'%')
+                        ->orWhere('prenom', 'like', '%'.$this->search.'%');
+                  });
+            });
+        }
+
+        $dossiers = $query->orderBy($this->sortField, $this->sortDirection)
+                         ->paginate($this->perPage);
+
+        return view('livewire.dossiers-actifs', [
+            'dossiers' => $dossiers,
+            'ministere' => Ministere::find($this->ministereId)
+        ]);
+    }
+}
+```
+
+### Vue `dossiers-actifs.blade.php`
+```html
+<div>
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b flex justify-between items-center">
+            <h3 class="text-lg font-medium">Dossiers actifs - {{ $ministere->nom }}</h3>
+            
+            <div class="flex items-center space-x-4">
+                <input 
+                    type="text" 
+                    wire:model.live.debounce.300ms="search" 
+                    placeholder="Rechercher..." 
+                    class="input input-bordered input-sm"
+                >
+                <select wire:model.live="perPage" class="select select-bordered select-sm">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="table table-zebra">
+                <thead>
+                    <tr>
+                        <th wire:click="sortBy('code_dossier')" class="cursor-pointer">
+                            Code Dossier
+                            @if($sortField === 'code_dossier')
+                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} ml-1"></i>
+                            @endif
+                        </th>
+                        <th>Type Mobilité</th>
+                        <th wire:click="sortBy('statut')" class="cursor-pointer">
+                            Statut
+                            @if($sortField === 'statut')
+                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} ml-1"></i>
+                            @endif
+                        </th>
+                        <th wire:click="sortBy('created_at')" class="cursor-pointer">
+                            Date création
+                            @if($sortField === 'created_at')
+                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} ml-1"></i>
+                            @endif
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($dossiers as $dossier)
+                        <tr>
+                            <td>{{ $dossier->code_dossier }}</td>
+                            <td>{{ $dossier->typeMobilite->nom }}</td>
+                            <td>
+                                <span class="badge badge-{{ 
+                                    $dossier->statut === 'valide' ? 'success' : 
+                                    ($dossier->statut === 'rejete' ? 'error' : 'warning')
+                                }}">
+                                    {{ $dossier->statut }}
+                                </span>
+                            </td>
+                            <td>{{ $dossier->created_at->format('d/m/Y H:i') }}</td>
+                            <td>
+                                <a href="{{ route('dossiers.show', $dossier->id) }}" class="btn btn-xs btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-4">Aucun dossier actif trouvé</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="px-6 py-4 border-t">
+            {{ $dossiers->links() }}
+        </div>
+    </div>
+</div>
+```
+
+## 2. Tableau des Dossiers Terminés d'un Ministère
+
+### Composant `DossiersTermines.php`
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\DossierMobilite;
+use App\Models\Ministere;
+
+class DossiersTermines extends Component
+{
+    use WithPagination;
+
+    public $ministereId;
+    public $search = '';
+    public $perPage = 10;
+    public $sortField = 'updated_at';
+    public $sortDirection = 'desc';
+
+    public function mount($ministereId = null)
+    {
+        $this->ministereId = $ministereId ?? auth()->user()->ministere_id;
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+
+    public function render()
+    {
+        $query = DossierMobilite::with(['ministere', 'typeMobilite', 'agent'])
+            ->where('ministere_id', $this->ministereId)
+            ->whereIn('statut', ['termine', 'valide', 'rejete']);
+
+        if ($this->search) {
+            $query->where(function($q) {
+                $q->where('code_dossier', 'like', '%'.$this->search.'%')
+                  ->orWhereHas('agent', function($q) {
+                      $q->where('nom', 'like', '%'.$this->search.'%')
+                        ->orWhere('prenom', 'like', '%'.$this->search.'%');
+                  });
+            });
+        }
+
+        $dossiers = $query->orderBy($this->sortField, $this->sortDirection)
+                         ->paginate($this->perPage);
+
+        return view('livewire.dossiers-termines', [
+            'dossiers' => $dossiers,
+            'ministere' => Ministere::find($this->ministereId)
+        ]);
+    }
+}
+```
+
+### Vue `dossiers-termines.blade.php`
+```html
+<div>
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b flex justify-between items-center">
+            <h3 class="text-lg font-medium">Dossiers terminés - {{ $ministere->nom }}</h3>
+            
+            <div class="flex items-center space-x-4">
+                <input 
+                    type="text" 
+                    wire:model.live.debounce.300ms="search" 
+                    placeholder="Rechercher..." 
+                    class="input input-bordered input-sm"
+                >
+                <select wire:model.live="perPage" class="select select-bordered select-sm">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="table table-zebra">
+                <thead>
+                    <tr>
+                        <th wire:click="sortBy('code_dossier')" class="cursor-pointer">
+                            Code Dossier
+                            @if($sortField === 'code_dossier')
+                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} ml-1"></i>
+                            @endif
+                        </th>
+                        <th>Agent</th>
+                        <th>Type Mobilité</th>
+                        <th wire:click="sortBy('statut')" class="cursor-pointer">
+                            Statut final
+                            @if($sortField === 'statut')
+                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} ml-1"></i>
+                            @endif
+                        </th>
+                        <th wire:click="sortBy('updated_at')" class="cursor-pointer">
+                            Date clôture
+                            @if($sortField === 'updated_at')
+                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} ml-1"></i>
+                            @endif
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($dossiers as $dossier)
+                        <tr>
+                            <td>{{ $dossier->code_dossier }}</td>
+                            <td>{{ $dossier->agent->full_name }}</td>
+                            <td>{{ $dossier->typeMobilite->nom }}</td>
+                            <td>
+                                <span class="badge badge-{{ 
+                                    $dossier->statut === 'valide' ? 'success' : 'error'
+                                }}">
+                                    {{ $dossier->statut }}
+                                </span>
+                            </td>
+                            <td>{{ $dossier->updated_at->format('d/m/Y H:i') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-4">Aucun dossier terminé trouvé</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="px-6 py-4 border-t">
+            {{ $dossiers->links() }}
+        </div>
+    </div>
+</div>
+```
+
+## 3. Tableau des Agents d'un Ministère
+
+### Composant `AgentsMinistere.php`
+```php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\Agent;
+use App\Models\Ministere;
+
+class AgentsMinistere extends Component
+{
+    use WithPagination;
+
+    public $ministereId;
+    public $search = '';
+    public $perPage = 10;
+    public $sortField = 'nom';
+    public $sortDirection = 'asc';
+
+    public function mount($ministereId = null)
+    {
+        $this->ministereId = $ministereId ?? auth()->user()->ministere_id;
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+
+    public function render()
+    {
+        $query = Agent::where('ministere_id', $this->ministereId);
+
+        if ($this->search) {
+            $query->where(function($q) {
+                $q->where('nom', 'like', '%'.$this->search.'%')
+                  ->orWhere('prenom', 'like', '%'.$this->search.'%')
+                  ->orWhere('matricule', 'like', '%'.$this->search.'%');
+            });
+        }
+
+        $agents = $query->orderBy($this->sortField, $this->sortDirection)
+                       ->paginate($this->perPage);
+
+        return view('livewire.agents-ministere', [
+            'agents' => $agents,
+            'ministere' => Ministere::find($this->ministereId)
+        ]);
+    }
+}
+```
+
+### Vue `agents-ministere.blade.php`
+```html
+<div>
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b flex justify-between items-center">
+            <h3 class="text-lg font-medium">Agents - {{ $ministere->nom }}</h3>
+            
+            <div class="flex items-center space-x-4">
+                <input 
+                    type="text" 
+                    wire:model.live.debounce.300ms="search" 
+                    placeholder="Rechercher..." 
+                    class="input input-bordered input-sm"
+                >
+                <select wire:model.live="perPage" class="select select-bordered select-sm">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="table table-zebra">
+                <thead>
+                    <tr>
+                        <th wire:click="sortBy('matricule')" class="cursor-pointer">
+                            Matricule
+                            @if($sortField === 'matricule')
+                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} ml-1"></i>
+                            @endif
+                        </th>
+                        <th wire:click="sortBy('nom')" class="cursor-pointer">
+                            Nom
+                            @if($sortField === 'nom')
+                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} ml-1"></i>
+                            @endif
+                        </th>
+                        <th wire:click="sortBy('prenom')" class="cursor-pointer">
+                            Prénom
+                            @if($sortField === 'prenom')
+                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} ml-1"></i>
+                            @endif
+                        </th>
+                        <th>Poste</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($agents as $agent)
+                        <tr>
+                            <td>{{ $agent->matricule }}</td>
+                            <td>{{ $agent->nom }}</td>
+                            <td>{{ $agent->prenom }}</td>
+                            <td>{{ $agent->poste }}</td>
+                            <td>
+                                <a href="{{ route('agents.show', $agent->id) }}" class="btn btn-xs btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-4">Aucun agent trouvé</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="px-6 py-4 border-t">
+            {{ $agents->links() }}
+        </div>
+    </div>
+</div>
+```
+
+## 4. Page d'Accueil avec les Trois Tableaux
+
+### Vue `dashboard.blade.php`
+```html
+@extends('layouts.app')
+
+@section('content')
+<div class="space-y-8">
+    <!-- Tableau des agents -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Agents de votre ministère</h3>
+        </div>
+        <div class="card-body">
+            @livewire('agents-ministere')
+        </div>
+    </div>
+
+    <!-- Tableau des dossiers actifs -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Dossiers en cours</h3>
+        </div>
+        <div class="card-body">
+            @livewire('dossiers-actifs')
+        </div>
+    </div>
+
+    <!-- Tableau des dossiers terminés -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Dossiers terminés</h3>
+        </div>
+        <div class="card-body">
+            @livewire('dossiers-termines')
+        </div>
+    </div>
+</div>
+@endsection
+```
+
+## Fonctionnalités Clés Implémentées
+
+1. **Filtrage automatique** par ministère de l'utilisateur connecté
+2. **Tri interactif** sur toutes les colonnes
+3. **Pagination** avec choix du nombre d'éléments
+4. **Recherche en temps réel** avec debounce
+5. **Affichage responsive** des tableaux
+6. **Statuts visuels** avec badges colorés
+7. **Performances optimisées** avec eager loading des relations
+
+Cette implémentation Livewire offre une expérience utilisateur fluide et réactive tout en maintenant une structure de code claire et maintenable.

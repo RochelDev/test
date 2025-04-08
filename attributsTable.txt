@@ -1,0 +1,16 @@
+Ministere
+id
+code_ministere
+nom
+description
+
+
+Dossier
+id
+code_dossier->unique();
+ministere_id
+type_mobilite_id
+agent_id
+statut->default('en_attente');
+annee
+historique_statut

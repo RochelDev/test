@@ -1,0 +1,206 @@
+1. Objectifs du projet
+- Centraliser la gestion des mobilités : Créer une plateforme numérique pour gérer les mutations, détachements, mises à disposition et changements de corps.
+- Automatiser les processus : Réduire les délais de traitement et les erreurs en automatisant les demandes et les validations.
+- Améliorer la transparence : Permettre aux agents de suivre l'état de leurs demandes en temps réel.
+- Faciliter le reporting : Fournir des outils pour générer des rapports statistiques sur les mobilités.
+- Garantir la conformité légale : S'assurer que toutes les mobilités respectent les dispositions légales et réglementaires en vigueur.
+
+2. Exigences fonctionnelles
+2.1 Pour les producteurs administrations
+- Gérer les demandes de mobilité (mutations, détachements, mises à disposition, changements de corps).
+- Valider ou rejeter les demandes en fonction des besoins du service et des compétences des agents.
+- Générer des rapports statistiques sur les mobilités.
+- Consulter les profils des agents (compétences, ancienneté, etc.).
+
+2.2 Pour les agents publics
+- Soumettre des demandes de mobilité en ligne.
+- Suivre l'état de leurs demandes en temps réel.
+- Consulter les opportunités de mobilité disponibles.
+- Accéder à des informations sur les procédures et les textes légaux.
+
+3. Exigences non fonctionnelles
+- Performance : Le système doit être capable de gérer un grand nombre de demandes simultanément sans ralentissement.
+- Sécurité : Les données des agents et des administrations doivent être protégées contre les accès non autorisés.
+- Fiabilité : Le système doit être disponible 24/24 avec un taux de disponibilité de 99,9 %.
+- Facilité d'utilisation : L'interface doit être intuitive et accessible même pour les utilisateurs non techniques.
+
+
+
+1. Introduction :
+Le présent cahier des charges décrit les exigences et les spécifications pour la conception et le développement d'un système de gestion de la mobilité des agents de l'État au Bénin. Ce système vise à automatiser et à optimiser les processus de mobilité, en garantissant la transparence, l'efficacité et la conformité aux réglementations en vigueur.
+2. Scénario initial :
+Actuellement, les demandes de mobilité des agents de l'État sont traitées manuellement, ce qui entraîne des délais importants, des erreurs et un manque de transparence. L'objectif de ce système est de digitaliser ces processus, de centraliser les informations et d'améliorer l'efficacité de la gestion de la mobilité.
+3. Objectif de l'application :
+L'objectif principal de l'application est de faciliter et d'accélérer les processus de mobilité des agents de l'État, en réduisant les délais, en améliorant la transparence et en garantissant la conformité réglementaire.
+4. Définitions métiers :
+•	Mobilité : Ensemble des processus de changement de poste, de détachement, de disponibilité, de position hors cadre, etc., des agents de l'État.
+•	Détachement : Situation administrative d'un agent placé hors de son corps d'origine pour exercer des fonctions dans un autre organisme.
+•	Disponibilité : Situation administrative d'un agent qui cesse temporairement d'exercer ses fonctions.
+•	Appel à candidature : Processus de recrutement interne ou externe pour pourvoir un poste vacant.
+•	Nomination en Conseil des ministres : Procédure de nomination à des postes de responsabilité nécessitant une décision du Conseil des ministres.
+5. Utilisateurs et stories :
+•	Agent : 
+o	En tant qu'agent, je souhaite déposer une demande de mobilité en ligne et suivre son statut.
+o	En tant qu'agent, je souhaite recevoir des notifications sur l'avancement de ma demande.
+o	En tant qu'agent, je souhaite consulter les offres de mobilité disponibles.
+•	Responsable RH : 
+o	En tant que responsable RH, je souhaite gérer les demandes de mobilité et les appels à candidature en ligne.
+o	En tant que responsable RH, je souhaite générer des rapports sur les demandes de mobilité.
+o	En tant que responsable RH, je souhaite notifier les agents des décisions relatives à leur mobilité.
+•	Ordonnateur sectoriel : 
+o	En tant qu'ordonnateur sectoriel, je souhaite viser les demandes de mobilité et les projets d'actes.
+o	En tant qu'ordonnateur sectoriel, je souhaite suivre l'avancement des demandes de mobilité.
+•	Responsable sectoriel : 
+o	En tant que responsable sectoriel, je souhaite signer les accords sectoriels en ligne.
+o	En tant que responsable sectoriel, je souhaite recevoir des notifications sur les demandes de mobilité.
+•	Agent DRSC, DRSC, DGFP, Responsable MTFP, DC MTFP, etc. : 
+o	En tant qu'acteur du processus de validation, je souhaite parapher et signer les documents en ligne.
+o	En tant qu'acteur du processus de validation, je souhaite suivre l'avancement des demandes de mobilité.
+•	Administrateur : 
+o	En tant qu'administrateur, je souhaite gérer les utilisateurs et les rôles.
+o	En tant qu'administrateur, je souhaite configurer les paramètres du système.
+o	En tant qu'administrateur, je souhaite générer des rapports d'utilisation du système.
+6. Précisions métiers :
+•	Le système doit gérer les différents types de mobilité (détachement, disponibilité, etc.) conformément aux réglementations en vigueur.
+•	Le système doit permettre la gestion des documents justificatifs (certificat de cessation de paiement, etc.).
+•	Le système doit intégrer un module de signature et de paraphe électroniques conforme aux normes en vigueur.
+•	Le système doit permettre la génération de rapports personnalisés sur les demandes de mobilité.
+•	Le système doit être accessible aux agents et aux responsables RH via une interface web conviviale.
+7. Impératifs et contraintes :
+•	Métiers : 
+o	Le système doit être conforme aux réglementations en vigueur en matière de mobilité des agents de l'État.
+o	Le système doit garantir la confidentialité et la sécurité des données.
+o	Le système doit être accessible aux agents et aux responsables RH dans tout le pays.
+o	Le système doit être intégré aux systèmes d'information existants de l'administration publique.
+•	Logistiques : 
+o	Le système doit être développé dans un délai de [indiquer le délai].
+o	Le budget alloué au projet est de [indiquer le budget].
+o	Le système doit être déployé sur une infrastructure sécurisée et performante.
+o	Le système doit être maintenu et mis à jour régulièrement.
+8. Fonctionnalités (détaillées) :
+•	Gestion des demandes de mobilité : 
+o	Création de demandes en ligne avec formulaire guidé.
+o	Téléchargement de documents justificatifs avec contrôle de conformité.
+o	Suivi des statuts en temps réel avec notifications.
+o	Gestion des échanges entre agents et responsables RH.
+•	Gestion des appels à candidature : 
+o	Publication d'offres avec description détaillée des postes.
+o	Gestion des candidatures avec filtrage et classement.
+o	Planification des entretiens et suivi des résultats.
+•	Gestion des nominations en Conseil des ministres : 
+o	Création de projets d'actes avec modèles prédéfinis.
+o	Circuit de validation avec paraphes et signatures électroniques.
+o	Archivage sécurisé des actes.
+•	Gestion des signatures et paraphes électroniques : 
+o	Intégration avec une API de signature électronique (YouSign ou équivalent).
+o	Génération de liens uniques et sécurisés.
+o	Suivi des statuts des signatures et paraphes.
+o	Archivage des preuves de signature.
+
+•	Gestion des notifications : 
+o	Personnalisation des notifications par type d'événement et par utilisateur.
+o	Envoi de notifications par email, SMS ou via l'application.
+o	Gestion des préférences de notification.
+
+•	Gestion des utilisateurs et des rôles : 
+o	Création de comptes avec authentification forte.
+o	Attribution de rôles et de permissions granulaires.
+o	Gestion des profils utilisateurs.
+
+•	Gestion des rapports et des statistiques : 
+o	Création de rapports personnalisés avec filtres et options de tri.
+o	Visualisation des données sous forme de tableaux et de graphiques.
+o	Exportation des données aux formats PDF, Excel, CSV.
+
+•	Gestion des archives : 
+o	Archivage automatique des documents et des données.
+o	Recherche avancée dans les archives.
+o	Gestion des droits d'accès aux archives.
+
+9. Exigences techniques :
+•	Plateforme : Application web responsive (Laravel).
+•	Base de données : MySQL ou PostgreSQL.
+•	API de signature électronique : YouSign ou équivalent.
+•	Sécurité : OWASP Top 10, RGPD.
+•	Performance : Temps de réponse < 2 secondes.
+•	Accessibilité : WCAG 2.1 AA.
+
+10. Livrables :
+•	Cahier des charges détaillé.
+•	Spécifications fonctionnelles et techniques.
+•	Maquettes et prototypes UI/UX.
+•	Code source de l'application.
+•	Documentation utilisateur et technique.
+•	Plan de tests et rapports de tests.
+•	Manuel de déploiement et de maintenance.
+
+11. Processus de développement :
+•	Méthodologie Agile (Scrum).
+•	Outils : Jira, Confluence, Git.
+•	Communication : Réunions quotidiennes, sprints de 2 semaines.
+
+12. Recette et déploiement :
+•	Tests unitaires, d'intégration et système.
+•	Recette utilisateur avec scénarios de test.
+•	Déploiement en production avec supervision.
+•	Formation des utilisateurs et support technique.
+
+13. Maintenance :
+•	Maintenance corrective et évolutive.
+•	Support technique niveau 1 et 2.
+•	Mises à jour de sécurité et de fonctionnalités.
+
+
+
+
+
+
+
+
+
+
+Objectif du projet
+Exigences fonctionnelles
+Exigences non fonctionnelles
+
+Identification des acteurs et leurs rôles
+diagramme de contexte statique
+diagramme de cas d'utilisation
+description des cas d'utilisations : enchaînement nominal, alternatifs et post-conditions
+
+
+diagramme de séquence
+dictionnaire des données
+SLR
+Diagramme des Classes
+
+
+Présentations des résultats de l'analyse (outils et technologies) puis chapitre 3
+
+
+Ex:
+
+Règle de gestion :
+➢ un département comporte plusieurs communes, de même une commune comporte plusieurs arrondissements et aussi un arrondissement comporte un ou plusieurs quartiers ou villes ;
+➢ une structure appartient forcément à un Ministère ;
+➢ un groupement peut couvrir plusieurs structures ;
+➢ un militaire peut appartenir à plusieurs groupements ;
+➢ pour une période plusieurs pointages sont effectuées ;
+➢ un détail Ordre Mission est associé à plusieurs pointages
+➢ une période se fait suivant une fréquence (mensuelle, semestrielle, trimestrielle) ;
+➢ un pointage peut concerner plusieurs ordres de Missions ;
+➢ un signataire a une fonction ;
+➢ un ordre de Mission peut être associer à plusieurs affectations ;
+➢ un détail Ordre Mission peut se fait en tenant compte de plusieurs attestations ;
+➢ une Attestation, une demande ou un Ordre de Mission ont respectivement un seul statut en une instante donnée ;
+➢ un bordereau de transmission est constitué d’un ou plusieurs demandes ou attestations et une attestation ou une demande sont associés qu’à un seul bordereau de transmission.
+➢ un utilisateur du système a un ou plusieurs rôles
+➢ un utilisateur d’une structure est associé à un seul type Utilisateur et un type utilisateur est associé à plusieurs utilisateurs ;
+➢ une structure est constituée d’un ou plusieurs signataires des différents documents;
+
+
+
+
+Une description textuelle d'un cas d'utilisation est un document détaillé qui explique comment un utilisateur interagit avec un système pour atteindre un objectif spécifique. Cette description inclut les acteurs d’un cas d’utilisation, les préconditions, les scénario nominal et alternatives, les postconditions. Voici ci-dessous quelques cas de description textuelles.[2]
+Cas d’utilisation : Enregistrer une demande
+Tableau 2:Enregistrer demande

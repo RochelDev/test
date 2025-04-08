@@ -1,0 +1,143 @@
+administrateur: 
+o	gérer les utilisateurs, attribuer des rôles et permissions à chaque utilisateur
+o	configurer les paramètres du système: CRUD ministère, postes, typemobilité, etapes, agent;
+o	En tant qu'administrateur, je souhaite générer des rapports d'utilisation du système.
+
+
+utilisateurs:
+
+•	Agent : 
+o	En tant qu'agent, je souhaite déposer une demande de mobilité en ligne et suivre son statut.
+o	En tant qu'agent, je souhaite recevoir des notifications sur l'avancement de ma demande.
+o	En tant qu'agent, je souhaite consulter les offres de mobilité disponibles.
+
+Service RH sectoriel(demandeur)
+Ordonnateur sectoriel(demandeur/receveur)
+
+•	Responsable RH : 
+o	En tant que responsable RH, je souhaite gérer les demandes de mobilité et les appels à candidature en ligne.
+o	En tant que responsable RH, je souhaite générer des rapports sur les demandes de mobilité.
+o	En tant que responsable RH, je souhaite notifier les agents des décisions relatives à leur mobilité.
+
+•	DPAF sectoriel : 
+o	En tant qu'ordonnateur sectoriel, je souhaite viser les demandes de mobilité et les projets d'actes.
+o	En tant qu'ordonnateur sectoriel, je souhaite suivre l'avancement des demandes de mobilité.
+
+•	Responsable sectoriel : 
+o	En tant que responsable sectoriel, je souhaite signer les accords sectoriels en ligne.
+o	En tant que responsable sectoriel, je souhaite recevoir des notifications sur les demandes de mobilité.
+
+•	Parapheur (Agent DRSC, DRSC, DGFP, Responsable MTFP, DC MTFP, controleur financier ajoint, C/SMS etc.) : 
+o	En tant qu'acteur du processus de validation, je souhaite parapher et signer les documents en ligne.
+o	En tant qu'acteur du processus de validation, je souhaite suivre l'avancement des demandes de mobilité.
+
+•	Signataire (Responsable sectoriel (demandeur/receveur)(SGM, SGAM, DAC, DC), Responsable MTFP(SGM, SGAM, DAC, DC), SSGM MEF/MTFP, DNCF, *****Directeur Cabinet, DC MTFP, Ministre, ordonnateur sectoriel) :
+signer les documents en ligne.
+
+Agent DRSC, DRSC, DGFP, 
+
+
+Défis majeur
+- Gérer le suivi et les acteurs
+    * Entre différents ministères
+- Transmission du dossier entre les différents acteurs
+- Stockage, téléchargement et archivage des fichiers
+
+
+Suggestion concernant à la complexité du projet:
+Essayé tout d'abord de gérer détachement et mise en disponibilité.
+
+D'abord les acteurs et leur profil
+Ensuite les etapes
+Et le suivi (on doit pouvoir savoir qui a fait quoi et à quel étape se trouve le dossier)
+la gestion des fichiers
+les notifications systèmes.
+
+*******************************
+Detachement-disponibilité (possibilité de l'associer aux autres mobilités)
+
+Cas d'utilisation
+
+Au niveau d'un ministère
+- Consulter demande externe (pour le cas de la demande sectorielle)
+- Faire demande à sa hiérarchie ? champ à remplir ou lettre à soumettre
+- Traiter demande : Valider ou refuser une demande et générer le document et le stocké pour être joint au dossier de mobilité 
+- Consulter document en attente de signature.
+- Télécharger et imprimer document pour signature.
+- mettre à jour le statut du dossier (valider par le ministre)
+- numéro du dossier, nom de l'agent concerné, type de mobilité, pièces jointes, statut:(en cours, validé par, x document signé par)
+
+
+Au niveau du MTFP:
+- Consulter les demandes ou dossiers en cours
+- Traiter demande : Valider ou refuser une demande et générer le document et le stocké pour être joint au dossier de mobilité 
+- Consulter document en attente de signature
+- Télécharger et imprimer document pour paraphe et signature.
+- mettre à jour le statut du dossier (valider par le MTFP)
+
+*************************************
+
+Concernant les documents à signer
+- Signature manuscrite
+- Notifier que les documents ont été paraphé et signé par tel ou tel acteur:
+- Enregistré Référence de chaque document dans le système
+
+
+
+
+
+*****************
+tableaux        (accessible selon cas soit par le MTFP, soit par le/les minitère(s) concerné par le dossier ou les deux)
+Tous les dossiers
+dossiers de détachements
+dossiers de disponibilités
+dossiers de demande sectoriel
+
+Proposition pour résoudre pb de traçabilité du dossier: on veut pouvoir identifier un dossier ainsi que ça provenance
+Code_dossier pour identifier le dossier+ministère qui l'a éditer
+
+CodeMinistere+TypeMobilité+ANNEE+numéroAutoIncremente
+Ex: MEFDE20250001  (max 25) 
+
+Detachement => DE
+Disponibilite => DNB
+Disposition => DSP
+
+lorsque statut dossier change permettre au acteurs d'accéder au dossier
+
+
+Identification des étapes:
+Detachement-Disponibilite: 
+Traitement demande
+Viser lettre demande accord
+Traitement demande niveau MTFP
+Viser lettre accord MTFP
+
+
+
+Disposition : 
+demande secto
+*lettre demande accord
+Traitement demande : MTFP
+Viser lettre demande accord 
+Traitement demande
+*lettre accord 
+Viser lettre accord
+Traitement demande : MTFP
+Viser lettre mise à disposition MTFP
+
+
+
+Etape Point commun:
+Traitement demande
+Impression Document et signature
+Viser document
+Impression document final et signature
+
+
+
+
+
+Règles de gestion
+RH sectoriel d'un ministère doit avoir accès aux dossiers de mobilité de son ministère
+Mise à disposition par demande sectorielle: accéder aux dossiers à une Etape du processuss
