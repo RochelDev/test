@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('profils', function (Blueprint $table) {
             $table->id();
+            $table->string('libelle_profil');
             $table->timestamps();
         });
     }

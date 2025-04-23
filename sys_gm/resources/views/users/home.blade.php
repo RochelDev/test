@@ -15,8 +15,7 @@
     <div class="container mb-4">
         <flux:heading size="xl" level="1">Tableau</flux:heading>
     </div>
-
-
+    
     <div class="container mb-4">
         <flux:heading size="xl" level="1">Formulaire</flux:heading>
         <div class="mx-auto p-6">
@@ -163,9 +162,7 @@
             </form>
         </div>
     </div>
-
     
-
 
     {{-- <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
         <div class="grid auto-rows-min gap-4 md:grid-cols-3">

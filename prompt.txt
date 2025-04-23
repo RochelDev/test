@@ -1,0 +1,949 @@
+fais moi une mise en forme du code sans modifier le contenue et mets sa sur la même ligne la où tu trouveras les attributs des balises à la ligne
+
+Layout.tsx
+import { Fragment } from 'react';
+import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
+import { Menu, Transition } from '@headlessui/react';
+import { useAuth } from '../context/AuthContext';
+import {
+  Building2,
+  ChevronDown,
+  Home,
+  FileText,
+  Bell,
+  LogOut,
+  User,
+  Settings,
+  Plus
+} from 'lucide-react';
+import clsx from 'clsx';
+
+export default function Layout() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <nav className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex">
+              <div className="flex-shrink-0 flex items-center">
+                <Building2 className="h-8 w-8 text-green-600" />
+                <span className="ml-2 text-xl font-semibold text-gray-900">
+                  Admin Bénin
+                </span>
+              </div>
+              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <Link
+                  to="/"
+                  className={clsx(
+                    "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
+                    location.pathname === '/' 
+                      ? "border-green-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  )}
+                >
+                  <Home className="h-5 w-5 mr-1" />
+                  Tableau de bord
+                </Link>
+                <Link
+                  to="/demandes"
+                  className={clsx(
+                    "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
+                    location.pathname.startsWith('/demandes')
+                      ? "border-green-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  )}
+                >
+                  <FileText className="h-5 w-5 mr-1" />
+                  Demandes
+                </Link>
+              </div>
+            </div>
+            <div className="hidden sm:ml-6 sm:flex sm:items-center">
+              <Link
+                to="/demandes/nouvelle"
+                className="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nouvelle Demande
+              </Link>
+
+              <button
+                type="button"
+                className="ml-3 bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                <span className="sr-only">Voir les notifications</span>
+                <Bell className="h-6 w-6" />
+              </button>
+
+              <Menu as="div" className="ml-3 relative">
+                <div>
+                  <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    <span className="sr-only">Ouvrir le menu utilisateur</span>
+                    <div className="flex items-center">
+                      <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                        <User className="h-5 w-5 text-gray-500" />
+                      </div>
+                      <ChevronDown className="ml-1 h-5 w-5 text-gray-400" />
+                    </div>
+                  </Menu.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-200"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={clsx(
+                            active ? 'bg-gray-100' : '',
+                            'block px-4 py-2 text-sm text-gray-700'
+                          )}
+                        >
+                          <div className="flex items-center">
+                            <Settings className="h-5 w-5 mr-2" />
+                            Paramètres
+                          </div>
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <button
+                          onClick={handleLogout}
+                          className={clsx(
+                            active ? 'bg-gray-100' : '',
+                            'block w-full text-left px-4 py-2 text-sm text-gray-700'
+                          )}
+                        >
+                          <div className="flex items-center">
+                            <LogOut className="h-5 w-5 mr-2" />
+                            Se déconnecter
+                          </div>
+                        </button>
+                      )}
+                    </Menu.Item>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div className="py-10">
+        <main>
+          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+Dashboard.tsx
+
+
+import { FileText, CheckCircle, AlertCircle, Clock } from 'lucide-react';
+
+export default function Dashboard() {
+  return (
+    <div className="bg-white shadow rounded-lg">
+      <div className="px-4 py-5 sm:p-6">
+        <h1 className="text-2xl font-semibold text-gray-900 mb-6">
+          Tableau de Bord
+        </h1>
+
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <Clock className="h-6 w-6 text-gray-400" />
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-gray-500 truncate">
+                      En attente
+                    </dt>
+                    <dd className="flex items-baseline">
+                      <div className="text-2xl font-semibold text-gray-900">
+                        12
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <FileText className="h-6 w-6 text-gray-400" />
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-gray-500 truncate">
+                      Total Demandes
+                    </dt>
+                    <dd className="flex items-baseline">
+                      <div className="text-2xl font-semibold text-gray-900">
+                        48
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <CheckCircle className="h-6 w-6 text-green-400" />
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-gray-500 truncate">
+                      Approuvées
+                    </dt>
+                    <dd className="flex items-baseline">
+                      <div className="text-2xl font-semibold text-gray-900">
+                        32
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <AlertCircle className="h-6 w-6 text-red-400" />
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-gray-500 truncate">
+                      Rejetées
+                    </dt>
+                    <dd className="flex items-baseline">
+                      <div className="text-2xl font-semibold text-gray-900">
+                        4
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-lg font-medium text-gray-900 mb-4">
+            Demandes Récentes
+          </h2>
+          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul role="list" className="divide-y divide-gray-200">
+              {[1, 2, 3].map((item) => (
+                <li key={item}>
+                  <a href="#" className="block hover:bg-gray-50">
+                    <div className="px-4 py-4 sm:px-6">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-green-600 truncate">
+                          Demande de détachement #12{item}
+                        </p>
+                        <div className="ml-2 flex-shrink-0 flex">
+                          <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            En attente
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-2 sm:flex sm:justify-between">
+                        <div className="sm:flex">
+                          <p className="flex items-center text-sm text-gray-500">
+                            John Doe
+                          </p>
+                        </div>
+                        <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                          <p>
+                            Soumis le 01/03/2024
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+RequestForm
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Upload, AlertCircle } from 'lucide-react';
+
+type RequestType = 'detachement' | 'disponibilite' | 'mise-a-disposition';
+
+export default function RequestForm() {
+  const navigate = useNavigate();
+  const [requestType, setRequestType] = useState<RequestType>('detachement');
+  const [message, setMessage] = useState('');
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!file) {
+      setError('Veuillez joindre le certificat de cessation de paiement');
+      return;
+    }
+
+    try {
+      // TODO: Implement actual form submission
+      console.log({ requestType, message, file });
+      navigate('/demandes');
+    } catch (error) {
+      setError('Une erreur est survenue lors de la soumission de la demande');
+    }
+  };
+
+  return (
+    <div className="bg-white shadow rounded-lg">
+      <div className="px-4 py-5 sm:p-6">
+        <div className="md:grid md:grid-cols-3 md:gap-6">
+          <div className="md:col-span-1">
+            <h3 className="text-lg font-medium leading-6 text-gray-900">
+              Nouvelle Demande
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Veuillez remplir tous les champs requis pour soumettre votre demande de mobilité.
+            </p>
+          </div>
+          <div className="mt-5 md:mt-0 md:col-span-2">
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-6 gap-6">
+                <div className="col-span-6">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Type de Demande
+                  </label>
+                  <select
+                    value={requestType}
+                    onChange={(e) => setRequestType(e.target.value as RequestType)}
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md"
+                  >
+                    <option value="detachement">Détachement</option>
+                    <option value="disponibilite">Mise en Disponibilité</option>
+                    <option value="mise-a-disposition">Mise à Disposition</option>
+                  </select>
+                </div>
+
+                <div className="col-span-6">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Message Complémentaire
+                  </label>
+                  <div className="mt-1">
+                    <textarea
+                      rows={4}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      placeholder="Informations supplémentaires concernant votre demande..."
+                    />
+                  </div>
+                </div>
+
+                <div className="col-span-6">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Certificat de Cessation de Paiement
+                  </label>
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                    <div className="space-y-1 text-center">
+                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                      <div className="flex text-sm text-gray-600">
+                        <label
+                          htmlFor="file-upload"
+                          className="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"
+                        >
+                          <span>Télécharger un fichier</span>
+                          <input
+                            id="file-upload"
+                            name="file-upload"
+                            type="file"
+                            className="sr-only"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={(e) => setFile(e.target.files?.[0] || null)}
+                          />
+                        </label>
+                        <p className="pl-1">ou glisser-déposer</p>
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        PDF, PNG, JPG jusqu'à 10MB
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {error && (
+                <div className="mt-4 bg-red-50 border border-red-200 rounded-md p-4">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <AlertCircle className="h-5 w-5 text-red-400" />
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-red-700">{error}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => navigate('/demandes')}
+                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="bg-green-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Soumettre
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+RequestList
+
+
+import { FileText, Search, Filter, Clock, CheckCircle, XCircle } from 'lucide-react';
+
+const requests = [
+  {
+    id: '1',
+    type: 'Détachement',
+    status: 'en-attente',
+    date: '2024-03-01',
+    agent: 'John Doe',
+    department: 'Ministère de la Fonction Publique'
+  },
+  {
+    id: '2',
+    type: 'Mise en Disponibilité',
+    status: 'approuve',
+    date: '2024-02-28',
+    agent: 'Jane Smith',
+    department: 'Ministère de l\'Économie'
+  },
+  {
+    id: '3',
+    type: 'Mise à Disposition',
+    status: 'rejete',
+    date: '2024-02-25',
+    agent: 'Robert Johnson',
+    department: 'Ministère de l\'Éducation'
+  }
+];
+
+const statusStyles = {
+  'en-attente': 'bg-yellow-100 text-yellow-800',
+  'approuve': 'bg-green-100 text-green-800',
+  'rejete': 'bg-red-100 text-red-800'
+};
+
+const statusLabels = {
+  'en-attente': 'En attente',
+  'approuve': 'Approuvé',
+  'rejete': 'Rejeté'
+};
+
+const statusIcons = {
+  'en-attente': Clock,
+  'approuve': CheckCircle,
+  'rejete': XCircle
+};
+
+export default function RequestList() {
+  return (
+    <div className="bg-white shadow rounded-lg">
+      <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Demandes de Mobilité
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Liste de toutes les demandes de mobilité
+          </p>
+        </div>
+      </div>
+
+      <div className="px-4 py-3 border-b border-gray-200">
+        <div className="flex space-x-4">
+          <div className="flex-1">
+            <div className="relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
+                placeholder="Rechercher une demande..."
+              />
+            </div>
+          </div>
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            <Filter className="h-5 w-5 mr-2 text-gray-500" />
+            Filtrer
+          </button>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Demande
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Agent
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Service
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Date
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Statut
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {requests.map((request) => {
+              const StatusIcon = statusIcons[request.status];
+              return (
+                <tr key={request.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <FileText className="h-5 w-5 text-gray-400 mr-2" />
+                      <div className="text-sm font-medium text-gray-900">
+                        {request.type}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{request.agent}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{request.department}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {new Date(request.date).toLocaleDateString('fr-FR')}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[request.status]}`}>
+                      <StatusIcon className="h-4 w-4 mr-1" />
+                      {statusLabels[request.status]}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div className="flex-1 flex justify-between sm:hidden">
+          <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Précédent
+          </button>
+          <button className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Suivant
+          </button>
+        </div>
+        <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm text-gray-700">
+              Affichage de <span className="font-medium">1</span> à{' '}
+              <span className="font-medium">3</span> sur{' '}
+              <span className="font-medium">12</span> résultats
+            </p>
+          </div>
+          <div>
+            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <button className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                Précédent
+              </button>
+              <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                1
+              </button>
+              <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                2
+              </button>
+              <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                3
+              </button>
+              <button className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                Suivant
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RequestProcesssing
+
+import { useState } from 'react';
+import { FileText, Download, Upload, CheckCircle, XCircle, AlertCircle, MessageSquare } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+
+type RequestStatus = 'en-attente' | 'approuve' | 'rejete' | 'modification-requise';
+
+interface Request {
+  id: string;
+  type: string;
+  status: RequestStatus;
+  date: string;
+  agent: string;
+  department: string;
+  documents: {
+    name: string;
+    url: string;
+  }[];
+  history: {
+    date: string;
+    action: string;
+    actor: string;
+    comment?: string;
+  }[];
+}
+
+export default function RequestProcessing() {
+  const { id } = useParams();
+  const [comment, setComment] = useState('');
+  const [newDocument, setNewDocument] = useState<File | null>(null);
+
+  // Mock data - In production, this would be fetched from an API
+  const request: Request = {
+    id: '1',
+    type: 'Détachement',
+    status: 'en-attente',
+    date: '2024-03-01',
+    agent: 'John Doe',
+    department: 'Ministère de la Fonction Publique',
+    documents: [
+      {
+        name: 'Certificat de cessation de paiement.pdf',
+        url: '#'
+      },
+      {
+        name: 'Demande signée.pdf',
+        url: '#'
+      }
+    ],
+    history: [
+      {
+        date: '2024-03-01',
+        action: 'Soumission',
+        actor: 'John Doe',
+        comment: 'Demande initiale de détachement'
+      }
+    ]
+  };
+
+  const handleAction = async (action: 'approve' | 'reject' | 'request-changes') => {
+    if (!comment && (action === 'reject' || action === 'request-changes')) {
+      alert('Un commentaire est requis pour cette action');
+      return;
+    }
+
+    try {
+      // TODO: Implement actual API call
+      console.log('Action:', action, 'Comment:', comment);
+      setComment('');
+    } catch (error) {
+      console.error('Error processing request:', error);
+    }
+  };
+
+  const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewDocument(file);
+      // TODO: Implement actual file upload
+    }
+  };
+
+  return (
+    <div className="bg-white shadow rounded-lg">
+      <div className="px-4 py-5 sm:p-6">
+        <div className="md:grid md:grid-cols-3 md:gap-6">
+          <div className="md:col-span-1">
+            <h3 className="text-lg font-medium leading-6 text-gray-900">
+              Traitement de la Demande
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              #{request.id} - {request.type}
+            </p>
+            <div className="mt-4">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                En attente de traitement
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-5 md:mt-0 md:col-span-2">
+            <div className="grid grid-cols-1 gap-6">
+              {/* Informations de base */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-500">Informations</h4>
+                <dl className="mt-2 grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">Agent</dt>
+                    <dd className="mt-1 text-sm text-gray-900">{request.agent}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">Service</dt>
+                    <dd className="mt-1 text-sm text-gray-900">{request.department}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">Date de soumission</dt>
+                    <dd className="mt-1 text-sm text-gray-900">
+                      {new Date(request.date).toLocaleDateString('fr-FR')}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              {/* Documents */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Documents</h4>
+                <ul className="divide-y divide-gray-200 border border-gray-200 rounded-md">
+                  {request.documents.map((doc, index) => (
+                    <li key={index} className="px-4 py-3 flex items-center justify-between text-sm">
+                      <div className="flex items-center">
+                        <FileText className="h-5 w-5 text-gray-400 mr-2" />
+                        <span className="text-gray-900">{doc.name}</span>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          type="button"
+                          className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        >
+                          <Download className="h-4 w-4 mr-1" />
+                          Télécharger
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Ajouter un document
+                  </label>
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                    <div className="space-y-1 text-center">
+                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                      <div className="flex text-sm text-gray-600">
+                        <label
+                          htmlFor="file-upload"
+                          className="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"
+                        >
+                          <span>Télécharger un fichier</span>
+                          <input
+                            id="file-upload"
+                            name="file-upload"
+                            type="file"
+                            className="sr-only"
+                            onChange={handleDocumentUpload}
+                          />
+                        </label>
+                        <p className="pl-1">ou glisser-déposer</p>
+                      </div>
+                      <p className="text-xs text-gray-500">PDF jusqu'à 10MB</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Historique */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Historique</h4>
+                <div className="flow-root">
+                  <ul className="-mb-8">
+                    {request.history.map((event, index) => (
+                      <li key={index}>
+                        <div className="relative pb-8">
+                          {index !== request.history.length - 1 && (
+                            <span
+                              className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                              aria-hidden="true"
+                            />
+                          )}
+                          <div className="relative flex space-x-3">
+                            <div>
+                              <span className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center ring-8 ring-white">
+                                <CheckCircle className="h-5 w-5 text-white" />
+                              </span>
+                            </div>
+                            <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                              <div>
+                                <p className="text-sm text-gray-500">
+                                  {event.action} par <span className="font-medium text-gray-900">{event.actor}</span>
+                                </p>
+                                {event.comment && (
+                                  <p className="mt-1 text-sm text-gray-500">{event.comment}</p>
+                                )}
+                              </div>
+                              <div className="text-right text-sm whitespace-nowrap text-gray-500">
+                                {new Date(event.date).toLocaleDateString('fr-FR')}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex flex-col space-y-4">
+                  <div>
+                    <label htmlFor="comment" className="block text-sm font-medium text-gray-700">
+                      Commentaire
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="comment"
+                        rows={3}
+                        className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      type="button"
+                      onClick={() => handleAction('request-changes')}
+                      className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    >
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Demander des modifications
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleAction('reject')}
+                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    >
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Rejeter
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleAction('approve')}
+                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Approuver
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+<main data-lov-id="src/pages/Dashboard.tsx:33:8" data-lov-name="main" data-component-path="src/pages/Dashboard.tsx" data-component-line="33" data-component-file="Dashboard.tsx" data-component-name="main" data-component-content="%7B%22className%22%3A%22flex-1%20p-6%20overflow-auto%22%7D" class="flex-1 p-6 overflow-auto"><div data-lov-id="src/pages/Dashboard.tsx:34:10" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="34" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20justify-between%20items-center%20mb-6%22%7D" class="flex justify-between items-center mb-6"><h1 data-lov-id="src/pages/Dashboard.tsx:35:12" data-lov-name="h1" data-component-path="src/pages/Dashboard.tsx" data-component-line="35" data-component-file="Dashboard.tsx" data-component-name="h1" data-component-content="%7B%22text%22%3A%22Tableau%20de%20bord%22%2C%22className%22%3A%22text-2xl%20font-bold%20text-gray-800%22%7D" class="text-2xl font-bold text-gray-800">Tableau de bord</h1><div data-lov-id="src/pages/Dashboard.tsx:36:12" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="36" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22text-sm%20breadcrumbs%20text-gray-600%22%7D" class="text-sm breadcrumbs text-gray-600"><span data-lov-id="src/pages/Dashboard.tsx:37:14" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="37" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22Accueil%22%7D">Accueil</span><span data-lov-id="src/pages/Dashboard.tsx:38:14" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="38" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22%2F%22%2C%22className%22%3A%22mx-2%22%7D" class="mx-2">/</span><span data-lov-id="src/pages/Dashboard.tsx:39:14" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="39" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22Tableau%20de%20bord%22%2C%22className%22%3A%22text-gray-800%22%7D" class="text-gray-800">Tableau de bord</span></div></div><div data-lov-id="src/pages/Dashboard.tsx:43:10" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="43" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22grid%20grid-cols-1%20md%3Agrid-cols-2%20lg%3Agrid-cols-4%20gap-6%20mb-6%22%7D" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"><div data-lov-id="src/components/dashboard/StatCard.tsx:16:4" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="16" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D" class="rounded-md p-6 text-white shadow-sm bg-gradient-to-br from-[#17a2b8] to-[#0f8b9d]"><div data-lov-id="src/components/dashboard/StatCard.tsx:17:6" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="17" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20justify-between%20items-start%22%7D" class="flex justify-between items-start"><div data-lov-id="src/components/dashboard/StatCard.tsx:18:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="18" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D"><p data-lov-id="src/components/dashboard/StatCard.tsx:19:10" data-lov-name="p" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="19" data-component-file="StatCard.tsx" data-component-name="p" data-component-content="%7B%22className%22%3A%22text-white%2F80%20font-medium%20mb-1%22%7D" class="text-white/80 font-medium mb-1">Utilisateurs</p><h3 data-lov-id="src/components/dashboard/StatCard.tsx:20:10" data-lov-name="h3" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="20" data-component-file="StatCard.tsx" data-component-name="h3" data-component-content="%7B%22className%22%3A%22text-2xl%20font-bold%22%7D" class="text-2xl font-bold">1,234</h3></div><div data-lov-id="src/components/dashboard/StatCard.tsx:22:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="22" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D" class="p-3 rounded-full bg-white/10 text-white/80"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users" data-lov-id="src/components/dashboard/StatCard.tsx:23:10" data-lov-name="Icon" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="23" data-component-file="StatCard.tsx" data-component-name="Icon" data-component-content="%7B%7D"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div></div><div data-lov-id="src/components/dashboard/StatCard.tsx:27:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="27" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22mt-4%20text-sm%22%7D" class="mt-4 text-sm"><span data-lov-id="src/components/dashboard/StatCard.tsx:28:10" data-lov-name="span" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="28" data-component-file="StatCard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22%25%22%7D" class="text-green-100">+12%</span><span data-lov-id="src/components/dashboard/StatCard.tsx:31:10" data-lov-name="span" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="31" data-component-file="StatCard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22vs%20pr%C3%A9c%C3%A9dent%22%2C%22className%22%3A%22text-white%2F60%20ml-1%22%7D" class="text-white/60 ml-1">vs précédent</span></div></div><div data-lov-id="src/components/dashboard/StatCard.tsx:16:4" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="16" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D" class="rounded-md p-6 text-white shadow-sm bg-gradient-to-br from-[#28a745] to-[#208637]"><div data-lov-id="src/components/dashboard/StatCard.tsx:17:6" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="17" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20justify-between%20items-start%22%7D" class="flex justify-between items-start"><div data-lov-id="src/components/dashboard/StatCard.tsx:18:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="18" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D"><p data-lov-id="src/components/dashboard/StatCard.tsx:19:10" data-lov-name="p" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="19" data-component-file="StatCard.tsx" data-component-name="p" data-component-content="%7B%22className%22%3A%22text-white%2F80%20font-medium%20mb-1%22%7D" class="text-white/80 font-medium mb-1">Ventes</p><h3 data-lov-id="src/components/dashboard/StatCard.tsx:20:10" data-lov-name="h3" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="20" data-component-file="StatCard.tsx" data-component-name="h3" data-component-content="%7B%22className%22%3A%22text-2xl%20font-bold%22%7D" class="text-2xl font-bold">845</h3></div><div data-lov-id="src/components/dashboard/StatCard.tsx:22:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="22" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D" class="p-3 rounded-full bg-white/10 text-white/80"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart" data-lov-id="src/components/dashboard/StatCard.tsx:23:10" data-lov-name="Icon" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="23" data-component-file="StatCard.tsx" data-component-name="Icon" data-component-content="%7B%7D"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg></div></div><div data-lov-id="src/components/dashboard/StatCard.tsx:27:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="27" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22mt-4%20text-sm%22%7D" class="mt-4 text-sm"><span data-lov-id="src/components/dashboard/StatCard.tsx:28:10" data-lov-name="span" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="28" data-component-file="StatCard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22%25%22%7D" class="text-red-100">-5%</span><span data-lov-id="src/components/dashboard/StatCard.tsx:31:10" data-lov-name="span" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="31" data-component-file="StatCard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22vs%20pr%C3%A9c%C3%A9dent%22%2C%22className%22%3A%22text-white%2F60%20ml-1%22%7D" class="text-white/60 ml-1">vs précédent</span></div></div><div data-lov-id="src/components/dashboard/StatCard.tsx:16:4" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="16" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D" class="rounded-md p-6 text-white shadow-sm bg-gradient-to-br from-[#ffc107] to-[#d9a406]"><div data-lov-id="src/components/dashboard/StatCard.tsx:17:6" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="17" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20justify-between%20items-start%22%7D" class="flex justify-between items-start"><div data-lov-id="src/components/dashboard/StatCard.tsx:18:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="18" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D"><p data-lov-id="src/components/dashboard/StatCard.tsx:19:10" data-lov-name="p" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="19" data-component-file="StatCard.tsx" data-component-name="p" data-component-content="%7B%22className%22%3A%22text-white%2F80%20font-medium%20mb-1%22%7D" class="text-white/80 font-medium mb-1">Revenu</p><h3 data-lov-id="src/components/dashboard/StatCard.tsx:20:10" data-lov-name="h3" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="20" data-component-file="StatCard.tsx" data-component-name="h3" data-component-content="%7B%22className%22%3A%22text-2xl%20font-bold%22%7D" class="text-2xl font-bold">€12,450</h3></div><div data-lov-id="src/components/dashboard/StatCard.tsx:22:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="22" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D" class="p-3 rounded-full bg-white/10 text-white/80"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dollar-sign" data-lov-id="src/components/dashboard/StatCard.tsx:23:10" data-lov-name="Icon" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="23" data-component-file="StatCard.tsx" data-component-name="Icon" data-component-content="%7B%7D"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div></div><div data-lov-id="src/components/dashboard/StatCard.tsx:27:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="27" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22mt-4%20text-sm%22%7D" class="mt-4 text-sm"><span data-lov-id="src/components/dashboard/StatCard.tsx:28:10" data-lov-name="span" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="28" data-component-file="StatCard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22%25%22%7D" class="text-green-100">+8%</span><span data-lov-id="src/components/dashboard/StatCard.tsx:31:10" data-lov-name="span" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="31" data-component-file="StatCard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22vs%20pr%C3%A9c%C3%A9dent%22%2C%22className%22%3A%22text-white%2F60%20ml-1%22%7D" class="text-white/60 ml-1">vs précédent</span></div></div><div data-lov-id="src/components/dashboard/StatCard.tsx:16:4" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="16" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D" class="rounded-md p-6 text-white shadow-sm bg-gradient-to-br from-[#dc3545] to-[#bd2130]"><div data-lov-id="src/components/dashboard/StatCard.tsx:17:6" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="17" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20justify-between%20items-start%22%7D" class="flex justify-between items-start"><div data-lov-id="src/components/dashboard/StatCard.tsx:18:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="18" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D"><p data-lov-id="src/components/dashboard/StatCard.tsx:19:10" data-lov-name="p" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="19" data-component-file="StatCard.tsx" data-component-name="p" data-component-content="%7B%22className%22%3A%22text-white%2F80%20font-medium%20mb-1%22%7D" class="text-white/80 font-medium mb-1">Croissance</p><h3 data-lov-id="src/components/dashboard/StatCard.tsx:20:10" data-lov-name="h3" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="20" data-component-file="StatCard.tsx" data-component-name="h3" data-component-content="%7B%22className%22%3A%22text-2xl%20font-bold%22%7D" class="text-2xl font-bold">24%</h3></div><div data-lov-id="src/components/dashboard/StatCard.tsx:22:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="22" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%7D" class="p-3 rounded-full bg-white/10 text-white/80"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up" data-lov-id="src/components/dashboard/StatCard.tsx:23:10" data-lov-name="Icon" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="23" data-component-file="StatCard.tsx" data-component-name="Icon" data-component-content="%7B%7D"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg></div></div><div data-lov-id="src/components/dashboard/StatCard.tsx:27:8" data-lov-name="div" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="27" data-component-file="StatCard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22mt-4%20text-sm%22%7D" class="mt-4 text-sm"><span data-lov-id="src/components/dashboard/StatCard.tsx:28:10" data-lov-name="span" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="28" data-component-file="StatCard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22%25%22%7D" class="text-green-100">+15%</span><span data-lov-id="src/components/dashboard/StatCard.tsx:31:10" data-lov-name="span" data-component-path="src/components/dashboard/StatCard.tsx" data-component-line="31" data-component-file="StatCard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22vs%20pr%C3%A9c%C3%A9dent%22%2C%22className%22%3A%22text-white%2F60%20ml-1%22%7D" class="text-white/60 ml-1">vs précédent</span></div></div></div><div data-lov-id="src/pages/Dashboard.tsx:78:10" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="78" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22grid%20grid-cols-1%20lg%3Agrid-cols-3%20gap-6%20mb-6%22%7D" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6"><div data-lov-id="src/pages/Dashboard.tsx:79:12" data-lov-name="Card" data-component-path="src/pages/Dashboard.tsx" data-component-line="79" data-component-file="Dashboard.tsx" data-component-name="Card" data-component-content="%7B%22className%22%3A%22lg%3Acol-span-2%20shadow-sm%20border-0%22%7D" class="rounded-lg bg-card text-card-foreground lg:col-span-2 shadow-sm border-0"><div data-lov-id="src/pages/Dashboard.tsx:80:14" data-lov-name="CardHeader" data-component-path="src/pages/Dashboard.tsx" data-component-line="80" data-component-file="Dashboard.tsx" data-component-name="CardHeader" data-component-content="%7B%22className%22%3A%22border-b%20bg-white%22%7D" class="flex flex-col space-y-1.5 p-6 border-b bg-white"><h3 data-lov-id="src/pages/Dashboard.tsx:81:16" data-lov-name="CardTitle" data-component-path="src/pages/Dashboard.tsx" data-component-line="81" data-component-file="Dashboard.tsx" data-component-name="CardTitle" data-component-content="%7B%22text%22%3A%22Ventes%20%26%20Revenus%22%2C%22className%22%3A%22text-lg%20font-semibold%22%7D" class="tracking-tight text-lg font-semibold">Ventes &amp; Revenus</h3></div><div data-lov-id="src/pages/Dashboard.tsx:83:14" data-lov-name="CardContent" data-component-path="src/pages/Dashboard.tsx" data-component-line="83" data-component-file="Dashboard.tsx" data-component-name="CardContent" data-component-content="%7B%22className%22%3A%22pt-6%22%7D" class="p-6 pt-6"><div class="recharts-responsive-container" style="width: 100%; height: 300px; min-width: 0px;"><div class="recharts-wrapper" style="position: relative; cursor: default; width: 100%; height: 100%; max-height: 300px; max-width: 420px;"><svg class="recharts-surface" width="420" height="300" viewBox="0 0 420 300" style="width: 100%; height: 100%;"><title></title><desc></desc><defs><clipPath id="recharts1-clip"><rect x="60" y="10" height="236" width="330"></rect></clipPath></defs><defs data-lov-id="src/pages/Dashboard.tsx:89:20" data-lov-name="defs" data-component-path="src/pages/Dashboard.tsx" data-component-line="89" data-component-file="Dashboard.tsx" data-component-name="defs" data-component-content="%7B%7D"><linearGradient data-lov-id="src/pages/Dashboard.tsx:90:22" data-lov-name="linearGradient" data-component-path="src/pages/Dashboard.tsx" data-component-line="90" data-component-file="Dashboard.tsx" data-component-name="linearGradient" data-component-content="%7B%7D" id="colorVentes" x1="0" y1="0" x2="0" y2="1"><stop data-lov-id="src/pages/Dashboard.tsx:91:24" data-lov-name="stop" data-component-path="src/pages/Dashboard.tsx" data-component-line="91" data-component-file="Dashboard.tsx" data-component-name="stop" data-component-content="%7B%7D" offset="5%" stop-color="#1e40af" stop-opacity="0.8"></stop><stop data-lov-id="src/pages/Dashboard.tsx:92:24" data-lov-name="stop" data-component-path="src/pages/Dashboard.tsx" data-component-line="92" data-component-file="Dashboard.tsx" data-component-name="stop" data-component-content="%7B%7D" offset="95%" stop-color="#1e40af" stop-opacity="0.1"></stop></linearGradient><linearGradient data-lov-id="src/pages/Dashboard.tsx:94:22" data-lov-name="linearGradient" data-component-path="src/pages/Dashboard.tsx" data-component-line="94" data-component-file="Dashboard.tsx" data-component-name="linearGradient" data-component-content="%7B%7D" id="colorRevenus" x1="0" y1="0" x2="0" y2="1"><stop data-lov-id="src/pages/Dashboard.tsx:95:24" data-lov-name="stop" data-component-path="src/pages/Dashboard.tsx" data-component-line="95" data-component-file="Dashboard.tsx" data-component-name="stop" data-component-content="%7B%7D" offset="5%" stop-color="#16a34a" stop-opacity="0.8"></stop><stop data-lov-id="src/pages/Dashboard.tsx:96:24" data-lov-name="stop" data-component-path="src/pages/Dashboard.tsx" data-component-line="96" data-component-file="Dashboard.tsx" data-component-name="stop" data-component-content="%7B%7D" offset="95%" stop-color="#16a34a" stop-opacity="0.1"></stop></linearGradient></defs><g class="recharts-cartesian-grid"><g class="recharts-cartesian-grid-horizontal"><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="60" y="10" width="330" height="236" x1="60" y1="246" x2="390" y2="246"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="60" y="10" width="330" height="236" x1="60" y1="187" x2="390" y2="187"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="60" y="10" width="330" height="236" x1="60" y1="128" x2="390" y2="128"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="60" y="10" width="330" height="236" x1="60" y1="69" x2="390" y2="69"></line><line stroke-dasharray="3 3" stroke="#f0f0f0" fill="none" x="60" y="10" width="330" height="236" x1="60" y1="10" x2="390" y2="10"></line></g></g><g class="recharts-layer recharts-cartesian-axis recharts-xAxis xAxis"><line stroke="#666" orientation="bottom" width="330" height="30" x="60" y="246" class="recharts-cartesian-axis-line" fill="none" x1="60" y1="246" x2="390" y2="246"></line><g class="recharts-cartesian-axis-ticks"><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="bottom" width="330" height="30" x="60" y="246" class="recharts-cartesian-axis-tick-line" fill="none" x1="60" y1="252" x2="60" y2="246"></line><text stroke="none" orientation="bottom" width="330" height="30" x="60" y="254" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#666"><tspan x="60" dy="0.71em">Jan</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="bottom" width="330" height="30" x="60" y="246" class="recharts-cartesian-axis-tick-line" fill="none" x1="115" y1="252" x2="115" y2="246"></line><text stroke="none" orientation="bottom" width="330" height="30" x="115" y="254" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#666"><tspan x="115" dy="0.71em">Fév</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="bottom" width="330" height="30" x="60" y="246" class="recharts-cartesian-axis-tick-line" fill="none" x1="170" y1="252" x2="170" y2="246"></line><text stroke="none" orientation="bottom" width="330" height="30" x="170" y="254" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#666"><tspan x="170" dy="0.71em">Mar</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="bottom" width="330" height="30" x="60" y="246" class="recharts-cartesian-axis-tick-line" fill="none" x1="225" y1="252" x2="225" y2="246"></line><text stroke="none" orientation="bottom" width="330" height="30" x="225" y="254" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#666"><tspan x="225" dy="0.71em">Avr</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="bottom" width="330" height="30" x="60" y="246" class="recharts-cartesian-axis-tick-line" fill="none" x1="280" y1="252" x2="280" y2="246"></line><text stroke="none" orientation="bottom" width="330" height="30" x="280" y="254" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#666"><tspan x="280" dy="0.71em">Mai</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="bottom" width="330" height="30" x="60" y="246" class="recharts-cartesian-axis-tick-line" fill="none" x1="335" y1="252" x2="335" y2="246"></line><text stroke="none" orientation="bottom" width="330" height="30" x="335" y="254" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#666"><tspan x="335" dy="0.71em">Jun</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="bottom" width="330" height="30" x="60" y="246" class="recharts-cartesian-axis-tick-line" fill="none" x1="390" y1="252" x2="390" y2="246"></line><text stroke="none" orientation="bottom" width="330" height="30" x="390" y="254" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="middle" fill="#666"><tspan x="390" dy="0.71em">Jul</tspan></text></g></g></g><g class="recharts-layer recharts-cartesian-axis recharts-yAxis yAxis"><line stroke="#666" orientation="left" width="60" height="236" x="0" y="10" class="recharts-cartesian-axis-line" fill="none" x1="60" y1="10" x2="60" y2="246"></line><g class="recharts-cartesian-axis-ticks"><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="left" width="60" height="236" x="0" y="10" class="recharts-cartesian-axis-tick-line" fill="none" x1="54" y1="246" x2="60" y2="246"></line><text stroke="none" orientation="left" width="60" height="236" x="52" y="246" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#666"><tspan x="52" dy="0.355em">0</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="left" width="60" height="236" x="0" y="10" class="recharts-cartesian-axis-tick-line" fill="none" x1="54" y1="187" x2="60" y2="187"></line><text stroke="none" orientation="left" width="60" height="236" x="52" y="187" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#666"><tspan x="52" dy="0.355em">1500</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="left" width="60" height="236" x="0" y="10" class="recharts-cartesian-axis-tick-line" fill="none" x1="54" y1="128" x2="60" y2="128"></line><text stroke="none" orientation="left" width="60" height="236" x="52" y="128" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#666"><tspan x="52" dy="0.355em">3000</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="left" width="60" height="236" x="0" y="10" class="recharts-cartesian-axis-tick-line" fill="none" x1="54" y1="69" x2="60" y2="69"></line><text stroke="none" orientation="left" width="60" height="236" x="52" y="69" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#666"><tspan x="52" dy="0.355em">4500</tspan></text></g><g class="recharts-layer recharts-cartesian-axis-tick"><line stroke="#666" orientation="left" width="60" height="236" x="0" y="10" class="recharts-cartesian-axis-tick-line" fill="none" x1="54" y1="10" x2="60" y2="10"></line><text stroke="none" orientation="left" width="60" height="236" x="52" y="12" class="recharts-text recharts-cartesian-axis-tick-value" text-anchor="end" fill="#666"><tspan x="52" dy="0.355em">6000</tspan></text></g></g></g><g class="recharts-layer recharts-area"><g class="recharts-layer"><path fill="url(#colorVentes)" fill-opacity="0.6" width="330" height="236" stroke="none" class="recharts-curve recharts-area-area" d="M60,88.667C78.333,108.333,96.667,128,115,128C133.333,128,151.667,49.333,170,49.333C188.333,49.333,206.667,116.266,225,136.653C243.333,157.041,261.667,171.66,280,171.66C298.333,171.66,316.667,162.482,335,151.993C353.333,141.504,371.667,125.116,390,108.727L390,246C371.667,246,353.333,246,335,246C316.667,246,298.333,246,280,246C261.667,246,243.333,246,225,246C206.667,246,188.333,246,170,246C151.667,246,133.333,246,115,246C96.667,246,78.333,246,60,246Z"></path><path stroke="#1e40af" fill="none" fill-opacity="0.6" width="330" height="236" class="recharts-curve recharts-area-curve" d="M60,88.667C78.333,108.333,96.667,128,115,128C133.333,128,151.667,49.333,170,49.333C188.333,49.333,206.667,116.266,225,136.653C243.333,157.041,261.667,171.66,280,171.66C298.333,171.66,316.667,162.482,335,151.993C353.333,141.504,371.667,125.116,390,108.727"></path></g></g><g class="recharts-layer recharts-area"><g class="recharts-layer"><path fill="url(#colorRevenus)" fill-opacity="0.6" width="330" height="236" stroke="none" class="recharts-curve recharts-area-area" d="M60,151.6C78.333,171.306,96.667,191.012,115,191.012C133.333,191.012,151.667,99.365,170,96.533C188.333,93.701,206.667,95.117,225,92.285C243.333,89.453,261.667,57.2,280,57.2C298.333,57.2,316.667,96.533,335,96.533C353.333,96.533,371.667,86.7,390,76.867L390,246C371.667,246,353.333,246,335,246C316.667,246,298.333,246,280,246C261.667,246,243.333,246,225,246C206.667,246,188.333,246,170,246C151.667,246,133.333,246,115,246C96.667,246,78.333,246,60,246Z"></path><path stroke="#16a34a" fill="none" fill-opacity="0.6" width="330" height="236" class="recharts-curve recharts-area-curve" d="M60,151.6C78.333,171.306,96.667,191.012,115,191.012C133.333,191.012,151.667,99.365,170,96.533C188.333,93.701,206.667,95.117,225,92.285C243.333,89.453,261.667,57.2,280,57.2C298.333,57.2,316.667,96.533,335,96.533C353.333,96.533,371.667,86.7,390,76.867"></path></g></g></svg><div class="recharts-legend-wrapper" style="position: absolute; width: 390px; height: auto; left: 0px; bottom: 0px;"><ul class="recharts-default-legend" style="padding: 0px; margin: 0px; text-align: center;"><li class="recharts-legend-item legend-item-0" style="display: inline-block; margin-right: 10px;"><svg class="recharts-surface" width="14" height="14" viewBox="0 0 32 32" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><title></title><desc>
+</desc><path stroke-width="4" fill="none" stroke="#1e40af" d="M0,16h10.666666666666666
+            A5.333333333333333,5.333333333333333,0,1,1,21.333333333333332,16
+            H32M21.333333333333332,16
+            A5.333333333333333,5.333333333333333,0,1,1,10.666666666666666,16" class="recharts-legend-icon"></path></svg><span class="recharts-legend-item-text" style="color: rgb(30, 64, 175);">ventes</span></li><li class="recharts-legend-item legend-item-1" style="display: inline-block; margin-right: 10px;"><svg class="recharts-surface" width="14" height="14" viewBox="0 0 32 32" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><title></title><desc></desc><path stroke-width="4" fill="none" stroke="#16a34a" d="M0,16h10.666666666666666
+            A5.333333333333333,5.333333333333333,0,1,1,21.333333333333332,16
+            H32M21.333333333333332,16
+            A5.333333333333333,5.333333333333333,0,1,1,10.666666666666666,16" class="recharts-legend-icon"></path></svg><span class="recharts-legend-item-text" style="color: rgb(22, 163, 74);">revenus</span></li></ul></div><div tabindex="-1" class="recharts-tooltip-wrapper recharts-tooltip-wrapper-left recharts-tooltip-wrapper-top" style="visibility: hidden; pointer-events: none; position: absolute; top: 0px; left: 0px; transform: translate(146.8px, 47.4px);"><div class="recharts-default-tooltip" style="margin: 0px; padding: 10px; background-color: rgb(255, 255, 255); border: 1px solid rgb(204, 204, 204); white-space: nowrap;"><p class="recharts-tooltip-label" style="margin: 0px;">Mai</p></div></div></div></div></div></div><div data-lov-id="src/pages/Dashboard.tsx:121:12" data-lov-name="Card" data-component-path="src/pages/Dashboard.tsx" data-component-line="121" data-component-file="Dashboard.tsx" data-component-name="Card" data-component-content="%7B%22className%22%3A%22shadow-sm%20border-0%22%7D" class="rounded-lg bg-card text-card-foreground shadow-sm border-0"><div data-lov-id="src/pages/Dashboard.tsx:122:14" data-lov-name="CardHeader" data-component-path="src/pages/Dashboard.tsx" data-component-line="122" data-component-file="Dashboard.tsx" data-component-name="CardHeader" data-component-content="%7B%22className%22%3A%22border-b%20bg-white%22%7D" class="flex flex-col space-y-1.5 p-6 border-b bg-white"><h3 data-lov-id="src/pages/Dashboard.tsx:123:16" data-lov-name="CardTitle" data-component-path="src/pages/Dashboard.tsx" data-component-line="123" data-component-file="Dashboard.tsx" data-component-name="CardTitle" data-component-content="%7B%22text%22%3A%22%C3%80%20faire%22%2C%22className%22%3A%22text-lg%20font-semibold%22%7D" class="tracking-tight text-lg font-semibold">À faire</h3></div><div data-lov-id="src/pages/Dashboard.tsx:125:14" data-lov-name="CardContent" data-component-path="src/pages/Dashboard.tsx" data-component-line="125" data-component-file="Dashboard.tsx" data-component-name="CardContent" data-component-content="%7B%22className%22%3A%22pt-6%22%7D" class="p-6 pt-6"><ul data-lov-id="src/pages/Dashboard.tsx:126:16" data-lov-name="ul" data-component-path="src/pages/Dashboard.tsx" data-component-line="126" data-component-file="Dashboard.tsx" data-component-name="ul" data-component-content="%7B%22className%22%3A%22space-y-3%22%7D" class="space-y-3"><li data-lov-id="src/pages/Dashboard.tsx:128:20" data-lov-name="li" data-component-path="src/pages/Dashboard.tsx" data-component-line="128" data-component-file="Dashboard.tsx" data-component-name="li" data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-3%20p-2%20hover%3Abg-gray-50%20rounded-lg%20transition-colors%22%7D" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors"><div data-lov-id="src/pages/Dashboard.tsx:129:22" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="129" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%7D" class="w-5 h-5 rounded-full flex items-center justify-center border-2 border-gray-300"></div><span data-lov-id="src/pages/Dashboard.tsx:134:22" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="134" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%7D" class="text-gray-700">Réviser le rapport mensuel</span></li><li data-lov-id="src/pages/Dashboard.tsx:128:20" data-lov-name="li" data-component-path="src/pages/Dashboard.tsx" data-component-line="128" data-component-file="Dashboard.tsx" data-component-name="li" data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-3%20p-2%20hover%3Abg-gray-50%20rounded-lg%20transition-colors%22%7D" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors"><div data-lov-id="src/pages/Dashboard.tsx:129:22" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="129" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%7D" class="w-5 h-5 rounded-full flex items-center justify-center bg-green-500"><span data-lov-id="src/pages/Dashboard.tsx:132:38" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="132" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22%E2%9C%93%22%2C%22className%22%3A%22text-white%20text-xs%22%7D" class="text-white text-xs">✓</span></div><span data-lov-id="src/pages/Dashboard.tsx:134:22" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="134" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%7D" class="line-through text-gray-500">Rencontrer les nouveaux clients</span></li><li data-lov-id="src/pages/Dashboard.tsx:128:20" data-lov-name="li" data-component-path="src/pages/Dashboard.tsx" data-component-line="128" data-component-file="Dashboard.tsx" data-component-name="li" data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-3%20p-2%20hover%3Abg-gray-50%20rounded-lg%20transition-colors%22%7D" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors"><div data-lov-id="src/pages/Dashboard.tsx:129:22" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="129" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%7D" class="w-5 h-5 rounded-full flex items-center justify-center border-2 border-gray-300"></div><span data-lov-id="src/pages/Dashboard.tsx:134:22" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="134" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%7D" class="text-gray-700">Développer la nouvelle fonctionnalité</span></li><li data-lov-id="src/pages/Dashboard.tsx:128:20" data-lov-name="li" data-component-path="src/pages/Dashboard.tsx" data-component-line="128" data-component-file="Dashboard.tsx" data-component-name="li" data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-3%20p-2%20hover%3Abg-gray-50%20rounded-lg%20transition-colors%22%7D" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors"><div data-lov-id="src/pages/Dashboard.tsx:129:22" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="129" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%7D" class="w-5 h-5 rounded-full flex items-center justify-center border-2 border-gray-300"></div><span data-lov-id="src/pages/Dashboard.tsx:134:22" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="134" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%7D" class="text-gray-700">Analyser les données de performance</span></li></ul><div data-lov-id="src/pages/Dashboard.tsx:140:16" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="140" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22mt-4%20pt-4%20border-t%22%7D" class="mt-4 pt-4 border-t"><input data-lov-id="src/pages/Dashboard.tsx:141:18" data-lov-name="input" data-component-path="src/pages/Dashboard.tsx" data-component-line="141" data-component-file="Dashboard.tsx" data-component-name="input" data-component-content="%7B%22placeholder%22%3A%22Ajouter%20une%20t%C3%A2che...%22%2C%22className%22%3A%22w-full%20p-2%20rounded-lg%20border%20border-gray-300%20focus%3Aring-2%20focus%3Aring-blue-500%2F20%20focus%3Aborder-blue-500%22%7D" type="text" placeholder="Ajouter une tâche..." class="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"></div></div></div></div><div data-lov-id="src/pages/Dashboard.tsx:151:10" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="151" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22grid%20grid-cols-1%20lg%3Agrid-cols-2%20gap-6%22%7D" class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div data-lov-id="src/components/dashboard/RecentActivity.tsx:12:4" data-lov-name="Card" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="12" data-component-file="RecentActivity.tsx" data-component-name="Card" data-component-content="%7B%22className%22%3A%22shadow-sm%20border-0%22%7D" class="rounded-lg bg-card text-card-foreground shadow-sm border-0"><div data-lov-id="src/components/dashboard/RecentActivity.tsx:13:6" data-lov-name="CardHeader" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="13" data-component-file="RecentActivity.tsx" data-component-name="CardHeader" data-component-content="%7B%22className%22%3A%22border-b%20bg-white%22%7D" class="flex flex-col space-y-1.5 p-6 border-b bg-white"><h3 data-lov-id="src/components/dashboard/RecentActivity.tsx:14:8" data-lov-name="CardTitle" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="14" data-component-file="RecentActivity.tsx" data-component-name="CardTitle" data-component-content="%7B%22text%22%3A%22Activit%C3%A9s%20R%C3%A9centes%22%2C%22className%22%3A%22text-lg%20font-semibold%22%7D" class="tracking-tight text-lg font-semibold">Activités Récentes</h3></div><div data-lov-id="src/components/dashboard/RecentActivity.tsx:16:6" data-lov-name="CardContent" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="16" data-component-file="RecentActivity.tsx" data-component-name="CardContent" data-component-content="%7B%22className%22%3A%22pt-6%22%7D" class="p-6 pt-6"><div data-lov-id="src/components/dashboard/RecentActivity.tsx:17:8" data-lov-name="div" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="17" data-component-file="RecentActivity.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22space-y-4%22%7D" class="space-y-4"><div data-lov-id="src/components/dashboard/RecentActivity.tsx:19:12" data-lov-name="div" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="19" data-component-file="RecentActivity.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-4%20p-3%20hover%3Abg-gray-50%20rounded-lg%20transition-colors%20border%20border-gray-100%22%7D" class="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors border border-gray-100"><div data-lov-id="src/components/dashboard/RecentActivity.tsx:23:14" data-lov-name="div" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="23" data-component-file="RecentActivity.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22w-10%20h-10%20rounded-full%20bg-blue-100%20flex%20items-center%20justify-center%20text-blue-600%20font-semibold%22%7D" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">J</div><div data-lov-id="src/components/dashboard/RecentActivity.tsx:26:14" data-lov-name="div" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="26" data-component-file="RecentActivity.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex-1%22%7D" class="flex-1"><p data-lov-id="src/components/dashboard/RecentActivity.tsx:27:16" data-lov-name="p" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="27" data-component-file="RecentActivity.tsx" data-component-name="p" data-component-content="%7B%22className%22%3A%22text-gray-700%22%7D" class="text-gray-700"><span data-lov-id="src/components/dashboard/RecentActivity.tsx:28:18" data-lov-name="span" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="28" data-component-file="RecentActivity.tsx" data-component-name="span" data-component-content="%7B%22className%22%3A%22font-medium%22%7D" class="font-medium">John Doe</span> a créé un nouveau projet</p><p data-lov-id="src/components/dashboard/RecentActivity.tsx:31:16" data-lov-name="p" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="31" data-component-file="RecentActivity.tsx" data-component-name="p" data-component-content="%7B%22className%22%3A%22text-sm%20text-gray-500%22%7D" class="text-sm text-gray-500">Il y a 2h</p></div></div><div data-lov-id="src/components/dashboard/RecentActivity.tsx:19:12" data-lov-name="div" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="19" data-component-file="RecentActivity.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-4%20p-3%20hover%3Abg-gray-50%20rounded-lg%20transition-colors%20border%20border-gray-100%22%7D" class="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors border border-gray-100"><div data-lov-id="src/components/dashboard/RecentActivity.tsx:23:14" data-lov-name="div" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="23" data-component-file="RecentActivity.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22w-10%20h-10%20rounded-full%20bg-blue-100%20flex%20items-center%20justify-center%20text-blue-600%20font-semibold%22%7D" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">J</div><div data-lov-id="src/components/dashboard/RecentActivity.tsx:26:14" data-lov-name="div" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="26" data-component-file="RecentActivity.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex-1%22%7D" class="flex-1"><p data-lov-id="src/components/dashboard/RecentActivity.tsx:27:16" data-lov-name="p" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="27" data-component-file="RecentActivity.tsx" data-component-name="p" data-component-content="%7B%22className%22%3A%22text-gray-700%22%7D" class="text-gray-700"><span data-lov-id="src/components/dashboard/RecentActivity.tsx:28:18" data-lov-name="span" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="28" data-component-file="RecentActivity.tsx" data-component-name="span" data-component-content="%7B%22className%22%3A%22font-medium%22%7D" class="font-medium">Jane Smith</span> a modifié le rapport</p><p data-lov-id="src/components/dashboard/RecentActivity.tsx:31:16" data-lov-name="p" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="31" data-component-file="RecentActivity.tsx" data-component-name="p" data-component-content="%7B%22className%22%3A%22text-sm%20text-gray-500%22%7D" class="text-sm text-gray-500">Il y a 3h</p></div></div><div data-lov-id="src/components/dashboard/RecentActivity.tsx:19:12" data-lov-name="div" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="19" data-component-file="RecentActivity.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-4%20p-3%20hover%3Abg-gray-50%20rounded-lg%20transition-colors%20border%20border-gray-100%22%7D" class="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors border border-gray-100"><div data-lov-id="src/components/dashboard/RecentActivity.tsx:23:14" data-lov-name="div" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="23" data-component-file="RecentActivity.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22w-10%20h-10%20rounded-full%20bg-blue-100%20flex%20items-center%20justify-center%20text-blue-600%20font-semibold%22%7D" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">M</div><div data-lov-id="src/components/dashboard/RecentActivity.tsx:26:14" data-lov-name="div" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="26" data-component-file="RecentActivity.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex-1%22%7D" class="flex-1"><p data-lov-id="src/components/dashboard/RecentActivity.tsx:27:16" data-lov-name="p" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="27" data-component-file="RecentActivity.tsx" data-component-name="p" data-component-content="%7B%22className%22%3A%22text-gray-700%22%7D" class="text-gray-700"><span data-lov-id="src/components/dashboard/RecentActivity.tsx:28:18" data-lov-name="span" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="28" data-component-file="RecentActivity.tsx" data-component-name="span" data-component-content="%7B%22className%22%3A%22font-medium%22%7D" class="font-medium">Mike Johnson</span> a supprimé un fichier</p><p data-lov-id="src/components/dashboard/RecentActivity.tsx:31:16" data-lov-name="p" data-component-path="src/components/dashboard/RecentActivity.tsx" data-component-line="31" data-component-file="RecentActivity.tsx" data-component-name="p" data-component-content="%7B%22className%22%3A%22text-sm%20text-gray-500%22%7D" class="text-sm text-gray-500">Il y a 5h</p></div></div></div></div></div><div data-lov-id="src/pages/Dashboard.tsx:154:12" data-lov-name="Card" data-component-path="src/pages/Dashboard.tsx" data-component-line="154" data-component-file="Dashboard.tsx" data-component-name="Card" data-component-content="%7B%22className%22%3A%22shadow-sm%20border-0%22%7D" class="rounded-lg bg-card text-card-foreground shadow-sm border-0"><div data-lov-id="src/pages/Dashboard.tsx:155:14" data-lov-name="CardHeader" data-component-path="src/pages/Dashboard.tsx" data-component-line="155" data-component-file="Dashboard.tsx" data-component-name="CardHeader" data-component-content="%7B%22className%22%3A%22border-b%20bg-white%22%7D" class="flex flex-col space-y-1.5 p-6 border-b bg-white"><h3 data-lov-id="src/pages/Dashboard.tsx:156:16" data-lov-name="CardTitle" data-component-path="src/pages/Dashboard.tsx" data-component-line="156" data-component-file="Dashboard.tsx" data-component-name="CardTitle" data-component-content="%7B%22text%22%3A%22Performance%20du%20site%22%2C%22className%22%3A%22text-lg%20font-semibold%22%7D" class="tracking-tight text-lg font-semibold">Performance du site</h3></div><div data-lov-id="src/pages/Dashboard.tsx:158:14" data-lov-name="CardContent" data-component-path="src/pages/Dashboard.tsx" data-component-line="158" data-component-file="Dashboard.tsx" data-component-name="CardContent" data-component-content="%7B%22className%22%3A%22pt-6%22%7D" class="p-6 pt-6"><div data-lov-id="src/pages/Dashboard.tsx:159:16" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="159" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22space-y-6%22%7D" class="space-y-6"><div data-lov-id="src/pages/Dashboard.tsx:160:18" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="160" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%7D"><div data-lov-id="src/pages/Dashboard.tsx:161:20" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="161" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20justify-between%20mb-1%22%7D" class="flex justify-between mb-1"><span data-lov-id="src/pages/Dashboard.tsx:162:22" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="162" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22Visiteurs%22%2C%22className%22%3A%22text-sm%20font-medium%20text-gray-700%22%7D" class="text-sm font-medium text-gray-700">Visiteurs</span><span data-lov-id="src/pages/Dashboard.tsx:163:22" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="163" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%2265%25%22%2C%22className%22%3A%22text-sm%20font-medium%20text-gray-700%22%7D" class="text-sm font-medium text-gray-700">65%</span></div><div data-lov-id="src/pages/Dashboard.tsx:165:20" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="165" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22w-full%20bg-gray-200%20rounded-full%20h-2%22%7D" class="w-full bg-gray-200 rounded-full h-2"><div data-lov-id="src/pages/Dashboard.tsx:166:22" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="166" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22bg-blue-600%20h-2%20rounded-full%22%7D" class="bg-blue-600 h-2 rounded-full" style="width: 65%;"></div></div></div><div data-lov-id="src/pages/Dashboard.tsx:170:18" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="170" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%7D"><div data-lov-id="src/pages/Dashboard.tsx:171:20" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="171" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20justify-between%20mb-1%22%7D" class="flex justify-between mb-1"><span data-lov-id="src/pages/Dashboard.tsx:172:22" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="172" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22Taux%20de%20rebond%22%2C%22className%22%3A%22text-sm%20font-medium%20text-gray-700%22%7D" class="text-sm font-medium text-gray-700">Taux de rebond</span><span data-lov-id="src/pages/Dashboard.tsx:173:22" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="173" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%2245%25%22%2C%22className%22%3A%22text-sm%20font-medium%20text-gray-700%22%7D" class="text-sm font-medium text-gray-700">45%</span></div><div data-lov-id="src/pages/Dashboard.tsx:175:20" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="175" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22w-full%20bg-gray-200%20rounded-full%20h-2%22%7D" class="w-full bg-gray-200 rounded-full h-2"><div data-lov-id="src/pages/Dashboard.tsx:176:22" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="176" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22bg-green-500%20h-2%20rounded-full%22%7D" class="bg-green-500 h-2 rounded-full" style="width: 45%;"></div></div></div><div data-lov-id="src/pages/Dashboard.tsx:180:18" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="180" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%7D"><div data-lov-id="src/pages/Dashboard.tsx:181:20" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="181" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20justify-between%20mb-1%22%7D" class="flex justify-between mb-1"><span data-lov-id="src/pages/Dashboard.tsx:182:22" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="182" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%22Conversions%22%2C%22className%22%3A%22text-sm%20font-medium%20text-gray-700%22%7D" class="text-sm font-medium text-gray-700">Conversions</span><span data-lov-id="src/pages/Dashboard.tsx:183:22" data-lov-name="span" data-component-path="src/pages/Dashboard.tsx" data-component-line="183" data-component-file="Dashboard.tsx" data-component-name="span" data-component-content="%7B%22text%22%3A%2230%25%22%2C%22className%22%3A%22text-sm%20font-medium%20text-gray-700%22%7D" class="text-sm font-medium text-gray-700">30%</span></div><div data-lov-id="src/pages/Dashboard.tsx:185:20" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="185" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22w-full%20bg-gray-200%20rounded-full%20h-2%22%7D" class="w-full bg-gray-200 rounded-full h-2"><div data-lov-id="src/pages/Dashboard.tsx:186:22" data-lov-name="div" data-component-path="src/pages/Dashboard.tsx" data-component-line="186" data-component-file="Dashboard.tsx" data-component-name="div" data-component-content="%7B%22className%22%3A%22bg-yellow-500%20h-2%20rounded-full%22%7D" class="bg-yellow-500 h-2 rounded-full" style="width: 30%;"></div></div></div></div></div></div></div></main>

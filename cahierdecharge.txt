@@ -1,0 +1,118 @@
+
+Section 2 : Exigences Fonctionnelles
+
+Conformément à votre description et au diagramme de classes, les exigences fonctionnelles sont divisées par rôle :
+
+2.1 Pour les producteurs administrations (Responsable RH, DPAF sectoriel, Responsable sectoriel)
+
+Gestion des demandes de mobilité :
+Créer, consulter, modifier et archiver les demandes de mobilité (mutations, détachements, mises à disposition, changements de corps).
+Attribuer des demandes à des responsables pour traitement.
+Suivre l'état d'avancement des demandes.
+Ajouter des commentaires et des pièces jointes aux dossiers.
+
+Validation et décision :
+Consulter les informations de l'agent demandeur (profil, historique).
+Évaluer la conformité des demandes aux règles et aux besoins du service.
+Valider ou rejeter les demandes avec justification.
+    * Générer les projets d'actes administratifs (arrêtés, décisions).
+    * Suivre le processus de paraphe et de signature des actes.
+
+Gestion des postes et des opportunités :
+    Créer, consulter, modifier et archiver les postes disponibles.
+    Publier les offres de mobilité (appel à candidatures).
+    Gérer les candidatures aux offres de mobilité.
+
+
+Gestion des agents :
+    Consulter les profils des agents (compétences, ancienneté, affectation actuelle).
+    Rechercher des agents selon différents critères.
+
+Gestion des référentiels (Administrateur) :
+    CRUD (Créer, Lire, Modifier, Supprimer) pour les ministères, les postes, les types de mobilité, les étapes du processus, les agents.
+    Gestion des utilisateurs, des rôles et des permissions.
+    Configuration des paramètres du système.
+
+2.2 Pour les agents publics
+
+Soumission des demandes :
+    Remplir et soumettre en ligne des demandes de mobilité (mutation, détachement, mise à disposition, etc.).
+    Joindre les pièces justificatives requises.
+
+Suivi des demandes :
+    Consulter en temps réel l'état d'avancement de leurs demandes.
+    Recevoir des notifications à chaque changement de statut.
+    Consulter l'historique de leurs demandes.
+
+Consultation des opportunités :
+    Accéder à la liste des postes vacants et des offres de mobilité disponibles.
+    Consulter les détails des offres (description du poste, compétences requises, etc.).
+
+Informations et procédures :
+    Accéder à des informations sur les procédures de mobilité et les textes légaux applicables.
+    Consulter une FAQ.
+Gestion du profil :
+    Consulter et éventuellement modifier leurs informations personnelles (sous réserve des règles de gestion).
+
+2.3 Pour les parapheurs et signataires
+
+Parapher et signer électroniquement :
+    Accéder aux documents nécessitant leur approbation.
+    Visualiser les détails du dossier et les pièces jointes.
+    Parapher et signer électroniquement les documents.
+    Suivre l'état des documents en attente de leur action.
+Suivi des dossiers :
+    Consulter l'avancement des dossiers dans le circuit de validation.
+
+Section 3 : Exigences Non Fonctionnelles
+
+Performance :
+    Le système doit être réactif et capable de gérer un grand nombre d'utilisateurs et de demandes simultanément sans dégradation des performances.
+    Les temps de réponse des requêtes doivent être inférieurs à [préciser un seuil, par exemple, 3 secondes].
+Sécurité :
+    Protection des données des agents et des administrations contre les accès non autorisés (authentification forte, autorisation basée sur les rôles, cryptage des données sensibles).
+    Journalisation des actions critiques (connexions, modifications, validations).
+    Conformité aux réglementations en vigueur en matière de protection des données personnelles.
+Fiabilité et Disponibilité :
+    Le système doit être disponible 24h/24 et 7j/7 avec un taux de disponibilité de 99,9%.
+    Mise en place de mécanismes de sauvegarde et de restauration des données.
+Facilité d'utilisation (Ergonomie) :
+    Interface utilisateur intuitive et conviviale, accessible même pour les utilisateurs non techniques.
+    Conception responsive pour une utilisation sur différents types d'appareils (ordinateurs, tablettes).
+    Aide en ligne et documentation utilisateur.
+Maintenabilité :
+    Architecture logicielle modulaire et bien documentée pour faciliter les évolutions et la maintenance.
+    Utilisation de technologies standardisées et pérennes.
+Interopérabilité (Souhaitable) :
+    Possibilité d'intégrer le système avec d'autres applications de gestion des ressources humaines de l'administration (à définir).
+
+Section 4 : Acteurs et Profils (Précisions)
+
+Administrateur : Gère les utilisateurs, les rôles, les permissions et les référentiels du système.
+Agent : Dépose les demandes, suit leur statut et consulte les offres.
+Service RH Sectoriel (Demandeur) : Gère les demandes au niveau de son secteur.
+Ordonnateur Sectoriel (Demandeur/Receveur) : Vise les demandes et les projets d'actes.
+Responsable RH : Gère les demandes et les appels à candidature, génère des rapports et notifie les agents.
+DPAF Sectoriel : Vise les demandes et les projets d'actes, suit l'avancement.
+Responsable Sectoriel : Signe les accords sectoriels et reçoit des notifications.
+Parapheur (Agent DRSC, DRSC, DGFP, Responsable MTFP, DC MTFP, Contrôleur Financier Adjoint, C/SMS etc.) :** Paraphe les documents en ligne et suit l'avancement.
+Signataire (Responsable sectoriel, Responsable MTFP, SSGM MEF/MTFP, DNCF, Directeur Cabinet, DC MTFP, Ministre, Ordonnateur sectoriel) :** Signe les documents en ligne.
+
+Section 5 : Défis Majeurs
+
+Suivi et acteurs interministériels : Gérer les flux de dossiers impliquant différents ministères.
+Transmission des dossiers : Assurer une transmission fluide et sécurisée des dossiers entre les acteurs.
+Gestion documentaire : Stockage, téléchargement et archivage des fichiers joints aux dossiers.
+Gestion des notifications : Mettre en place un système de notifications efficace pour informer les acteurs des actions requises et des changements de statut.
+
+Section 6 : Suggestions Concernant la Complexité du Projet (Priorisation)
+
+Compte tenu de la complexité, il est judicieux de commencer par une phase pilote se concentrant sur :
+
+1.  Gestion des acteurs et de leurs profils.
+2.  Gestion des types de mobilité prioritaires :** Détachement et mise à disposition.
+3.  Définition et gestion des étapes du processus pour ces types de mobilité.
+4.  Mise en place du suivi des dossiers :** Visualisation de l'étape actuelle et de l'historique des actions (qui a fait quoi et quand).
+5.  Fonctionnalités de gestion des fichiers (téléchargement, stockage, consultation).
+6.  Système de notifications de base pour les agents et les responsables concernés.
+

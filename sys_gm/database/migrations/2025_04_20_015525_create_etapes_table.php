@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ministeres', function (Blueprint $table) {
+        Schema::create('etapes', function (Blueprint $table) {
             $table->id();
-            $table->string('code_ministere', 10);
-            $table->string('nom_ministere');
-            $table->string('site_ministere');
+            $table->string('nom');
+            $table->string('ordre');
+            $table->string('delai_max');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ministeres');
+        Schema::dropIfExists('etapes');
     }
 };

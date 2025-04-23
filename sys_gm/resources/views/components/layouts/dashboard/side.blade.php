@@ -12,24 +12,39 @@
         <flux:brand href="#" logo="https://fluxui.dev/img/demo/logo.png" name="Acme Inc." class="px-2 dark:hidden" />
         
         <flux:brand href="#" logo="https://fluxui.dev/img/demo/dark-mode-logo.png" name="Acme Inc." class="px-2 hidden dark:flex" />
-        <flux:input as="button" variant="filled" placeholder="Search..." icon="magnifying-glass" />
+
+        <flux:separator variant="subtle" />
         
         <flux:navlist variant="outline">
             <flux:navlist.item icon="home" href="#" class="hover:bg-blue-50! hover:text-blue-700!  bg-blue-900 text-white!">Tableau de bord</flux:navlist.item>
+            <flux:navlist.item icon="folder" badge="14" href="#" class="hover:bg-blue-50! hover:text-blue-700!">Dossier à traiter</flux:navlist.item>
+            <flux:navlist.item icon="folder" badge="14" href="#" class="hover:bg-blue-50! hover:text-blue-700!">Faire une Demande</flux:navlist.item>
             <flux:navlist.item icon="document" href="#" class="hover:bg-blue-50! hover:text-blue-700!">Générer un Document</flux:navlist.item>
             <flux:navlist.item icon="inbox" href="#" class="hover:bg-blue-50! hover:text-blue-700!">Liste des Agents</flux:navlist.item>
-            <flux:navlist.item icon="inbox" href="#" class="hover:bg-blue-50! hover:text-blue-700!">Rôles et permissions</flux:navlist.item>
-            <flux:navlist.group expandable heading="Pramètres" class="hidden lg:grid">
-                <flux:navlist.item href="{{ route('admin.ministere.index') }}" class="hover:bg-blue-50! hover:text-blue-700!">Gestion des Ministères</flux:navlist.item>
-                <flux:navlist.item href="#" class="hover:bg-blue-50! hover:text-blue-700!">Gestion des structures</flux:navlist.item>
-                <flux:navlist.item href="#" class="hover:bg-blue-50! hover:text-blue-700!">Gestion des Postes</flux:navlist.item>
-                <flux:navlist.item href="#" class="hover:bg-blue-50! hover:text-blue-700!">Gestion des Fonctions</flux:navlist.item>
-                <flux:navlist.item href="#" class="hover:bg-blue-50! hover:text-blue-700!">Gestion des Mobilités</flux:navlist.item>
-            </flux:navlist.group>
+            <flux:navlist.item icon="inbox" href="#" class="hover:bg-blue-50! hover:text-blue-700!">Affectations</flux:navlist.item>
             <flux:navlist.item icon="document-text" href="#" class="hover:bg-blue-50! hover:text-blue-700!">Historiques</flux:navlist.item>
         </flux:navlist>
         
         <flux:spacer />
+
+
+        <flux:navlist variant="outline">
+            <flux:navlist.item icon="cog-6-tooth" href="#" class="hover:bg-blue-50! hover:text-blue-700!">Settings</flux:navlist.item>
+        </flux:navlist>
+
+        <flux:separator variant="subtle" />
+
+        <flux:dropdown position="top" align="start" class="max-lg:hidden border rounded-lg bg-white dark:bg-gray-800">
+            <flux:profile avatar="https://fluxui.dev/img/demo/user.png" name="Olivia Martin" />
+            <flux:menu>
+                <flux:menu.radio.group>
+                    <flux:menu.radio checked>Olivia Martin</flux:menu.radio>
+                    <flux:menu.radio>Truly Delta</flux:menu.radio>
+                </flux:menu.radio.group>
+                <flux:menu.separator />
+                <flux:menu.item icon="arrow-right-start-on-rectangle" class="hover:bg-blue-50! hover:text-blue-700!">Logout</flux:menu.item>
+            </flux:menu>
+        </flux:dropdown>
         
     </flux:sidebar>
 

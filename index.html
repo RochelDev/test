@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Démarches d'urbanisme à Paris</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <div class="min-h-screen bg-gray-100">
+      <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16">
+            <div class="flex">
+              <div class="flex-shrink-0 flex items-center">
+                <span class="ml-2 text-xl font-semibold text-gray-900">
+                  Admin Bénin
+                </span>
+              </div>
+              <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <a
+                  class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium border-green-500 text-gray-900"
+                >
+                  Tableau de bord
+                </a>
+                <a
+                  class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                >
+                  Demandes
+                </a>
+              </div>
+            </div>
+            <div class="hidden sm:ml-6 sm:flex sm:items-center">
+              <a
+                class="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                Nouvelle Demande
+              </a>
+
+              <button
+                type="button"
+                class="ml-3 bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                <span class="sr-only">Voir les notifications</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div class="py-10">
+        <main>
+          <div class="max-w-7xl space-y-3 mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white shadow rounded-lg">
+              <div class="px-4 py-5 sm:p-6">
+                <div class="md:grid md:grid-cols-3 md:gap-6">
+                  <div class="md:col-span-1">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">
+                      Nouvelle Demande
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      Veuillez remplir tous les champs requis pour soumettre
+                      votre demande de mobilité.
+                    </p>
+                  </div>
+                  <div class="mt-5 md:mt-0 md:col-span-2">
+                    <form>
+                      <div class="grid grid-cols-6 gap-6">
+                        <div class="col-span-6">
+                          <label
+                            class="block text-sm font-medium text-gray-700"
+                          >
+                            Type de Demande
+                          </label>
+                          <select
+                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md"
+                          >
+                            <option value="detachement">Détachement</option>
+                            <option value="disponibilite">
+                              Mise en Disponibilité
+                            </option>
+                            <option value="mise-a-disposition">
+                              Mise à Disposition
+                            </option>
+                          </select>
+                        </div>
+
+                        <div class="col-span-6">
+                          <label
+                            class="block text-sm font-medium text-gray-700"
+                          >
+                            Message Complémentaire
+                          </label>
+                          <div class="mt-1">
+                            <textarea
+                              rows="4"
+                              class="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              placeholder="Informations supplémentaires concernant votre demande..."
+                            ></textarea>
+                          </div>
+                        </div>
+
+                        <div class="col-span-6">
+                          <label
+                            class="block text-sm font-medium text-gray-700"
+                          >
+                            Certificat de Cessation de Paiement
+                          </label>
+                          <div
+                            class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
+                          >
+                            <div class="space-y-1 text-center">
+                              <!-- <Upload class="mx-auto h-12 w-12 text-gray-400" /> -->
+                              <svg
+                                viewBox="0 0 24 24"
+                                class="mx-auto h-12 w-12 text-gray-400"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g
+                                  id="SVGRepo_tracerCarrier"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                ></g>
+                                <g id="SVGRepo_iconCarrier">
+                                  <path
+                                    d="M18.22 20.75H5.78C5.43322 20.7359 5.09262 20.6535 4.77771 20.5075C4.4628 20.3616 4.17975 20.155 3.94476 19.8996C3.70977 19.6442 3.52745 19.3449 3.40824 19.019C3.28903 18.693 3.23525 18.3468 3.25 18V15C3.25 14.8011 3.32902 14.6103 3.46967 14.4697C3.61033 14.329 3.80109 14.25 4 14.25C4.19892 14.25 4.38968 14.329 4.53033 14.4697C4.67099 14.6103 4.75 14.8011 4.75 15V18C4.72419 18.2969 4.81365 18.5924 4.99984 18.8251C5.18602 19.0579 5.45465 19.21 5.75 19.25H18.22C18.5154 19.21 18.784 19.0579 18.9702 18.8251C19.1564 18.5924 19.2458 18.2969 19.22 18V15C19.22 14.8011 19.299 14.6103 19.4397 14.4697C19.5803 14.329 19.7711 14.25 19.97 14.25C20.1689 14.25 20.3597 14.329 20.5003 14.4697C20.641 14.6103 20.72 14.8011 20.72 15V18C20.75 18.6954 20.5041 19.3744 20.0359 19.8894C19.5677 20.4045 18.9151 20.7137 18.22 20.75Z"
+                                    fill="#000000"
+                                  ></path>
+                                  <path
+                                    d="M16 8.74995C15.9015 8.75042 15.8038 8.7312 15.7128 8.69342C15.6218 8.65564 15.5392 8.60006 15.47 8.52995L12 5.05995L8.53 8.52995C8.38782 8.66243 8.19978 8.73455 8.00548 8.73113C7.81118 8.7277 7.62579 8.64898 7.48838 8.51157C7.35096 8.37416 7.27225 8.18877 7.26882 7.99447C7.2654 7.80017 7.33752 7.61213 7.47 7.46995L11.47 3.46995C11.6106 3.3295 11.8012 3.25061 12 3.25061C12.1987 3.25061 12.3894 3.3295 12.53 3.46995L16.53 7.46995C16.6705 7.61058 16.7493 7.8012 16.7493 7.99995C16.7493 8.1987 16.6705 8.38932 16.53 8.52995C16.4608 8.60006 16.3782 8.65564 16.2872 8.69342C16.1962 8.7312 16.0985 8.75042 16 8.74995Z"
+                                    fill="#000000"
+                                  ></path>
+                                  <path
+                                    d="M12 15.75C11.8019 15.7474 11.6126 15.6676 11.4725 15.5275C11.3324 15.3874 11.2526 15.1981 11.25 15V4C11.25 3.80109 11.329 3.61032 11.4697 3.46967C11.6103 3.32902 11.8011 3.25 12 3.25C12.1989 3.25 12.3897 3.32902 12.5303 3.46967C12.671 3.61032 12.75 3.80109 12.75 4V15C12.7474 15.1981 12.6676 15.3874 12.5275 15.5275C12.3874 15.6676 12.1981 15.7474 12 15.75Z"
+                                    fill="#000000"
+                                  ></path>
+                                </g>
+                              </svg>
+                              <div class="flex text-sm text-gray-600">
+                                <label
+                                  htmlFor="file-upload"
+                                  class="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"
+                                >
+                                  <span>Télécharger un fichier</span>
+                                  <input
+                                    id="file-upload"
+                                    name="file-upload"
+                                    type="file"
+                                    class="sr-only"
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                  />
+                                </label>
+                                <p class="pl-1">ou glisser-déposer</p>
+                              </div>
+                              <p class="text-xs text-gray-500">
+                                PDF, PNG, JPG jusqu'à 10MB
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mt-6 flex justify-end space-x-3">
+                        <button
+                          type="button"
+                          class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        >
+                          Annuler
+                        </button>
+                        <button
+                          type="submit"
+                          class="bg-green-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        >
+                          Soumettre
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white shadow rounded-lg">
+              <div class="px-4 py-5 sm:p-6">
+                <div class="md:grid md:grid-cols-3 md:gap-6">
+                  <div class="md:col-span-1">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">
+                      Traitement de la Demande
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      #{request.id} - {request.type}
+                    </p>
+                    <div class="mt-4">
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                      >
+                        En attente de traitement
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="mt-5 md:mt-0 md:col-span-2">
+                    <div class="grid grid-cols-1 gap-6">
+                      <!-- Informations de base -->
+                      <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-500">
+                          Informations
+                        </h4>
+                        <dl
+                          class="mt-2 grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2"
+                        >
+                          <div>
+                            <dt class="text-sm font-medium text-gray-500">
+                              Agent
+                            </dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                              {request.agent}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt class="text-sm font-medium text-gray-500">
+                              Service
+                            </dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                              {request.department}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt class="text-sm font-medium text-gray-500">
+                              Date de soumission
+                            </dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                              {new
+                              Date(request.date).toLocaleDateString('fr-FR')}
+                            </dd>
+                          </div>
+                        </dl>
+                      </div>
+
+                      <!-- Documents -->
+                      <div>
+                        <h4 class="text-sm font-medium text-gray-500 mb-4">
+                          Documents
+                        </h4>
+                        <ul
+                          class="divide-y divide-gray-200 border border-gray-200 rounded-md"
+                        >
+                          <li
+                            class="px-4 py-3 flex items-center justify-between text-sm"
+                          >
+                            <div class="flex items-center">
+                              <FileText class="h-5 w-5 text-gray-400 mr-2" />
+                              <span class="text-gray-900">{doc.name}</span>
+                            </div>
+                            <div class="flex space-x-2">
+                              <button
+                                type="button"
+                                class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                              >
+                                <!-- <Download class="h-4 w-4 mr-1" /> -->
+                                Télécharger
+                              </button>
+                            </div>
+                          </li>
+                        </ul>
+                        <div class="mt-4">
+                          <label
+                            class="block text-sm font-medium text-gray-700"
+                          >
+                            Ajouter un document
+                          </label>
+                          <div
+                            class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
+                          >
+                            <div class="space-y-1 text-center">
+                              <!-- <Upload class="mx-auto h-12 w-12 text-gray-400" /> -->
+                              <div class="flex text-sm text-gray-600">
+                                <label
+                                  htmlFor="file-upload"
+                                  class="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"
+                                >
+                                  <span>Télécharger un fichier</span>
+                                  <input
+                                    id="file-upload"
+                                    name="file-upload"
+                                    type="file"
+                                    class="sr-only"
+                                  />
+                                </label>
+                                <p class="pl-1">ou glisser-déposer</p>
+                              </div>
+                              <p class="text-xs text-gray-500">
+                                PDF jusqu'à 10MB
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Historique -->
+                      <div>
+                        <h4 class="text-sm font-medium text-gray-500 mb-4">
+                          Historique
+                        </h4>
+                        <div class="flow-root">
+                          <ul class="-mb-8">
+                            <li>
+                              <div class="relative pb-8">
+                                <span
+                                  class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                ></span>
+                                <div class="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      class="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center ring-8 ring-white"
+                                    >
+                                      <CheckCircle class="h-5 w-5 text-white" />
+                                    </span>
+                                  </div>
+                                  <div
+                                    class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4"
+                                  >
+                                    <div>
+                                      <p class="text-sm text-gray-500">
+                                        {event.action} par
+                                        <span class="font-medium text-gray-900"
+                                          >{event.actor}</span
+                                        >
+                                      </p>
+                                      <p class="mt-1 text-sm text-gray-500">
+                                        {event.comment}
+                                      </p>
+                                    </div>
+                                    <div
+                                      class="text-right text-sm whitespace-nowrap text-gray-500"
+                                    >
+                                      {new
+                                      Date(event.date).toLocaleDateString('fr-FR')}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <!-- Actions -->
+                      <div class="border-t border-gray-200 pt-4">
+                        <div class="flex flex-col space-y-4">
+                          <div>
+                            <label
+                              htmlFor="comment"
+                              class="block text-sm font-medium text-gray-700"
+                            >
+                              Commentaire
+                            </label>
+                            <div class="mt-1">
+                              <textarea
+                                id="comment"
+                                rows="3"
+                                class="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              ></textarea>
+                            </div>
+                          </div>
+                          <div class="flex justify-end space-x-3">
+                            <button
+                              type="button"
+                              class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                            >
+                              <!-- <MessageSquare class="h-4 w-4 mr-2" /> -->
+                              Demander des modifications
+                            </button>
+                            <button
+                              type="button"
+                              class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            >
+                              <!-- <XCircle class="h-4 w-4 mr-2" /> -->
+                              Rejeter
+                            </button>
+                            <button
+                              type="button"
+                              class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                            >
+                              <!-- <CheckCircle class="h-4 w-4 mr-2" /> -->
+                              Approuver
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white shadow rounded-lg">
+              <div class="space-y-6">
+                <div class="space-y-6">
+                  <div class="flex flex-col">
+                    <h1 class="text-2xl font-bold tracking-tight">
+                      Dossiers à traiter
+                    </h1>
+                    <p class="text-muted-foreground">
+                      Traitez les demandes de mobilité et suivez l'état des
+                      dossiers en cours.
+                    </p>
+                  </div>
+
+                  <div class="space-y-6">
+                    <div
+                      class="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground gap-2"
+                      style="outline: none"
+                    >
+                      <button
+                        type="button"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                      >
+                        Demandes à traiter
+                      </button>
+                      <button
+                        type="button"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                      >
+                        Suivi de dossier (DEM-2025-001)
+                      </button>
+                    </div>
+                    <div
+                      class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 space-y-4"
+                    >
+                      <div class="space-y-4">
+                        <div
+                          class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+                        >
+                          <div class="relative w-full md:max-w-sm">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
+                            >
+                              <circle cx="11" cy="11" r="8"></circle>
+                              <path d="m21 21-4.3-4.3"></path>
+                            </svg>
+                            <input
+                              type="search"
+                              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-8"
+                              placeholder="Rechercher une demande..."
+                            />
+                          </div>
+                          <button
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 gap-2"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-filter h-4 w-4"
+                            >
+                              <polygon
+                                points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"
+                              ></polygon>
+                            </svg>
+                            Filtres avancés
+                          </button>
+                        </div>
+                        <div class="rounded-md border">
+                          <div class="relative w-full overflow-auto">
+                            <table class="w-full caption-bottom text-sm">
+                              <thead>
+                                <tr
+                                  class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                                >
+                                  <th
+                                    class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
+                                  >
+                                    Référence
+                                  </th>
+                                  <th
+                                    class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
+                                  >
+                                    Date
+                                  </th>
+                                  <th
+                                    class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
+                                  >
+                                    Agent
+                                  </th>
+                                  <th
+                                    class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
+                                  >
+                                    Matricule
+                                  </th>
+                                  <th
+                                    class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
+                                  >
+                                    Type de demande
+                                  </th>
+                                  <th
+                                    class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
+                                  >
+                                    Service demandeur
+                                  </th>
+                                  <th
+                                    class="h-12 px-4 text-left align-middle font-medium text-muted-foreground"
+                                  >
+                                    État
+                                  </th>
+                                  <th
+                                    class="h-12 px-4 align-middle font-medium text-muted-foreground text-right"
+                                  >
+                                    Actions
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr
+                                  class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                                >
+                                  <td class="p-4 align-middle">DEM-2025-001</td>
+                                  <td class="p-4 align-middle">2025-04-15</td>
+                                  <td class="p-4 align-middle">
+                                    Adéchola Kofi
+                                  </td>
+                                  <td class="p-4 align-middle">AP2023-1234</td>
+                                  <td class="p-4 align-middle">Détachement</td>
+                                  <td class="p-4 align-middle">
+                                    Ministère de l'Économie
+                                  </td>
+                                  <td class="p-4 align-middle">
+                                    <div
+                                      class="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-yellow-100 text-yellow-800"
+                                    >
+                                      En attente
+                                    </div>
+                                  </td>
+                                  <td class="p-4 align-middle text-right">
+                                    <button
+                                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                                      type="button"
+                                      aria-haspopup="dialog"
+                                      aria-expanded="false"
+                                      aria-controls="radix-:r4d:"
+                                      data-state="closed"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="lucide lucide-file-text h-4 w-4 mr-1"
+                                      >
+                                        <path
+                                          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                                        ></path>
+                                        <path
+                                          d="M14 2v4a2 2 0 0 0 2 2h4"
+                                        ></path>
+                                        <path d="M10 9H8"></path>
+                                        <path d="M16 13H8"></path>
+                                        <path d="M16 17H8"></path>
+                                      </svg>
+                                      Voir
+                                    </button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      data-state="inactive"
+                      data-orientation="horizontal"
+                      role="tabpanel"
+                      aria-labelledby="radix-:ro:-trigger-suivi"
+                      id="radix-:ro:-content-suivi"
+                      tabindex="0"
+                      class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hidden"
+                    ></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="bg-white shadow rounded-lg">
+              <div class="space-y-6">
+                <div class="flex flex-col">
+                  <h1 class="text-2xl font-bold tracking-tight">
+                    Dossiers à traiter
+                  </h1>
+                  <p class="text-muted-foreground">
+                    Traitez les demandes de mobilité et suivez l'état des
+                    dossiers en cours.
+                  </p>
+                </div>
+                <div class="space-y-6">
+                  <div
+                    class="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground"
+                    style="outline: none"
+                  >
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="radix-:ro:-content-demandes"
+                      id="radix-:ro:-trigger-demandes"
+                      class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                    >
+                      Demandes à traiter</button
+                    ><button
+                      type="button"
+                      role="tab"
+                      aria-selected="true"
+                      aria-controls="radix-:ro:-content-suivi"
+                      id="radix-:ro:-trigger-suivi"
+                      class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                    >
+                      Suivi de dossier (DEM-2025-001)
+                    </button>
+                  </div>
+                  <div
+                    class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 space-y-4"
+                  ></div>
+                  <div
+                    class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <div class="space-y-6">
+                      <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-semibold">
+                          Suivi du dossier:
+                          <span class="text-blue-700">DEM-2025-001</span>
+                        </h2>
+                        <div
+                          class="inline-flex items-center rounded-md border px-2.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-yellow-100 text-yellow-800 text-sm py-1"
+                        >
+                          En traitement
+                        </div>
+                      </div>
+                      <div class="space-y-4">
+                        <div
+                          class="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground"
+                          style="outline: none"
+                        >
+                          <button
+                            type="button"
+                            role="tab"
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                          >
+                            Timeline</button
+                          ><button
+                            type="button"
+                            role="tab"
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                          >
+                            Documents</button
+                          ><button
+                            type="button"
+                            role="tab"
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                          >
+                            Fiche agent
+                          </button>
+                        </div>
+                        <div
+                          class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 space-y-4"
+                        >
+                          <div
+                            class="relative pl-8 border-l-2 border-gray-200 space-y-10 py-4"
+                          >
+                            <div class="relative">
+                              <div class="absolute -left-[41px] mt-1.5">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  class="lucide lucide-circle-check-big h-6 w-6 text-green-500"
+                                >
+                                  <path
+                                    d="M21.801 10A10 10 0 1 1 17 3.335"
+                                  ></path>
+                                  <path d="m9 11 3 3L22 4"></path>
+                                </svg>
+                              </div>
+                              <div class="mb-1 flex items-baseline">
+                                <h3 class="text-lg font-medium">
+                                  Soumission initiale
+                                </h3>
+                                <span class="ml-2"
+                                  ><div
+                                    class="inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80 bg-green-100 text-green-800 text-xs"
+                                  >
+                                    Complété
+                                  </div></span
+                                >
+                              </div>
+                              <div class="space-y-2 text-sm">
+                                <div class="flex items-center text-gray-600">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="lucide lucide-calendar h-4 w-4 mr-2"
+                                  >
+                                    <path d="M8 2v4"></path>
+                                    <path d="M16 2v4"></path>
+                                    <rect
+                                      width="18"
+                                      height="18"
+                                      x="3"
+                                      y="4"
+                                      rx="2"
+                                    ></rect>
+                                    <path d="M3 10h18"></path>
+                                  </svg>
+                                  2025-04-15 09:30
+                                </div>
+                                <div class="flex items-center text-gray-600">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="lucide lucide-user h-4 w-4 mr-2"
+                                  >
+                                    <path
+                                      d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+                                    ></path>
+                                    <circle
+                                      cx="12"
+                                      cy="7"
+                                      r="4"
+                                    ></circle></svg>
+                                    Kofi Adéchola (Agent)
+                                </div>
+                                <div class="flex items-baseline mt-1">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="lucide lucide-info h-4 w-4 mr-2 text-gray-600 flex-shrink-0"
+                                  >
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M12 16v-4"></path>
+                                    <path d="M12 8h.01"></path>
+                                  </svg>
+                                  <p class="text-gray-600">
+                                    Demande de détachement soumise avec tous
+                                    les documents requis
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="relative">
+                              <div class="absolute -left-[41px] mt-1.5">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  class="lucide lucide-clock h-6 w-6 text-blue-500"
+                                >
+                                  <circle cx="12" cy="12" r="10"></circle>
+                                  <polyline
+                                    points="12 6 12 12 16 14"
+                                  ></polyline>
+                                </svg>
+                              </div>
+                              <div class="mb-1 flex items-baseline">
+                                <h3 class="text-lg font-medium">
+                                  Validation Ordonnateur Sectoriel
+                                </h3>
+                                <span class="ml-2"
+                                  ><div
+                                    class="inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80 bg-blue-100 text-blue-800 text-xs"
+                                  >
+                                    En cours
+                                  </div></span
+                                >
+                              </div>
+                              <div class="space-y-2 text-sm">
+                                <div class="flex items-center text-gray-600">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="lucide lucide-user h-4 w-4 mr-2"
+                                  >
+                                    <path
+                                      d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+                                    ></path>
+                                    <circle
+                                      cx="12"
+                                      cy="7"
+                                      r="4"
+                                    ></circle></svg> 
+                                    Marc Ahouannou (Ordonnateur Sectoriel)
+                                </div>
+                              </div>
+                            </div>
+                            <div class="relative">
+                              <div class="absolute -left-[41px] mt-1.5">
+                                <div class="h-6 w-6 text-gray-300">
+                                  <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  >
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="mb-1 flex items-baseline">
+                                <h3 class="text-lg font-medium">
+                                  Signature Responsable Sectoriel
+                                </h3>
+                                <span class="ml-2"></span>
+                              </div>
+                            </div>
+                            <div class="relative">
+                              <div class="absolute -left-[41px] mt-1.5">
+                                <div class="h-6 w-6 text-gray-300">
+                                  <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  >
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="mb-1 flex items-baseline">
+                                <h3 class="text-lg font-medium">
+                                  Paraphe DRSC
+                                </h3>
+                                <span class="ml-2"></span>
+                              </div>
+                            </div>
+                            <div class="relative">
+                              <div class="absolute -left-[41px] mt-1.5">
+                                <div class="h-6 w-6 text-gray-300">
+                                  <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  >
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="mb-1 flex items-baseline">
+                                <h3 class="text-lg font-medium">
+                                  Paraphe DGFP
+                                </h3>
+                                <span class="ml-2"></span>
+                              </div>
+                            </div>
+                            <div class="relative">
+                              <div class="absolute -left-[41px] mt-1.5">
+                                <div class="h-6 w-6 text-gray-300">
+                                  <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  >
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="mb-1 flex items-baseline">
+                                <h3 class="text-lg font-medium">
+                                  Décision finale MTFP
+                                </h3>
+                                <span class="ml-2"></span>
+                              </div>
+                            </div>
+                            <div class="relative">
+                              <div class="absolute -left-[41px] mt-1.5">
+                                <div class="h-6 w-6 text-gray-300">
+                                  <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  >
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="mb-1 flex items-baseline">
+                                <h3 class="text-lg font-medium">
+                                  Archivage RH
+                                </h3>
+                                <span class="ml-2"></span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 space-y-4"
+                        ></div>
+                        <div
+                          class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 space-y-4"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white shadow rounded-lg">
+              <div class="">
+                <div>
+                  <h2 class="text-xl font-semibold mb-4">
+                    Bienvenue, Jean Dupont
+                  </h2>
+                  <p class="text-muted-foreground mb-6">
+                    Voici un aperçu de votre activité dans le système de gestion
+                    des mobilités
+                  </p>
+                  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <div
+                      class="rounded-lg border bg-card text-card-foreground shadow-sm"
+                    >
+                      <div
+                        class="p-6 flex flex-row items-center justify-between space-y-0 pb-2"
+                      >
+                        <h3 class="tracking-tight text-sm font-medium">
+                          Dossiers à traiter
+                        </h3>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-folder-open h-5 w-5 text-blue-500"
+                        >
+                          <path
+                            d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"
+                          ></path>
+                        </svg>
+                      </div>
+                      <div class="p-6 pt-0">
+                        <div class="text-2xl font-bold">5</div>
+                        <p class="text-xs text-muted-foreground">
+                          Dossiers en attente de validation
+                        </p>
+                        <div class="flex items-center mt-2 text-xs">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-arrow-up h-3 w-3 text-green-600 mr-1"
+                          >
+                            <path d="m5 12 7-7 7 7"></path>
+                            <path d="M12 19V5"></path></svg><span class="text-green-600">2 nouveaux aujourd'hui</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="rounded-lg border bg-card text-card-foreground shadow-sm"
+                    >
+                      <div
+                        class="p-6 flex flex-row items-center justify-between space-y-0 pb-2"
+                      >
+                        <h3 class="tracking-tight text-sm font-medium">
+                          Dossiers traités
+                        </h3>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-file-check h-5 w-5 text-green-500"
+                        >
+                          <path
+                            d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                          ></path>
+                          <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                          <path d="m9 15 2 2 4-4"></path>
+                        </svg>
+                      </div>
+                      <div class="p-6 pt-0">
+                        <div class="text-2xl font-bold">12</div>
+                        <p class="text-xs text-muted-foreground">Ce mois-ci</p>
+                        <div class="flex items-center mt-2 text-xs">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-arrow-up h-3 w-3 text-green-600 mr-1"
+                          >
+                            <path d="m5 12 7-7 7 7"></path>
+                            <path d="M12 19V5"></path></svg><span class="text-green-600">5 de plus que le mois dernier</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                      <div
+                        class="p-6 flex flex-row items-center justify-between space-y-0 pb-2"
+                      >
+                        <h3 class="tracking-tight text-sm font-medium">
+                          Retours à faire
+                        </h3>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-circle-alert h-5 w-5 text-red-500"
+                        >
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" x2="12" y1="8" y2="12"></line>
+                          <line x1="12" x2="12.01" y1="16" y2="16"></line>
+                        </svg>
+                      </div>
+                      <div class="p-6 pt-0">
+                        <div class="text-2xl font-bold">2</div>
+                        <p class="text-xs text-muted-foreground">
+                          Dossiers nécessitant corrections
+                        </p>
+                        <div class="flex items-center mt-2 text-xs">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-arrow-down h-3 w-3 text-red-600 mr-1"
+                          >
+                            <path d="M12 5v14"></path>
+                            <path d="m19 12-7 7-7-7"></path></svg><span class="text-red-600">1 de moins qu'hier</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-6">
+                    <div
+                      class="rounded-lg border bg-card text-card-foreground shadow-sm"
+                    >
+                      <div class="flex flex-col space-y-1.5 p-6">
+                        <h3
+                          class="text-2xl font-semibold leading-none tracking-tight"
+                        >
+                          Dossiers à traiter en priorité
+                        </h3>
+                        <p class="text-sm text-muted-foreground">
+                          Liste des dossiers nécessitant une attention immédiate
+                        </p>
+                      </div>
+                      <div class="p-6 pt-0">
+                        <div class="space-y-4">
+                          <div
+                            class="flex items-center justify-between p-4 border rounded-lg border-l-4 border-l-red-500"
+                          >
+                            <div class="flex flex-col">
+                              <span class="font-medium"
+                                >Détachement - Jean Koffi</span
+                              ><span class="text-sm text-muted-foreground"
+                                >Ref: DGFP-2023-045</span
+                              >
+                            </div>
+                            <div class="flex items-center gap-2">
+                              <span class="text-sm text-red-600"
+                                >En attente depuis 3 jours</span
+                              ><button
+                                class="px-3 py-1 text-xs bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                              >
+                                Traiter
+                              </button>
+                            </div>
+                          </div>
+                          <div
+                            class="flex items-center justify-between p-4 border rounded-lg border-l-4 border-l-amber-500"
+                          >
+                            <div class="flex flex-col">
+                              <span class="font-medium"
+                                >Mise à disposition - Marie Sossou</span
+                              ><span class="text-sm text-muted-foreground"
+                                >Ref: DGFP-2023-046</span
+                              >
+                            </div>
+                            <div class="flex items-center gap-2">
+                              <span class="text-sm text-amber-600"
+                                >En attente depuis 2 jours</span
+                              ><button
+                                class="px-3 py-1 text-xs bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                              >
+                                Traiter
+                              </button>
+                            </div>
+                          </div>
+                          <div
+                            class="flex items-center justify-between p-4 border rounded-lg border-l-4 border-l-blue-500"
+                          >
+                            <div class="flex flex-col">
+                              <span class="font-medium"
+                                >Disponibilité - Paul Gbaguidi</span
+                              ><span class="text-sm text-muted-foreground"
+                                >Ref: DGFP-2023-047</span
+                              >
+                            </div>
+                            <div class="flex items-center gap-2">
+                              <span class="text-sm text-blue-600"
+                                >Nouveau dossier</span
+                              ><button
+                                class="px-3 py-1 text-xs bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                              >
+                                Traiter
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white shadow rounded-lg">
+              <div
+                role="dialog"
+                class="fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-3xl"
+                style="pointer-events: auto"
+              >
+                <div class="flex flex-col space-y-1.5 text-center sm:text-left">
+                  <h2 class="text-lg font-semibold leading-none tracking-tight">
+                    Détails de la demande DEM-2025-001
+                  </h2>
+                </div>
+                <div
+                  data-lov-id="src/components/traitement/DetailsDemande.tsx:120:4"
+                  data-lov-name="div"
+                  data-component-path="src/components/traitement/DetailsDemande.tsx"
+                  data-component-line="120"
+                  data-component-file="DetailsDemande.tsx"
+                  data-component-name="div"
+                  data-component-content="%7B%22class%22%3A%22mt-4%20space-y-6%22%7D"
+                  class="mt-4 space-y-6"
+                >
+                  <div
+                    data-lov-id="src/components/traitement/DetailsDemande.tsx:121:6"
+                    data-lov-name="div"
+                    data-component-path="src/components/traitement/DetailsDemande.tsx"
+                    data-component-line="121"
+                    data-component-file="DetailsDemande.tsx"
+                    data-component-name="div"
+                    data-component-content="%7B%22class%22%3A%22grid%20grid-cols-1%20md%3Agrid-cols-2%20gap-4%22%7D"
+                    class="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  >
+                    <div
+                      data-lov-id="src/components/traitement/DetailsDemande.tsx:122:8"
+                      data-lov-name="div"
+                      data-component-path="src/components/traitement/DetailsDemande.tsx"
+                      data-component-line="122"
+                      data-component-file="DetailsDemande.tsx"
+                      data-component-name="div"
+                      data-component-content="%7B%7D"
+                    >
+                      <h3
+                        data-lov-id="src/components/traitement/DetailsDemande.tsx:123:10"
+                        data-lov-name="h3"
+                        data-component-path="src/components/traitement/DetailsDemande.tsx"
+                        data-component-line="123"
+                        data-component-file="DetailsDemande.tsx"
+                        data-component-name="h3"
+                        data-component-content="%7B%22text%22%3A%22Information%20sur%20l'agent%22%2C%22class%22%3A%22font-semibold%20mb-2%22%7D"
+                        class="font-semibold mb-2"
+                      >
+                        Information sur l'agent
+                      </h3>
+                      <div
+                        data-lov-id="src/components/traitement/DetailsDemande.tsx:124:10"
+                        data-lov-name="div"
+                        data-component-path="src/components/traitement/DetailsDemande.tsx"
+                        data-component-line="124"
+                        data-component-file="DetailsDemande.tsx"
+                        data-component-name="div"
+                        data-component-content="%7B%22class%22%3A%22grid%20grid-cols-2%20gap-2%20text-sm%22%7D"
+                        class="grid grid-cols-2 gap-2 text-sm"
+                      >
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:125:12"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="125"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%22text%22%3A%22Nom%20complet%3A%22%2C%22class%22%3A%22font-medium%22%7D"
+                          class="font-medium"
+                        >
+                          Nom complet:
+                        </div>
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:126:12"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="126"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%7D"
+                        >
+                          Adéchola Kofi
+                        </div>
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:127:12"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="127"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%22text%22%3A%22Matricule%3A%22%2C%22class%22%3A%22font-medium%22%7D"
+                          class="font-medium"
+                        >
+                          Matricule:
+                        </div>
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:128:12"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="128"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%7D"
+                        >
+                          AP2023-1234
+                        </div>
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:129:12"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="129"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%22text%22%3A%22Service%3A%22%2C%22class%22%3A%22font-medium%22%7D"
+                          class="font-medium"
+                        >
+                          Service:
+                        </div>
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:130:12"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="130"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%7D"
+                        >
+                          Ministère de l'Économie
+                        </div>
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:131:12"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="131"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%22text%22%3A%22Type%20de%20demande%3A%22%2C%22class%22%3A%22font-medium%22%7D"
+                          class="font-medium"
+                        >
+                          Type de demande:
+                        </div>
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:132:12"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="132"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%7D"
+                        >
+                          Détachement
+                        </div>
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:133:12"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="133"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%22text%22%3A%22Date%20de%20soumission%3A%22%2C%22class%22%3A%22font-medium%22%7D"
+                          class="font-medium"
+                        >
+                          Date de soumission:
+                        </div>
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:134:12"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="134"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%7D"
+                        >
+                          2025-04-15
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      data-lov-id="src/components/traitement/DetailsDemande.tsx:137:8"
+                      data-lov-name="div"
+                      data-component-path="src/components/traitement/DetailsDemande.tsx"
+                      data-component-line="137"
+                      data-component-file="DetailsDemande.tsx"
+                      data-component-name="div"
+                      data-component-content="%7B%7D"
+                    >
+                      <h3
+                        data-lov-id="src/components/traitement/DetailsDemande.tsx:138:10"
+                        data-lov-name="h3"
+                        data-component-path="src/components/traitement/DetailsDemande.tsx"
+                        data-component-line="138"
+                        data-component-file="DetailsDemande.tsx"
+                        data-component-name="h3"
+                        data-component-content="%7B%22text%22%3A%22Documents%20joints%22%2C%22class%22%3A%22font-semibold%20mb-2%22%7D"
+                        class="font-semibold mb-2"
+                      >
+                        Documents joints
+                      </h3>
+                      <div
+                        data-lov-id="src/components/traitement/DetailsDemande.tsx:139:10"
+                        data-lov-name="div"
+                        data-component-path="src/components/traitement/DetailsDemande.tsx"
+                        data-component-line="139"
+                        data-component-file="DetailsDemande.tsx"
+                        data-component-name="div"
+                        data-component-content="%7B%22class%22%3A%22space-y-2%20max-h-40%20overflow-y-auto%22%7D"
+                        class="space-y-2 max-h-40 overflow-y-auto"
+                      >
+                        <div
+                          data-lov-id="src/components/traitement/DetailsDemande.tsx:141:14"
+                          data-lov-name="div"
+                          data-component-path="src/components/traitement/DetailsDemande.tsx"
+                          data-component-line="141"
+                          data-component-file="DetailsDemande.tsx"
+                          data-component-name="div"
+                          data-component-content="%7B%22class%22%3A%22flex%20items-center%20justify-between%20p-2%20border%20rounded-md%20hover%3Abg-gray-50%20cursor-pointer%22%7D"
+                          class="flex items-center justify-between p-2 border rounded-md hover:bg-gray-50 cursor-pointer"
+                        >
+                          <div
+                            data-lov-id="src/components/traitement/DetailsDemande.tsx:146:16"
+                            data-lov-name="div"
+                            data-component-path="src/components/traitement/DetailsDemande.tsx"
+                            data-component-line="146"
+                            data-component-file="DetailsDemande.tsx"
+                            data-component-name="div"
+                            data-component-content="%7B%22class%22%3A%22flex%20items-center%22%7D"
+                            class="flex items-center"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-file-text h-4 w-4 mr-2 text-blue-600"
+                            >
+                              <path
+                                d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                              ></path>
+                              <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                              <path d="M10 9H8"></path>
+                              <path d="M16 13H8"></path>
+                              <path d="M16 17H8"></path>
+                            </svg>
+                            <span class="text-sm"
+                              >Certificat de cessation de paiement</span
+                            >
+                          </div>
+                          <button
+                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-download h-4 w-4"
+                            >
+                              <path
+                                d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                              ></path>
+                              <polyline points="7 10 12 15 17 10"></polyline>
+                              <line x1="12" x2="12" y1="15" y2="3"></line>
+                            </svg>
+                          </button>
+                        </div>
+                        <div
+                          class="flex items-center justify-between p-2 border rounded-md hover:bg-gray-50 cursor-pointer"
+                        >
+                          <div class="flex items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-file-text h-4 w-4 mr-2 text-blue-600"
+                            >
+                              <path
+                                d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                              ></path>
+                              <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                              <path d="M10 9H8"></path>
+                              <path d="M16 13H8"></path>
+                              <path d="M16 17H8"></path>
+                            </svg>
+                            <span class="text-sm">Formulaire de demande</span>
+                          </div>
+                          <button
+                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-download h-4 w-4"
+                            >
+                              <path
+                                d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                              ></path>
+                              <polyline points="7 10 12 15 17 10"></polyline>
+                              <line x1="12" x2="12" y1="15" y2="3"></line>
+                            </svg>
+                          </button>
+                        </div>
+                        <div
+                          class="flex items-center justify-between p-2 border rounded-md hover:bg-gray-50 cursor-pointer"
+                        >
+                          <div
+                            data-lov-id="src/components/traitement/DetailsDemande.tsx:146:16"
+                            data-lov-name="div"
+                            data-component-path="src/components/traitement/DetailsDemande.tsx"
+                            data-component-line="146"
+                            data-component-file="DetailsDemande.tsx"
+                            data-component-name="div"
+                            data-component-content="%7B%22class%22%3A%22flex%20items-center%22%7D"
+                            class="flex items-center"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-file-text h-4 w-4 mr-2 text-blue-600"
+                            >
+                              <path
+                                d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                              ></path>
+                              <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                              <path d="M10 9H8"></path>
+                              <path d="M16 13H8"></path>
+                              <path d="M16 17H8"></path>
+                            </svg>
+                            <span class="text-sm">Pièces justificatives</span>
+                          </div>
+                          <button
+                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-download h-4 w-4"
+                            >
+                              <path
+                                d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                              ></path>
+                              <polyline points="7 10 12 15 17 10"></polyline>
+                              <line x1="12" x2="12" y1="15" y2="3"></line>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="mt-4">
+                        <button
+                          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3 w-full"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-upload h-4 w-4 mr-2"
+                          >
+                            <path
+                              d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                            ></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" x2="12" y1="3" y2="15"></line>
+                          </svg>
+                          Ajouter un document signé
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="space-y-2">
+                    <h3 class="font-semibold">Commentaire / Avis</h3>
+                    <textarea
+                      class="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-24"
+                      placeholder="Saisissez votre commentaire, avis ou motif de rejet..."
+                    ></textarea>
+                  </div>
+                  <div class="flex flex-wrap gap-2 justify-end">
+                    <button
+                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                      type="button"
+                    >
+                      Fermer</button
+                    ><button
+                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border hover:text-accent-foreground h-10 px-4 py-2 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 hover:border-blue-300"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-message-circle h-4 w-4 mr-2"
+                      >
+                        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
+                      </svg>
+                      Demander des modifications</button
+                    ><button
+                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border hover:text-accent-foreground h-10 px-4 py-2 bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:border-red-300"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-circle-x h-4 w-4 mr-2"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m15 9-6 6"></path>
+                        <path d="m9 9 6 6"></path>
+                      </svg>
+                      Rejeter</button
+                    ><button
+                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 text-primary-foreground h-10 px-4 py-2 bg-green-600 hover:bg-green-700"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-circle-check-big h-4 w-4 mr-2"
+                      >
+                        <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
+                        <path d="m9 11 3 3L22 4"></path>
+                      </svg>
+                      Approuver</button
+                    ><button
+                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 ml-4"
+                    >
+                      Suivi du dossier
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-x h-4 w-4"
+                  >
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                  </svg>
+                  <span class="sr-only">Close</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="path/to/paris_logo.png" alt="Paris Logo" class="h-8 mr-2">
+                <span class="text-lg font-semibold text-gray-800">PARIS</span>
+                <span class="ml-1 text-sm text-gray-600">DÉMARCHES D'URBANISME</span>
+            </div>
+
+            <div>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    NOUVELLE DEMANDE
+                </button>
+            </div>
+        </div>
+
+        <div class="relative">
+            <div class="absolute inset-0 bg-gray-700 opacity-50"></div> <div class="container mx-auto px-4 py-16 text-center relative z-10">
+                <h1 class="text-4xl font-bold text-white mb-4">Démarches d'urbanisme à Paris</h1>
+                <p class="text-xl text-gray-200">Préparer mon dossier, suivre mes demandes et déclarer mes chantiers</p>
+            </div>
+            <img src="path/to/paris_skyline.jpg" alt="Paris Skyline" class="w-full h-64 object-cover">
+        </div>
+    </header>
+
+    <main class="container mx-auto py-8 px-4">
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Les étapes d'une demande d'urbanisme</h2>
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-6 text-center">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center mb-2">1</div>
+                    <img src="path/to/step1_icon.png" alt="Step 1 Icon" class="mx-auto h-12 mb-2">
+                    <p class="text-sm text-gray-700">Je m'informe sur la faisabilité de mon projet</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center mb-2">2</div>
+                    <img src="path/to/step2_icon.png" alt="Step 2 Icon" class="mx-auto h-12 mb-2">
+                    <p class="text-sm text-gray-700">Je choisis et complète mon formulaire</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center mb-2">3</div>
+                    <img src="path/to/step3_icon.png" alt="Step 3 Icon" class="mx-auto h-12 mb-2">
+                    <p class="text-sm text-gray-700">Je prépare mon dossier papier</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center mb-2">4</div>
+                    <img src="path/to/step4_icon.png" alt="Step 4 Icon" class="mx-auto h-12 mb-2">
+                    <p class="text-sm text-gray-700">J'enregistre mon dossier au guichet</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center mb-2">5</div>
+                    <img src="path/to/step5_icon.png" alt="Step 5 Icon" class="mx-auto h-12 mb-2">
+                    <p class="text-sm text-gray-700">Je suis le traitement de ma demande</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center mb-2">6</div>
+                    <img src="path/to/step6_icon.png" alt="Step 6 Icon" class="mx-auto h-12 mb-2">
+                    <p class="text-sm text-gray-700">Je gère mon chantier</p>
+                </div>
+            </div>
+        </section>
+
+        </main>
+
+    <footer class="bg-gray-200 py-4 text-center text-gray-600">
+        <p>&copy; 2025 Ville de Paris - Tous droits réservés</p>
+    </footer> -->
+  </body>
+</html>

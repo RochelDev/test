@@ -141,3 +141,335 @@ Impression document final et signature
 Règles de gestion
 RH sectoriel d'un ministère doit avoir accès aux dossiers de mobilité de son ministère
 Mise à disposition par demande sectorielle: accéder aux dossiers à une Etape du processuss
+
+
+
+
+
+
+
+
+Interfaces adaptées pour une application de gestion des mobilités
+Voici une proposition de design pour les principales interfaces de votre application:
+
+1. Page de Connexion
+Les Utilisateur pouront se connecter selon leur profil. S'il en on plusieurs il se connecterons au choix
+Design sobre et professionnel
+
+Formulaire avec email/matricule et mot de passe
+
+Lien "Mot de passe oublié"
+
+Logo de l'administration publique béninoise
+
+2. Tableau de Bord (Différent selon le profil)
+Vue personnalisée selon le rôle (Agent, Ordonnateur, Responsable Sectoriel, etc.)
+
+Widgets avec:
+
+Dossiers en attente
+
+Dossiers traités
+
+Notifications
+
+Menu latéral avec accès rapide aux fonctionnalités
+
+3. Interface de Demande (Pour l'Agent)
+Formulaire de demande avec:
+
+Sélection du type (Détachement/Disponibilité ou Mise à disposition)
+
+Upload du certificat de cessation de paiement
+
+Champ pour message complémentaire
+
+Historique des demandes précédentes
+
+4. Interface de Traitement (Pour les Ordonnateurs/Responsables)
+Liste des demandes à traiter avec filtres
+
+Pour chaque demande:
+
+Visualisation des pièces jointes
+
+Boutons d'action (Approuver, Rejeter, Demander des modifications)
+
+Champ pour commentaire
+
+Possibilité d'uploader des documents scannés signés
+
+5. Suivi des Dossiers
+Timeline visuelle montrant l'état actuel du dossier
+
+Historique des actions avec dates et acteurs
+
+Documents associés (téléchargeables)
+
+6. Gestion des Agents
+Fiche agent avec:
+
+Informations personnelles
+
+Situation administrative
+
+Historique des mobilités
+
+Documents associés
+
+Fonctionnalité de recherche avancée
+
+7. Notification Center
+Liste des notifications avec marquage lu/non-lu
+
+Filtres par type et par date
+
+Options de suppression/marquage
+
+
+
+
+
+
+
+
+
+
+Détail des Étapes Clés
+1. Soumission Initiale (Agent)
+Action :
+
+Upload du dossier scanné (PDF) avec :
+
+Formulaire de demande.
+
+Pièces justificatives (ex. certificat médical).
+
+Réaction système :
+
+Vérifie que le PDF est lisible.
+
+Statut → "Soumis".
+
+Notifie l’Ordonnateur sectoriel.
+
+2. Validation/Rejet (Ordonnateur Sectoriel)
+Action :
+
+Télécharge le dossier scanné.
+
+Annote les éventuelles corrections à la main.
+
+Rescanne et upload la nouvelle version avec :
+
+Cachet + mention "Validé".
+
+Ou "Rejeté" + motif écrit.
+
+Réaction système :
+
+Si validé → Statut "Validé", notifie le Responsable Sectoriel.
+
+Si rejeté → Statut "Rejeté", notifie l’agent avec motif.
+
+3. Signature Sectorielle (Responsable Sectoriel)
+Action :
+
+Imprime le dossier validé.
+
+Signe manuellement et appose le cachet.
+
+Scanne et upload la version signée.
+
+Réaction système :
+
+Vérifie la présence de la signature/cachet.
+
+Statut → "Signé Sectoriel".
+
+Notifie la DRSC.
+
+4-5. Paraphes Physiques (DRSC → DGFP)
+Processus identique pour chaque service :
+
+Télécharge la dernière version.
+
+Paraphe manuellement.
+
+Scanne et upload.
+
+Réaction système :
+
+Statut mis à jour ("Paraphé DRSC" → "Paraphé DGFP").
+
+Notifie l’acteur suivant.
+
+6. Décision Finale (MTFP)
+Action :
+
+Signe physiquement la lettre de décision.
+
+Scanne et upload le document final.
+
+Réaction système :
+
+Statut → "Décision Signée".
+
+Génère une notification à l’agent et aux RH.
+
+7. Archivage (RH)
+Action :
+
+Vérifie le dossier scanné complet.
+
+Clique sur "Archiver".
+
+Réaction système :
+
+Statut → "Archivé".
+
+Le dossier est verrouillé en lecture seule.
+
+Interface Utilisateur Adaptée
+Pour tous les acteurs :
+Onglet "Documents" :
+
+Affichage du dernier PDF scanné (prévisualisation intégrée).
+
+Bouton "Uploader une nouvelle version" (avec validation format/taille).
+
+Barre de progression :
+
+Étapes ✓ en vert (validées), → en bleu (en attente), avec dates.
+
+
+1. Interface du Demandeur (Agent Public)
+Objectif : Suivre son dossier, uploader des documents, recevoir des notifications.
+Onglets principaux :
+
+Tableau de bord : Vue synthétique des dossiers en cours.
+
+Mes demandes : Liste détaillée (statut, étape actuelle, date).
+
+Nouvelle demande : Formulaire de dépôt (type de mobilité, pièces jointes).
+
+Messagerie : Échanges avec l’administration.
+
+Actions clés :
+
+Bouton "Démarrer une demande" → Formulaire guidé (étapes en sidebar).
+
+Bouton "Uploader un document" → Zone de dépôt avec validation automatique (format, taille).
+
+Bouton "Suivre l’avancement" → Diagramme de workflow interactif (étapes ✓/→).
+
+Exemple de réaction du système :
+
+Après upload d’un certificat : "Document reçu! En attente de vérification par l’Ordonnateur sectoriel."
+
+Si rejet : Notification + motif + bouton "Corriger et renvoyer".
+
+2. Interface de l’Ordonnateur Sectoriel
+Objectif : Vérifier/valider les demandes, signer des accords.
+Onglets principaux :
+
+Dossiers à traiter : Liste filtrée (statut "Soumis" ou "En vérification").
+
+Historique : Dossiers déjà traités.
+
+Documents à signer : Alertes pour signatures en attente.
+
+Actions clés :
+
+Bouton "Vérifier le dossier" → Ouverture du dossier + vue des pièces jointes.
+
+Bouton "Valider" → Formulaire de validation (commentaire optionnel).
+
+Bouton "Rejeter" → Champ obligatoire pour motif + notification auto au demandeur.
+
+Bouton "Signer électroniquement" → Intégration avec certificat numérique.
+
+Réaction du système :
+
+Après validation : Dossier passe au statut "Validé" et notifie le Responsable Sectoriel.
+
+3. Interface du Responsable Sectoriel (SGM/SGAM/DAC/DC)
+Objectif : Approuver les accords sectoriels.
+Onglets principaux :
+
+Dossiers en attente de signature : Liste prioritaire.
+
+Tableau de bord analytique : Statistiques (délais moyens, volumes).
+
+Actions clés :
+
+Bouton "Signer la lettre d’accord" → PDF interactif avec zone de signature.
+
+Bouton "Déléguer" : Si délégation de signature possible.
+
+Réaction du système :
+
+Après signature : Statut passe à "Signé" + notification à la DRSC pour paraphe.
+
+4. Interface de l’Agent DRSC/DGFP
+Objectif : Parapher les documents, vérifier la conformité.
+Onglets principaux :
+
+Dossiers en attente de paraphe : Tri par urgence/ancienneté.
+
+Recherche avancée : Filtres (type de mobilité, date).
+
+Actions clés :
+
+Bouton "Parapher" → Ajout du cachet électronique.
+
+Bouton "Demander un complément" : Renvoi vers l’Ordonnateur avec motif.
+
+Réaction du système :
+
+Après paraphe : Notifie le Responsable MTFP + statut "Prêt pour signature finale".
+
+5. Interface du Responsable MTFP
+Objectif : Signer les décisions finales.
+Onglets principaux :
+
+Alertes signatures : Dossiers critiques (détachements, suspensions).
+
+Reporting : Export Excel/PDF des décisions.
+
+Actions clés :
+
+Bouton "Signer l’acte" → Signature digitale + option de suspension de salaire (si applicable).
+
+Bouton "Notifier l’agent" : Envoi auto de la lettre par email.
+
+Réaction du système :
+
+Après signature : Statut "Clôturé" + archivage auto + notification au demandeur.
+
+6. Interface de l’Admin RH
+Objectif : Superviser l’ensemble des workflows.
+Onglets principaux :
+
+Gestion des rôles : Attribution des droits (ex. délégation de signature).
+
+Audit : Logs des modifications (qui a fait quoi, quand).
+
+Modèles de documents : Création/modification des templates (lettres, accords).
+
+Actions clés :
+
+Bouton "Modifier le workflow" : Ajout d’étapes personnalisées.
+
+Bouton "Générer un rapport" : Export des données métiers.
+
+Design Recommandations
+Couleurs :
+
+Bleu pour les actions administratives (validation, signature).
+
+Rouge pour les rejets/urgences.
+
+
+
+Je veux créé une application de gestion de mobilité des agents dans l'administration publique béninoise. Je voudrais que tu me crée les différents interfaces avec les informations ci-après

@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ministeres', function (Blueprint $table) {
+        Schema::create('suivi_dossiers', function (Blueprint $table) {
             $table->id();
-            $table->string('code_ministere', 10);
-            $table->string('nom_ministere');
-            $table->string('site_ministere');
             $table->timestamps();
         });
     }
@@ -25,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ministeres');
+        Schema::dropIfExists('suivi_dossiers');
     }
 };
