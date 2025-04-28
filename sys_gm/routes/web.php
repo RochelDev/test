@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\MobiliteController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -24,3 +24,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/mobilites/create', [MobiliteController::class, 'create'])->name('mobilites.create');
+Route::post('/mobilite', [MobiliteController::class, 'store'])->name('mobilite.store');

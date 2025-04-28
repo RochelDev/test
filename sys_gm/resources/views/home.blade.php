@@ -5,7 +5,7 @@
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <nav class="bg-gray-800">
+         <nav class="bg-gray-800">
             <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
               <div class="relative flex h-16 items-center justify-between">
                 <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -95,56 +95,66 @@
             </div>
           </nav>
 
-          <!-- Bandeau -->
-    <div class="bg-blue-100 py-10 text-center shadow-inner">
-        <h2 class="text-4xl font-bold text-blue-900">Plateforme de gestion de la mobilité</h2>
-        <p class="mt-2 text-gray-600 text-lg">Faciliter la gestion des mutations et des agents de l'État</p>
-    </div>
+
+          <div class="relative w-full h-auto md:h-[300px] overflow-hidden">
+            <img src="{{ asset('images/collab.jpg') }}" alt="Image de la plateforme" class="absolute inset-0 w-full h-full object-cover ">
+            <div class="absolute inset-0 flex items-center justify-between px-4 md:px-8 text-white">
+                {{-- <div class="text-left">
+                    <h1 class="text-xl md:text-3xl font-bold mb-2">Gestion des Mobilités</h1>
+                    <p class="text-sm md:text-lg">Suivi des déplacements des agents</p>
+                </div>
+                <div>
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
+                        Commencer une demande
+                    </button>
+                </div> --}}
+            </div>
+        </div>
+
+
+
+
+
+
 
     <!-- Contenu -->
     <main class="max-w-7xl mx-auto p-6">
         @yield('content')
     </main>
 
-    <section class="py-12">
-        <div class="flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="w-full md:w-1/2 bg-white p-8 rounded-lg shadow space-y-4">
-                <blockquote class="border-l-4 border-blue-500 pl-4 mb-4">
-                    <p class="text-lg italic text-blue-800">À propos de notre mission : digitaliser et simplifier la gestion des demandes de mobilité des agents de l'administration publique béninoise.</p>
-                </blockquote>
-                <p class="text-gray-700 leading-relaxed">
-                    Notre plateforme permet aux fonctionnaires d'effectuer en ligne leurs démarches de mutation, d'affectation ou de réaffectation, tout en offrant aux services RH un outil centralisé pour un traitement plus rapide, transparent et équitable.
+    <section class="py-16 bg-blue-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold text-blue-800 mb-4">Notre Mission</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    La modernisation de l'administration publique béninoise passe par la digitalisation de ses processus. Notre plateforme permet une gestion efficace et transparente des demandes de mobilité des agents.
                 </p>
-                <p class="text-gray-700 leading-relaxed">
-                    Grâce à des fonctionnalités telles que le dépôt électronique, le suivi en temps réel et des notifications automatiques, nous éliminons les lourdeurs administratives et réduisons les délais. Notre objectif est de moderniser la gestion des ressources humaines publiques en garantissant efficacité, sécurité et accessibilité pour tous.
-                </p>
-                <p class="font-semibold text-blue-800 italic">
-                    Une mobilité simplifiée, une administration modernisée.
-                </p>
-            </div>
-
-            <div class="w-full md:w-1/2 pl-4 space-y-4">
-                <div class="bg-blue-50 p-6 rounded-md">
-                    <h3 class="text-xl font-semibold text-blue-800 mb-2">Critères d’éligibilité</h3>
-                    <p class="text-gray-700 leading-relaxed text-sm">
-                        Les agents doivent avoir une ancienneté minimale dans leur poste actuel et ne faire l’objet d’aucune procédure disciplinaire. Les demandes sont examinées selon les besoins en ressources humaines des administrations.
-                    </p>
-                </div>
-
-                <div class="bg-blue-50 p-6 rounded-md">
-                    <h3 class="text-xl font-semibold text-blue-800 mb-2">Délai moyen de traitement</h3>
-                    <p class="text-gray-700 leading-relaxed text-sm">
-                        Le traitement d’une demande de mutation prend en moyenne 2 à 4 semaines, selon la complexité du dossier et la période de dépôt.
-                    </p>
+                <div class="bg-blue-100 p-4 rounded-md">
+                    <h3 class="text-lg font-semibold text-blue-700 mb-2">Nos objectifs</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed">
+                        <li>Simplifier les démarches administratives</li>
+                        <li>Assurer la transparence des processus</li>
+                        <li>Optimiser le traitement des demandes</li>
+                    </ul>
                 </div>
             </div>
-        </div>
 
-        <div class="max-w-3xl mx-auto mt-8 bg-white p-6 shadow rounded-md">
-            <h3 class="text-xl font-semibold text-blue-800 mb-2">Procédures et documents requis</h3>
-            <p class="text-gray-700 leading-relaxed">
-                Les demandeurs doivent remplir un formulaire en ligne, joindre une lettre de motivation, un arrêté de nomination, un avis favorable de la hiérarchie et tout autre document exigé selon le cas.
-            </p>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold text-blue-800 mb-4">Critères d'éligibilité</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Les agents doivent répondre à des critères spécifiques pour être éligibles à une demande de mobilité, conformément aux réglementations en vigueur.
+                </p>
+                <div class="bg-blue-100 p-4 rounded-md">
+                    <h3 class="text-lg font-semibold text-blue-700 mb-2">Processus de traitement</h3>
+                    <p class="text-gray-700 leading-relaxed mb-2">
+                        Délai moyen de traitement : 2 à 4 semaines
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed">
+                        <li>Étude approfondie de chaque dossier</li>
+                        <li>Validation par les services compétents</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
 
