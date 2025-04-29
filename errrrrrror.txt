@@ -1,0 +1,109 @@
+<?php
+
+use App\Livewire\Settings\Appearance;
+use App\Livewire\Settings\Password;
+use App\Livewire\Settings\Profile;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
+
+Route::get('/user', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware(['auth', 'verified', 'admin'])->prefix('/admin')->group(function () {
+    Route::get('/', function () { return view('admin.index');})->name('admindashboard');
+
+    Route::prefix('/ministere')->name('ministere.')->group(function () {
+        Route::get('/', function () { return view('admin.ministeres.index');})->name('index');
+        Route::get('/create', function () { return view('admin.ministeres.create');})->name('create');
+        Route::get('/edit', function () { return view('admin.ministeres.edit');})->name('edit');
+    });
+
+});
+
+// Route::get('/admin', function () {
+//     return view('admin.index');
+// })->name('admindashboard')->middleware(['auth', 'verified', 'admin']);
+
+// Route::get('/users', function () {
+//     return view('users.index');
+// })->middleware(['auth', 'verified'])->name('user');
+
+
+Route::get('/userhome', function () {
+    return view('users.user');
+})->middleware(['auth', 'verified'])->name('userUser');
+
+
+
+//route vers dashboard
+
+// Route::view('/user', 'users.index')
+//     ->middleware(['auth', 'verified'])
+//     ->name('dashboard');
+
+// Route::middleware(['auth', 'verified', 'profilAccess'])->group(function () {
+// });
+
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::redirect('settings', 'settings/profile');
+
+    Route::get('settings/profile', Profile::class)->name('settings.profile');
+    Route::get('settings/password', Password::class)->name('settings.password');
+    Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
+});
+
+require __DIR__.'/auth.php';
+
+
+
+
+
+
+
+
+
+
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+
+
+class HomeController extends Controller
+{
+    //
+    public function index()
+    {
+        if(Auth::id())
+	    {
+		    $usertype=Auth()->user()->usertype;
+
+		    if($usertype=='user')
+		    {
+			    return view('users.index');
+    		}
+		    else if($usertype=='admin')
+		    {
+			    return view('admin.index');
+    		}
+		    else
+		    {
+			    return redirect()->back();
+    	    }
+	    }
+    }
+
+}
+
+
+Je veux que chacun des types d'utilisateurs (admin et user) est accès à sa route.

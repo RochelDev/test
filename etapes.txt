@@ -1,0 +1,26 @@
+Interface administrateur: 
+attribuer un ou plusieur profil à chaque utilisateurs utilisateur
+accès au dosiers selon le ministère, l'étape et le profil
+Les paramètres du système: CRUD pour les tables Ministères, Structures, postes, fonctions, agents,
+Interfaces Utilisateurs selon le profil de chacun.
+type mobilité, pièces requises, TypePiece.
+Les Demandes, le suivi du dossier, la gestion des fichiers et générations de documents.
+
+Etape 0: bd pré-rempli
+
+
+ajouter ministere_id qui peut être nullable à users
+
+Etape 1: trouver solution au problème de livewire
+Si trop compliqué revenir aux anciennes méthodes de CRUD et Controller (30min à 1h )
+
+Etape 2: gestion des profils (4h)
+
+Etape 3: Réaliser au moins un CRUD (ministères, structures, postes, documents requis, Typedoc, Agents et profil ) ou soit enregistrer directement dans la base de données (2h)
+
+
+Etape 4: Gérer les interfaces pour chaque profil(4h)
+
+Etape5: Demande, suivi dossiers et interventions de chaque acteur
+
+Etape 6: Gestions des fichiers(Piecesjustificatives) et génération de documents(TypePiece) 

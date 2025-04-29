@@ -217,3 +217,8 @@ Compte tenu de la complexité, il est judicieux de commencer par une phase pilot
 Cette approche progressive permettra de valider les fonctionnalités essentielles et de recueillir des retours pour les phases ultérieures du projet.
 
 N'hésitez pas à me poser d'autres questions ou si vous souhaitez affiner certains aspects de ce cahier des charges !
+
+
+
+
+

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('fonctions', function (Blueprint $table) {
             $table->id();
-            $table->string('libelle_fonction');
+            $table->string('intitule_fonction');
             $table->timestamps();
         });
     }

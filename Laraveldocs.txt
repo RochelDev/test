@@ -1,0 +1,2925 @@
+php artisan make:livewire Notes
+
+php artisan make:model Notes -m
+
+php artisan make:migration add_collums_to_u
+sers_table --table=users
+
+
+Pour nettoyer les routes: 
+php artisan route:clear
+php artisan cache:clear
+php artisan config:clear
+php artisan route:cache
+
+
+
+clipboard-document-list
+
+
+
+
+
+
+
+
+
+
+***************************************
+************les middlewares************
+***************************************
+php artisan make:middleware Notes
+
+Enregistrement du middleware
+Intergiciel mondial
+Si vous souhaitez qu'un middleware s'exécute à chaque requête HTTP adressée à votre application, vous pouvez l'ajouter à la pile middleware globale dans bootstrap/app.phple fichier de votre application :
+
+use App\Http\Middleware\EnsureTokenIsValid;
+ 
+->withMiddleware(function (Middleware $middleware) {
+     $middleware->append(EnsureTokenIsValid::class);
+})
+
+L' $middlewareobjet fourni à la withMiddlewarefermeture est une instance Illuminate\Foundation\Configuration\Middlewaredu middleware affecté aux routes de votre application et est responsable de sa gestion. La appendméthode ajoute le middleware à la fin de la liste des middlewares globaux. Pour ajouter un middleware au début de la liste, utilisez cette prependméthode.
+
+
+Affectation d'un middleware aux routes
+Si vous souhaitez affecter un middleware à des itinéraires spécifiques, vous pouvez appeler la middlewareméthode lors de la définition de l'itinéraire :
+
+use App\Http\Middleware\EnsureTokenIsValid;
+ 
+Route::get('/profile', function () {
+    // ...
+})->middleware(EnsureTokenIsValid::class);
+
+Vous pouvez attribuer plusieurs intergiciels à la route en transmettant un tableau de noms d'intergiciels à la middlewareméthode :
+
+Route::get('/', function () {
+    // ...
+})->middleware([First::class, Second::class]);
+
+
+Groupes middleware par défaut de Laravel
+Laravel inclut des groupes prédéfinis webet apimiddleware contenant des intergiciels courants que vous pourriez appliquer à vos routes web et API. N'oubliez pas que Laravel applique automatiquement ces groupes middleware aux fichiers routes/web.phpet routes/api.phpaux fichiers correspondants :
+
+Le webgroupe Middleware
+Illuminate\Cookie\Middleware\EncryptCookies
+Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse
+Illuminate\Session\Middleware\StartSession
+Illuminate\View\Middleware\ShareErrorsFromSession
+Illuminate\Foundation\Http\Middleware\ValidateCsrfToken
+Illuminate\Routing\Middleware\SubstituteBindings
+Le apigroupe Middleware
+Illuminate\Routing\Middleware\SubstituteBindings
+Si vous souhaitez ajouter ou préfixer un intergiciel à ces groupes, vous pouvez utiliser les méthodes webet apidans le fichier de votre application bootstrap/app.php. Ces webméthodes apisont des alternatives pratiques à la appendToGroupméthode suivante :
+
+use App\Http\Middleware\EnsureTokenIsValid;
+use App\Http\Middleware\EnsureUserIsSubscribed;
+ 
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->web(append: [
+        EnsureUserIsSubscribed::class,
+    ]);
+ 
+    $middleware->api(prepend: [
+        EnsureTokenIsValid::class,
+    ]);
+})
+
+Vous pouvez même remplacer l'une des entrées du groupe middleware par défaut de Laravel par votre propre middleware personnalisé :
+
+use App\Http\Middleware\StartCustomSession;
+use Illuminate\Session\Middleware\StartSession;
+ 
+$middleware->web(replace: [
+    StartSession::class => StartCustomSession::class,
+]);
+
+Ou, vous pouvez supprimer entièrement un middleware :
+
+$middleware->web(remove: [
+    StartSession::class,
+]);
+
+
+
+
+
+Alias ​​de middleware
+Vous pouvez attribuer des alias aux intergiciels dans le fichier de votre application bootstrap/app.php. Les alias intergiciels permettent de définir un alias court pour une classe intergiciel donnée, ce qui peut être particulièrement utile pour les intergiciels dont les noms de classe sont longs :
+
+use App\Http\Middleware\EnsureUserIsSubscribed;
+ 
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->alias([
+        'subscribed' => EnsureUserIsSubscribed::class
+    ]);
+})
+
+Une fois l'alias du middleware défini dans bootstrap/app.phple fichier de votre application, vous pouvez utiliser l'alias lors de l'affectation du middleware aux routes :
+
+Route::get('/profile', function () {
+    // ...
+})->middleware('subscribed');
+
+Pour plus de commodité, certains intergiciels intégrés à Laravel sont aliasés par défaut. Par exemple, l' authintergiciel est un alias pour l' Illuminate\Auth\Middleware\Authenticateintergiciel. Voici la liste des alias par défaut des intergiciels :
+
+Alias	Intergiciel
+auth	Illuminate\Auth\Middleware\Authenticate
+auth.basic	Illuminate\Auth\Middleware\AuthenticateWithBasicAuth
+auth.session	Illuminate\Session\Middleware\AuthenticateSession
+cache.headers	Illuminate\Http\Middleware\SetCacheHeaders
+can	Illuminate\Auth\Middleware\Authorize
+guest	Illuminate\Auth\Middleware\RedirectIfAuthenticated
+password.confirm	Illuminate\Auth\Middleware\RequirePassword
+precognitive	Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests
+signed	Illuminate\Routing\Middleware\ValidateSignature
+subscribed	\Spark\Http\Middleware\VerifyBillableIsSubscribed
+throttle	Illuminate\Routing\Middleware\ThrottleRequestsouIlluminate\Routing\Middleware\ThrottleRequestsWithRedis
+verified	Illuminate\Auth\Middleware\EnsureEmailIsVerified
+
+
+Paramètres du middleware
+Les intergiciels peuvent également recevoir des paramètres supplémentaires. Par exemple, si votre application doit vérifier que l'utilisateur authentifié possède un rôle donné avant d'effectuer une action, vous pouvez créer un EnsureUserHasRoleintergiciel recevant un nom de rôle comme argument supplémentaire.
+
+Des paramètres middleware supplémentaires seront transmis au middleware après l' $nextargument :
+
+<?php
+ 
+namespace App\Http\Middleware;
+ 
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+ 
+class EnsureUserHasRole
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next, string $role): Response
+    {
+        if (! $request->user()->hasRole($role)) {
+            // Redirect...
+        }
+ 
+        return $next($request);
+    }
+ 
+}
+
+Les paramètres du middleware peuvent être spécifiés lors de la définition de l'itinéraire en séparant le nom du middleware et les paramètres par un ::
+
+use App\Http\Middleware\EnsureUserHasRole;
+ 
+Route::put('/post/{id}', function (string $id) {
+    // ...
+})->middleware(EnsureUserHasRole::class.':editor');
+
+Plusieurs paramètres peuvent être délimités par des virgules :
+
+Route::put('/post/{id}', function (string $id) {
+    // ...
+})->middleware(EnsureUserHasRole::class.':editor,publisher');
+
+Middleware terminable
+Il arrive qu'un middleware doive effectuer certaines opérations après l'envoi de la réponse HTTP au navigateur. Si vous définissez une terminateméthode sur votre middleware et que votre serveur web utilise FastCGI, la terminateméthode sera automatiquement appelée après l'envoi de la réponse au navigateur :
+
+<?php
+ 
+namespace Illuminate\Session\Middleware;
+ 
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+ 
+class TerminatingMiddleware
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        return $next($request);
+    }
+ 
+    /**
+     * Handle tasks after the response has been sent to the browser.
+     */
+    public function terminate(Request $request, Response $response): void
+    {
+        // ...
+    }
+}
+
+La terminateméthode doit recevoir à la fois la requête et la réponse. Une fois le middleware terminable défini, ajoutez-le à la liste des routes ou au middleware global dans bootstrap/app.phple fichier de votre application.
+
+Lors de l'appel de la terminateméthode sur votre middleware, Laravel résout une nouvelle instance du middleware depuis le conteneur de services . Si vous souhaitez utiliser la même instance du middleware lors de l' appel handledes terminateméthodes et , enregistrez le middleware auprès du conteneur via la singletonméthode de ce dernier. En général, cela se fait dans la registerméthode de votre conteneurAppServiceProvider :
+
+use App\Http\Middleware\TerminatingMiddleware;
+ 
+/**
+ * Register any application services.
+ */
+public function register(): void
+{
+    $this->app->singleton(TerminatingMiddleware::class);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Les requêtes
+
+
+Requêtes HTTP
+Introduction
+La classe de Laravel Illuminate\Http\Requestfournit un moyen orienté objet d'interagir avec la requête HTTP actuelle traitée par votre application ainsi que de récupérer l'entrée, les cookies et les fichiers qui ont été soumis avec la requête.
+
+Interagir avec la demande
+Accéder à la demande
+Pour obtenir une instance de la requête HTTP actuelle par injection de dépendances, vous devez indiquer le type de la Illuminate\Http\Requestclasse sur votre méthode de fermeture de route ou de contrôleur. L'instance de la requête entrante sera automatiquement injectée par le conteneur de services Laravel :
+
+<?php
+ 
+namespace App\Http\Controllers;
+ 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+ 
+class UserController extends Controller
+{
+    /**
+     * Store a new user.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $name = $request->input('name');
+ 
+        // Store the user...
+ 
+        return redirect('/users');
+    }
+}
+
+Comme indiqué précédemment, vous pouvez également indiquer le type de la Illuminate\Http\Requestclasse lors de la fermeture d'une route. Le conteneur de services injectera automatiquement la requête entrante dans la fermeture lors de son exécution :
+
+use Illuminate\Http\Request;
+ 
+Route::get('/', function (Request $request) {
+    // ...
+});
+
+Injection de dépendances et paramètres de route
+Si votre méthode de contrôleur attend également une entrée d'un paramètre de route, vous devez lister ces paramètres après vos autres dépendances. Par exemple, si votre route est définie comme suit :
+
+use App\Http\Controllers\UserController;
+ 
+Route::put('/user/{id}', [UserController::class, 'update']);
+
+Vous pouvez toujours saisir l'indice de type Illuminate\Http\Requestet accéder à votre idparamètre d'itinéraire en définissant votre méthode de contrôleur comme suit :
+
+<?php
+ 
+namespace App\Http\Controllers;
+ 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+ 
+class UserController extends Controller
+{
+    /**
+     * Update the specified user.
+     */
+    public function update(Request $request, string $id): RedirectResponse
+    {
+        // Update the user...
+ 
+        return redirect('/users');
+    }
+}
+
+Chemin de la demande, hôte et méthode
+L' Illuminate\Http\Requestinstance fournit diverses méthodes pour examiner la requête HTTP entrante et étend la Symfony\Component\HttpFoundation\Requestclasse. Nous aborderons ci-dessous quelques-unes des méthodes les plus importantes.
+
+Récupération du chemin de la requête
+La pathméthode renvoie le chemin d'accès à la requête. Ainsi, si la requête entrante cible http://example.com/foo/bar, la pathméthode renvoiefoo/bar :
+
+$uri = $request->path();
+
+Inspection du chemin/route de la requête
+Cette isméthode permet de vérifier que le chemin de la requête entrante correspond à un modèle donné. Vous pouvez utiliser ce *caractère comme caractère générique avec cette méthode :
+
+if ($request->is('admin/*')) {
+    // ...
+}
+
+En utilisant cette routeIsméthode, vous pouvez déterminer si la demande entrante correspond à une route nommée :
+
+if ($request->routeIs('admin.*')) {
+    // ...
+}
+
+Récupération de l'URL de la requête
+Pour récupérer l'URL complète de la requête entrante, vous pouvez utiliser les méthodes urlou . La méthode renvoie l'URL sans la chaîne de requête, tandis que la méthode inclut la chaîne de requête :fullUrlurlfullUrl
+
+$url = $request->url();
+ 
+$urlWithQueryString = $request->fullUrl();
+
+Si vous souhaitez ajouter des données de chaîne de requête à l'URL actuelle, vous pouvez appeler la fullUrlWithQueryméthode. Cette méthode fusionne le tableau de variables de chaîne de requête donné avec la chaîne de requête actuelle :
+
+$request->fullUrlWithQuery(['type' => 'phone']);
+
+Si vous souhaitez obtenir l'URL actuelle sans paramètre de chaîne de requête donné, vous pouvez utiliser la fullUrlWithoutQueryméthode :
+
+$request->fullUrlWithoutQuery(['type']);
+
+Récupération de l'hôte de la requête
+Vous pouvez récupérer l'« hôte » de la requête entrante via les méthodes host, httpHost, etschemeAndHttpHost :
+
+$request->host();
+$request->httpHost();
+$request->schemeAndHttpHost();
+
+Récupération de la méthode de requête
+La methodméthode renvoie le verbe HTTP de la requête. Vous pouvez l'utiliser isMethodpour vérifier que le verbe HTTP correspond à une chaîne donnée :
+
+$method = $request->method();
+ 
+if ($request->isMethod('post')) {
+    // ...
+}
+
+En-têtes de requête
+Vous pouvez récupérer un en-tête de requête depuis l' Illuminate\Http\Requestinstance à l'aide de la headerméthode. Si l'en-tête est absent de la requête, nullla valeur est renvoyée. Cependant, la headerméthode accepte un second argument facultatif, qui sera renvoyé si l'en-tête est absent de la requête :
+
+$value = $request->header('X-Header-Name');
+ 
+$value = $request->header('X-Header-Name', 'default');
+
+La hasHeaderméthode peut être utilisée pour déterminer si la requête contient un en-tête donné :
+
+if ($request->hasHeader('X-Header-Name')) {
+    // ...
+}
+
+Pour plus de commodité, cette bearerTokenméthode peut être utilisée pour récupérer un jeton de porteur à partir de l' Authorizationen-tête. En l'absence d'un tel en-tête, une chaîne vide est renvoyée :
+
+$token = $request->bearerToken();
+
+Demande d'adresse IP
+La ipméthode peut être utilisée pour récupérer l'adresse IP du client qui a fait la demande à votre application :
+
+$ipAddress = $request->ip();
+
+Si vous souhaitez récupérer un tableau d'adresses IP, incluant toutes les adresses IP client transférées par les proxys, vous pouvez utiliser la ipsméthode suivante. L'adresse IP client « d'origine » se trouvera à la fin du tableau :
+
+$ipAddresses = $request->ips();
+
+En général, les adresses IP doivent être considérées comme des entrées non fiables, contrôlées par l'utilisateur et utilisées à des fins d'information uniquement.
+
+Négociation de contenu
+Laravel propose plusieurs méthodes pour inspecter les types de contenu demandés par la requête entrante via l' Accepten-tête. La première getAcceptableContentTypesméthode renvoie un tableau contenant tous les types de contenu acceptés par la requête :
+
+$contentTypes = $request->getAcceptableContentTypes();
+
+La acceptsméthode accepte un tableau de types de contenu et renvoie truesi l'un d'eux est accepté par la requête. Sinon, falsela valeur renvoyée est :
+
+if ($request->accepts(['text/html', 'application/json'])) {
+    // ...
+}
+
+Vous pouvez utiliser cette prefersméthode pour déterminer, parmi un ensemble donné de types de contenu, le type de contenu préféré par la requête. Si aucun des types de contenu fournis n'est accepté par la requête, la méthode suivante nullsera renvoyée :
+
+$preferred = $request->prefers(['text/html', 'application/json']);
+
+Étant donné que de nombreuses applications ne servent que du HTML ou du JSON, vous pouvez utiliser la expectsJsonméthode pour déterminer rapidement si la requête entrante attend une réponse JSON :
+
+if ($request->expectsJson()) {
+    // ...
+}
+
+Demandes PSR-7
+La norme PSR-7 spécifie les interfaces pour les messages HTTP, y compris les requêtes et les réponses. Si vous souhaitez obtenir une instance d'une requête PSR-7 plutôt qu'une requête Laravel, vous devrez d'abord installer quelques bibliothèques. Laravel utilise le composant Symfony HTTP Message Bridge pour convertir les requêtes et réponses Laravel classiques en implémentations compatibles PSR-7 :
+
+composer require symfony/psr-http-message-bridge
+composer require nyholm/psr7
+
+Une fois ces bibliothèques installées, vous pouvez obtenir une requête PSR-7 en indiquant le type de l'interface de requête sur votre méthode de fermeture de route ou de contrôleur :
+
+use Psr\Http\Message\ServerRequestInterface;
+ 
+Route::get('/', function (ServerRequestInterface $request) {
+    // ...
+});
+
+Si vous renvoyez une instance de réponse PSR-7 à partir d'une route ou d'un contrôleur, elle sera automatiquement reconvertie en une instance de réponse Laravel et affichée par le framework.
+
+Saisir
+Récupération des entrées
+Récupération de toutes les données d'entrée
+Vous pouvez récupérer toutes les données d'entrée de la requête entrante à l' arrayaide de la allméthode. Cette méthode est utilisable que la requête entrante provienne d'un formulaire HTML ou d'une requête XHR :
+
+$input = $request->all();
+
+En utilisant cette collectméthode, vous pouvez récupérer toutes les données d'entrée de la requête entrante sous forme de collection :
+
+$input = $request->collect();
+
+La collectméthode vous permet également de récupérer un sous-ensemble de l'entrée de la requête entrante sous forme de collection :
+
+$request->collect('users')->each(function (string $user) {
+    // ...
+});
+
+Récupération d'une valeur d'entrée
+Grâce à quelques méthodes simples, vous pouvez accéder à toutes les entrées utilisateur de votre Illuminate\Http\Requestinstance sans vous soucier du verbe HTTP utilisé pour la requête. Quel que soit le verbe HTTP, la inputméthode peut être utilisée pour récupérer les entrées utilisateur :
+
+$name = $request->input('name');
+
+Vous pouvez passer une valeur par défaut comme second argument à la inputméthode. Cette valeur sera renvoyée si la valeur d'entrée demandée n'est pas présente dans la requête :
+
+$name = $request->input('name', 'Sally');
+
+Lorsque vous travaillez avec des formulaires contenant des entrées de tableau, utilisez la notation « point » pour accéder aux tableaux :
+
+$name = $request->input('products.0.name');
+ 
+$names = $request->input('products.*.name');
+
+Vous pouvez appeler la inputméthode sans aucun argument afin de récupérer toutes les valeurs d'entrée sous forme de tableau associatif :
+
+$input = $request->input();
+
+Récupération de l'entrée à partir de la chaîne de requête
+Bien que la inputméthode récupère les valeurs de l'ensemble de la charge utile de la requête (y compris la chaîne de requête), la queryméthode récupérera uniquement les valeurs de la chaîne de requête :
+
+$name = $request->query('name');
+
+Si les données de valeur de chaîne de requête demandées ne sont pas présentes, le deuxième argument de cette méthode sera renvoyé :
+
+$name = $request->query('name', 'Helen');
+
+Vous pouvez appeler la queryméthode sans aucun argument afin de récupérer toutes les valeurs de la chaîne de requête sous forme de tableau associatif :
+
+$query = $request->query();
+
+Récupération des valeurs d'entrée JSON
+Lorsque vous envoyez des requêtes JSON à votre application, vous pouvez accéder aux données JSON via la inputméthode, à condition que l' Content-Typeen-tête de la requête soit correctement défini sur application/json. Vous pouvez même utiliser la syntaxe « point » pour récupérer des valeurs imbriquées dans des tableaux ou des objets JSON :
+
+$name = $request->input('user.name');
+
+Récupération de valeurs d'entrée pouvant être converties en chaînes
+Au lieu de récupérer les données d'entrée de la requête en tant que primitive string, vous pouvez utiliser la stringméthode pour récupérer les données de la requête en tant qu'instance de Illuminate\Support\Stringable :
+
+$name = $request->string('name')->trim();
+
+Récupération des valeurs d'entrée entières
+Pour récupérer des valeurs d'entrée sous forme d'entiers, vous pouvez utiliser la integerméthode suivante : . Cette méthode tente de convertir la valeur d'entrée en entier. Si l'entrée est absente ou si la conversion échoue, elle renvoie la valeur par défaut spécifiée. Ceci est particulièrement utile pour la pagination ou d'autres entrées numériques :
+
+$perPage = $request->integer('per_page');
+
+Récupération des valeurs d'entrée booléennes
+Lors de la manipulation d'éléments HTML tels que des cases à cocher, votre application peut recevoir des valeurs « true » qui sont en réalité des chaînes. Par exemple, « true » ou « on ». Pour plus de commodité, vous pouvez utiliser la booleanméthode pour récupérer ces valeurs sous forme de booléens. La booleanméthode renvoie truepour 1, « 1 », « true », « on » et « yes ». Toutes les autres valeurs renvoientfalse :
+
+$archived = $request->boolean('archived');
+
+Récupération des valeurs d'entrée de date
+Pour plus de commodité, les valeurs d'entrée contenant des dates/heures peuvent être récupérées sous forme d'instances Carbon à l'aide de la dateméthode. Si la requête ne contient pas de valeur d'entrée portant le nom donné, la méthode suivante nullsera renvoyée :
+
+$birthday = $request->date('birthday');
+
+Les deuxième et troisième arguments acceptés par la dateméthode peuvent être utilisés pour spécifier respectivement le format de la date et le fuseau horaire :
+
+$elapsed = $request->date('elapsed', '!H:i', 'Europe/Madrid');
+
+Si la valeur d'entrée est présente mais a un format non valide, une InvalidArgumentExceptionerreur sera générée ; par conséquent, il est recommandé de valider l'entrée avant d'appeler la dateméthode.
+
+Récupération des valeurs d'entrée d'énumération
+Les valeurs d'entrée correspondant aux énumérations PHP peuvent également être récupérées depuis la requête. Si la requête ne contient pas de valeur d'entrée portant le nom donné ou si l'énumération n'a pas de valeur de sauvegarde correspondant à la valeur d'entrée, la méthode nullest renvoyée. La enumméthode accepte le nom de la valeur d'entrée et la classe de l'énumération comme premier et deuxième arguments :
+
+use App\Enums\Status;
+ 
+$status = $request->enum('status', Status::class);
+
+Si la valeur d'entrée est un tableau de valeurs correspondant à une énumération PHP, vous pouvez utiliser la enumsméthode pour récupérer le tableau de valeurs sous forme d'instances d'énumération :
+
+use App\Enums\Product;
+ 
+$products = $request->enums('products', Product::class);
+
+Récupération d'entrée via des propriétés dynamiques
+Vous pouvez également accéder aux données saisies par l'utilisateur via les propriétés dynamiques de l' Illuminate\Http\Requestinstance. Par exemple, si l'un des formulaires de votre application contient un namechamp, vous pouvez accéder à sa valeur comme suit :
+
+$name = $request->name;
+
+Lors de l'utilisation de propriétés dynamiques, Laravel recherche d'abord la valeur du paramètre dans la charge utile de la requête. Si elle n'est pas présente, Laravel recherche le champ dans les paramètres de la route correspondante.
+
+Récupération d'une partie des données d'entrée
+Si vous devez récupérer un sous-ensemble des données d'entrée, vous pouvez utiliser les méthodes onlyet except. Ces deux méthodes acceptent un argument unique arrayou une liste dynamique d'arguments :
+
+$input = $request->only(['username', 'password']);
+ 
+$input = $request->only('username', 'password');
+ 
+$input = $request->except(['credit_card']);
+ 
+$input = $request->except('credit_card');
+
+La onlyméthode renvoie toutes les paires clé/valeur que vous demandez ; cependant, elle ne renverra pas les paires clé/valeur qui ne sont pas présentes dans la demande.
+
+Présence d'entrée
+Vous pouvez utiliser cette hasméthode pour déterminer si une valeur est présente dans la requête. La hasméthode renvoie truela valeur si elle est présente dans la requête :
+
+if ($request->has('name')) {
+    // ...
+}
+
+Lorsqu'un tableau est donné, la hasméthode déterminera si toutes les valeurs spécifiées sont présentes :
+
+if ($request->has(['name', 'email'])) {
+    // ...
+}
+
+La hasAnyméthode renvoie truesi l'une des valeurs spécifiées est présente :
+
+if ($request->hasAny(['name', 'email'])) {
+    // ...
+}
+
+La whenHasméthode exécutera la fermeture donnée si une valeur est présente dans la requête :
+
+$request->whenHas('name', function (string $input) {
+    // ...
+});
+
+Une deuxième fermeture peut être passée à la whenHasméthode qui sera exécutée si la valeur spécifiée n'est pas présente dans la requête :
+
+$request->whenHas('name', function (string $input) {
+    // The "name" value is present...
+}, function () {
+    // The "name" value is not present...
+});
+
+Si vous souhaitez déterminer si une valeur est présente dans la requête et n'est pas une chaîne vide, vous pouvez utiliser la filledméthode :
+
+if ($request->filled('name')) {
+    // ...
+}
+
+Si vous souhaitez déterminer si une valeur est manquante dans la requête ou s'il s'agit d'une chaîne vide, vous pouvez utiliser la isNotFilledméthode :
+
+if ($request->isNotFilled('name')) {
+    // ...
+}
+
+Lorsqu'un tableau lui est donné, la isNotFilledméthode déterminera si toutes les valeurs spécifiées sont manquantes ou vides :
+
+if ($request->isNotFilled(['name', 'email'])) {
+    // ...
+}
+
+La anyFilledméthode renvoie truesi l'une des valeurs spécifiées n'est pas une chaîne vide :
+
+if ($request->anyFilled(['name', 'email'])) {
+    // ...
+}
+
+La whenFilledméthode exécutera la fermeture donnée si une valeur est présente dans la requête et n'est pas une chaîne vide :
+
+$request->whenFilled('name', function (string $input) {
+    // ...
+});
+
+Une deuxième fermeture peut être passée à la whenFilledméthode qui sera exécutée si la valeur spécifiée n'est pas « remplie » :
+
+$request->whenFilled('name', function (string $input) {
+    // The "name" value is filled...
+}, function () {
+    // The "name" value is not filled...
+});
+
+Pour déterminer si une clé donnée est absente de la requête, vous pouvez utiliser les méthodes missinget whenMissing:
+
+if ($request->missing('name')) {
+    // ...
+}
+ 
+$request->whenMissing('name', function () {
+    // The "name" value is missing...
+}, function () {
+    // The "name" value is present...
+});
+
+Fusion d'entrées supplémentaires
+Il peut parfois être nécessaire de fusionner manuellement des données supplémentaires avec les données d'entrée existantes de la requête. Pour ce faire, vous pouvez utiliser la mergeméthode. Si une clé d'entrée donnée existe déjà dans la requête, elle sera écrasée par les données fournies à la mergeméthode :
+
+$request->merge(['votes' => 0]);
+
+La mergeIfMissingméthode peut être utilisée pour fusionner l'entrée dans la requête si les clés correspondantes n'existent pas déjà dans les données d'entrée de la requête :
+
+$request->mergeIfMissing(['votes' => 0]);
+
+Ancienne entrée
+Laravel vous permet de conserver les entrées d'une requête lors de la requête suivante. Cette fonctionnalité est particulièrement utile pour remplir à nouveau les formulaires après avoir détecté des erreurs de validation. Cependant, si vous utilisez les fonctionnalités de validation incluses dans Laravel , vous n'aurez peut-être pas besoin d'utiliser manuellement ces méthodes de flashage des entrées de session, car certaines fonctionnalités de validation intégrées de Laravel les appellent automatiquement.
+
+Entrée clignotante dans la session
+La flashméthode de la Illuminate\Http\Requestclasse affichera l'entrée actuelle dans la session afin qu'elle soit disponible lors de la prochaine requête de l'utilisateur à l'application :
+
+$request->flash();
+
+Vous pouvez également utiliser les méthodes flashOnlyet flashExceptpour flasher un sous-ensemble des données de la requête vers la session. Ces méthodes sont utiles pour protéger les informations sensibles, telles que les mots de passe, contre l'accès à la session :
+
+$request->flashOnly(['username', 'email']);
+ 
+$request->flashExcept('password');
+
+Entrée clignotante puis redirection
+Étant donné que vous souhaiterez souvent envoyer une entrée flash à la session, puis rediriger vers la page précédente, vous pouvez facilement enchaîner l'envoi d'une entrée flash sur une redirection à l'aide de la withInputméthode suivante :
+
+return redirect('/form')->withInput();
+ 
+return redirect()->route('user.create')->withInput();
+ 
+return redirect('/form')->withInput(
+    $request->except('password')
+);
+
+Récupération d'anciennes entrées
+Pour récupérer les données flashées de la requête précédente, appelez la oldméthode sur une instance de Illuminate\Http\Request. La oldméthode extraira les données flashées de la session :
+
+$username = $request->old('username');
+
+Laravel fournit également un assistant global old. Si vous affichez d'anciennes données dans un template Blade , il est plus pratique d'utiliser cet oldassistant pour remplir à nouveau le formulaire. Si aucune ancienne donnée n'existe pour le champ donné, nullle résultat sera :
+
+<input type="text" name="username" value="{{ old('username') }}">
+
+Cookies
+Récupération des cookies à partir des requêtes
+Tous les cookies créés par le framework Laravel sont chiffrés et signés avec un code d'authentification ; ils seront donc considérés comme invalides s'ils ont été modifiés par le client. Pour récupérer la valeur d'un cookie à partir de la requête, utilisez la cookieméthode sur une Illuminate\Http\Requestinstance :
+
+$value = $request->cookie('name');
+
+Ajustement et normalisation des entrées
+Par défaut, Laravel inclut les intergiciels Illuminate\Foundation\Http\Middleware\TrimStringset Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNulldans la pile intergiciels globale de votre application. Ces intergiciels suppriment automatiquement tous les champs de chaîne entrants de la requête et convertissent les champs de chaîne vides en null. Vous n'avez ainsi plus à vous soucier de ces problèmes de normalisation dans vos routes et contrôleurs.
+
+Désactivation de la normalisation des entrées
+Si vous souhaitez désactiver ce comportement pour toutes les requêtes, vous pouvez supprimer les deux middlewares de la pile middleware de votre application en invoquant la $middleware->removeméthode dans le fichier de votre applicationbootstrap/app.php :
+
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\TrimStrings;
+ 
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->remove([
+        ConvertEmptyStringsToNull::class,
+        TrimStrings::class,
+    ]);
+})
+
+Si vous souhaitez désactiver la suppression des chaînes et la conversion des chaînes vides pour un sous-ensemble de requêtes adressées à votre application, vous pouvez utiliser les méthodes middleware trimStringset convertEmptyStringsToNulldans le fichier de votre application bootstrap/app.php. Ces deux méthodes acceptent un tableau de fermetures, qui doit renvoyer trueou falsepour indiquer si la normalisation des entrées doit être ignorée :
+
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->convertEmptyStringsToNull(except: [
+        fn (Request $request) => $request->is('admin/*'),
+    ]);
+ 
+    $middleware->trimStrings(except: [
+        fn (Request $request) => $request->is('admin/*'),
+    ]);
+})
+
+Fichiers
+Récupération des fichiers téléchargés
+Vous pouvez récupérer les fichiers téléchargés depuis une Illuminate\Http\Requestinstance à l'aide de la fileméthode ou de propriétés dynamiques. La fileméthode renvoie une instance de la Illuminate\Http\UploadedFileclasse, qui étend la SplFileInfoclasse PHP et fournit diverses méthodes d'interaction avec le fichier :
+
+$file = $request->file('photo');
+ 
+$file = $request->photo;
+
+Vous pouvez déterminer si un fichier est présent dans la demande en utilisant la hasFileméthode :
+
+if ($request->hasFile('photo')) {
+    // ...
+}
+
+Validation des téléchargements réussis
+En plus de vérifier si le fichier est présent, vous pouvez vérifier qu'il n'y a eu aucun problème lors du téléchargement du fichier via la isValidméthode :
+
+if ($request->file('photo')->isValid()) {
+    // ...
+}
+
+Chemins de fichiers et extensions
+La UploadedFileclasse contient également des méthodes permettant d'accéder au chemin d'accès complet du fichier et à son extension. La extensionméthode tente de deviner l'extension du fichier en fonction de son contenu. Cette extension peut être différente de celle fournie par le client :
+
+$path = $request->photo->path();
+ 
+$extension = $request->photo->extension();
+
+Autres méthodes de fichiers
+Il existe diverses autres méthodes disponibles sur UploadedFileles instances. Consultez la documentation de l'API de la classe pour plus d'informations sur ces méthodes.
+
+Stockage des fichiers téléchargés
+Pour stocker un fichier téléchargé, vous utiliserez généralement l'un de vos systèmes de fichiers configurés . La UploadedFileclasse possède une storeméthode permettant de déplacer un fichier téléchargé vers l'un de vos disques, qu'il s'agisse de votre système de fichiers local ou d'un stockage cloud comme Amazon S3.
+
+La storeméthode accepte le chemin d'accès au fichier par rapport au répertoire racine configuré du système de fichiers. Ce chemin ne doit pas contenir de nom de fichier, car un identifiant unique sera automatiquement généré pour servir de nom de fichier.
+
+La storeméthode accepte également un second argument facultatif pour le nom du disque sur lequel stocker le fichier. Elle renvoie le chemin d'accès du fichier par rapport à la racine du disque :
+
+$path = $request->photo->store('images');
+ 
+$path = $request->photo->store('images', 's3');
+
+Si vous ne souhaitez pas qu'un nom de fichier soit généré automatiquement, vous pouvez utiliser la storeAsméthode qui accepte le chemin, le nom de fichier et le nom du disque comme arguments :
+
+$path = $request->photo->storeAs('images', 'filename.jpg');
+ 
+$path = $request->photo->storeAs('images', 'filename.jpg', 's3');
+
+Pour plus d'informations sur le stockage de fichiers dans Laravel, consultez la documentation complète sur le stockage de fichiers .
+
+Configuration des proxys de confiance
+Lorsque vous exécutez vos applications derrière un équilibreur de charge qui interrompt les certificats TLS/SSL, vous remarquerez peut-être que votre application ne génère pas toujours de liens HTTPS lors de l'utilisation de l' urlassistant. Cela est généralement dû au fait que votre application reçoit du trafic de votre équilibreur de charge sur le port 80 et ignore qu'elle doit générer des liens sécurisés.
+
+Pour résoudre ce problème, vous pouvez activer le Illuminate\Http\Middleware\TrustProxiesmiddleware inclus dans votre application Laravel, ce qui vous permet de personnaliser rapidement les équilibreurs de charge ou les proxys auxquels votre application doit faire confiance. Ces proxys de confiance doivent être spécifiés à l'aide de la trustProxiesméthode middleware dans bootstrap/app.phple fichier de votre application :
+
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->trustProxies(at: [
+        '192.168.1.1',
+        '10.0.0.0/8',
+    ]);
+})
+
+En plus de configurer les proxys approuvés, vous pouvez également configurer les en-têtes de proxy qui doivent être approuvés :
+
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->trustProxies(headers: Request::HEADER_X_FORWARDED_FOR |
+        Request::HEADER_X_FORWARDED_HOST |
+        Request::HEADER_X_FORWARDED_PORT |
+        Request::HEADER_X_FORWARDED_PROTO |
+        Request::HEADER_X_FORWARDED_AWS_ELB
+    );
+})
+
+Si vous utilisez AWS Elastic Load Balancing, la headersvaleur doit être Request::HEADER_X_FORWARDED_AWS_ELB. Si votre équilibreur de charge utilise l' Forwardeden-tête standard de la RFC 7239 , la headersvaleur doit être Request::HEADER_FORWARDED. Pour plus d'informations sur les constantes pouvant être utilisées dans la headersvaleur, consultez la documentation Symfony sur la confiance envers les proxys .
+
+Faire confiance à tous les proxys
+Si vous utilisez Amazon AWS ou un autre fournisseur d'équilibreurs de charge « cloud », vous ne connaissez peut-être pas les adresses IP de vos équilibreurs. Dans ce cas, vous pouvez utiliser *pour faire confiance à tous les proxys :
+
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->trustProxies(at: '*');
+})
+
+Configuration des hôtes approuvés
+Par défaut, Laravel répond à toutes les requêtes reçues, quel que soit le contenu de l' Hosten-tête de la requête HTTP. De plus, la Hostvaleur de l'en-tête sera utilisée lors de la génération d'URL absolues vers votre application lors d'une requête web.
+
+En règle générale, vous devez configurer votre serveur web, tel que Nginx ou Apache, pour n'envoyer à votre application que les requêtes correspondant à un nom d'hôte donné. Cependant, si vous ne pouvez pas personnaliser directement votre serveur web et devez indiquer à Laravel de ne répondre qu'à certains noms d'hôtes, vous pouvez le faire en activant le Illuminate\Http\Middleware\TrustHostsmiddleware pour votre application.
+
+Pour activer le TrustHostsmiddleware, vous devez invoquer la trustHostsméthode middleware dans le fichier de votre application bootstrap/app.php. L' atargument de cette méthode permet de spécifier les noms d'hôtes auxquels votre application doit répondre. Les requêtes entrantes contenant d'autres Hosten-têtes seront rejetées :
+
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->trustHosts(at: ['laravel.test']);
+})
+
+Par défaut, les requêtes provenant des sous-domaines de l'URL de l'application sont également automatiquement approuvées. Pour désactiver ce comportement, utilisez l' subdomainsargument :
+
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->trustHosts(at: ['laravel.test'], subdomains: false);
+})
+
+Si vous devez accéder aux fichiers de configuration ou à la base de données de votre application pour déterminer vos hôtes de confiance, vous pouvez fournir une clôture à l' atargument :
+
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->trustHosts(at: fn () => config('app.trusted_hosts'));
+})
+
+
+
+
+
+
+
+Absolument ! Pour indiquer la table référencée lors de la définition d'une clé étrangère dans une migration Laravel, vous utilisez la méthode constrained(). Cette méthode va inférer par convention le nom de la table référencée à partir du nom de la colonne de la clé étrangère.
+
+Exemple simple :
+
+Si vous avez une colonne nommée user_id dans votre table actuelle et que vous souhaitez qu'elle soit une clé étrangère référençant la colonne id de la table users, vous pouvez le faire comme ceci :
+
+PHP
+
+$table->foreignId('user_id')->constrained()->onDelete('cascade');
+foreignId('user_id') : Crée une colonne de type unsignedBigInteger nommée user_id, qui est le type généralement utilisé pour les clés étrangères référençant des clés primaires auto-incrémentées (bigIncrements ou id()) dans d'autres tables.
+constrained() : C'est la méthode clé ici. Sans argument, elle suppose que la clé étrangère user_id fait référence à la colonne id de la table users (le nom de la table est la forme au pluriel du nom de la colonne sans le _id).
+onDelete('cascade') (facultatif) : Définit ce qui doit se passer lorsque l'enregistrement référencé dans la table users est supprimé. Dans ce cas, si un utilisateur est supprimé, tous les enregistrements de la table actuelle ayant cet user_id seront également supprimés. D'autres options courantes sont onDelete('restrict') (empêche la suppression si des enregistrements dépendants existent) et onDelete('set null') (définit la clé étrangère à NULL lors de la suppression du parent).
+Spécifier explicitement la table référencée :
+
+Si votre convention de nommage de table ne correspond pas à celle attendue par constrained(), ou si la clé primaire de la table référencée n'est pas id, vous pouvez spécifier explicitement la table et la colonne référencée :
+
+PHP
+
+$table->foreign('customer_id')
+      ->references('id')
+      ->on('clients')
+      ->onDelete('restrict');
+foreign('customer_id') : Indique que la colonne customer_id est une clé étrangère.
+references('id') : Spécifie que cette clé étrangère fait référence à la colonne id de la table distante.
+on('clients') : Indique explicitement que la table référencée est clients.
+onDelete('restrict') : Définit le comportement en cas de suppression de l'enregistrement parent dans la table clients.
+Exemple avec une clé primaire non standard :
+
+Si la table products a une clé primaire nommée product_code (qui n'est pas auto-incrémentée) et que vous avez une clé étrangère product_code dans votre table order_items qui y fait référence :
+
+PHP
+
+$table->string('product_code'); // La colonne de clé étrangère doit avoir le même type que la clé primaire référencée
+$table->foreign('product_code')
+      ->references('product_code')
+      ->on('products')
+      ->onUpdate('cascade'); // Définit le comportement en cas de mise à jour de la clé primaire
+En résumé, pour indiquer la table référencée lors de la définition d'une clé étrangère dans Laravel :
+
+Utilisez la méthode constrained() pour suivre les conventions de nommage standard (clé étrangère nom_de_table_id référençant id sur la table nom_de_table).
+Utilisez les méthodes foreign(), references(), et on() pour spécifier explicitement la colonne et la table référencées lorsque les conventions ne sont pas suivies ou lorsque la clé primaire de la table référencée n'est pas id.
+N'oubliez pas d'exécuter php artisan migrate après avoir modifié vos fichiers de migration pour appliquer les changements à votre base de données.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Les relations
+
+
+
+
+Éloquent : Relations
+Introduction
+Les tables de bases de données sont souvent liées les unes aux autres. Par exemple, un article de blog peut contenir de nombreux commentaires ou une commande peut être liée à l'utilisateur qui l'a passée. Eloquent simplifie la gestion et l'utilisation de ces relations et prend en charge diverses relations courantes :
+
+Un à un
+Un à plusieurs
+Plusieurs à plusieurs
+A un à travers
+A beaucoup à travers
+Un à un (polymorphe)
+Un à plusieurs (polymorphe)
+Plusieurs à plusieurs (polymorphe)
+Définir les relations
+Les relations Eloquent sont définies comme des méthodes sur les classes de votre modèle Eloquent. Comme les relations servent également de puissants générateurs de requêtes , leur définition comme méthodes offre de puissantes capacités de chaînage et d'interrogation de méthodes. Par exemple, nous pouvons enchaîner des contraintes de requête supplémentaires sur cette postsrelation :
+
+$user->posts()->where('active', 1)->get();
+
+Mais, avant de plonger trop profondément dans l’utilisation des relations, apprenons à définir chaque type de relation pris en charge par Eloquent.
+
+Un à un / A un
+Une relation un-à-un est un type très basique de relation de base de données. Par exemple, un Usermodèle peut être associé à un autre Phonemodèle. Pour définir cette relation, nous allons placer une phoneméthode sur le Usermodèle. Cette phoneméthode doit appeler la hasOneméthode et renvoyer son résultat. Cette hasOneméthode est accessible à votre modèle via sa Illuminate\Database\Eloquent\Modelclasse de base :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+ 
+class User extends Model
+{
+    /**
+     * Get the phone associated with the user.
+     */
+    public function phone(): HasOne
+    {
+        return $this->hasOne(Phone::class);
+    }
+}
+
+Le premier argument passé à la hasOneméthode est le nom de la classe de modèle associée. Une fois la relation définie, nous pouvons récupérer l'enregistrement associé grâce aux propriétés dynamiques d'Eloquent. Ces propriétés dynamiques permettent d'accéder aux méthodes de relation comme s'il s'agissait de propriétés définies sur le modèle :
+
+$phone = User::find(1)->phone;
+
+Eloquent détermine la clé étrangère de la relation en fonction du nom du modèle parent. Dans ce cas, le Phonemodèle est automatiquement considéré comme possédant une user_idclé étrangère. Pour outrepasser cette convention, vous pouvez passer un second argument à la hasOneméthode :
+
+return $this->hasOne(Phone::class, 'foreign_key');
+
+De plus, Eloquent suppose que la clé étrangère doit avoir une valeur correspondant à la colonne de clé primaire du parent. Autrement dit, Eloquent recherchera la valeur de la idcolonne de l'utilisateur dans la user_idcolonne de l' Phoneenregistrement. Si vous souhaitez que la relation utilise une valeur de clé primaire autre que idla propriété de votre modèle $primaryKey, vous pouvez passer un troisième argument à la hasOneméthode :
+
+return $this->hasOne(Phone::class, 'foreign_key', 'local_key');
+
+Définir l'inverse de la relation
+Nous pouvons donc accéder au Phonemodèle depuis notre Usermodèle. Définissons ensuite une relation sur le Phonemodèle qui nous permettra d'accéder à l'utilisateur propriétaire du téléphone. Nous pouvons définir l'inverse d'une hasOnerelation avec la belongsTométhode suivante :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+ 
+class Phone extends Model
+{
+    /**
+     * Get the user that owns the phone.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}
+
+Lors de l'appel de la userméthode, Eloquent tentera de trouver un Usermodèle qui possède un idqui correspond à la user_idcolonne du Phonemodèle.
+
+Eloquent détermine le nom de la clé étrangère en examinant le nom de la méthode de relation et en ajoutant le suffixe _id. Dans ce cas, Eloquent suppose que le Phonemodèle possède une user_idcolonne. Cependant, si la clé étrangère du Phonemodèle n'est pas user_id, vous pouvez passer un nom de clé personnalisé comme second argument à la belongsTométhode :
+
+/**
+ * Get the user that owns the phone.
+ */
+public function user(): BelongsTo
+{
+    return $this->belongsTo(User::class, 'foreign_key');
+}
+
+Si le modèle parent n'est pas utilisé idcomme clé primaire, ou si vous souhaitez trouver le modèle associé à l'aide d'une colonne différente, vous pouvez passer un troisième argument à la belongsTométhode spécifiant la clé personnalisée de la table parent :
+
+/**
+ * Get the user that owns the phone.
+ */
+public function user(): BelongsTo
+{
+    return $this->belongsTo(User::class, 'foreign_key', 'owner_key');
+}
+
+Un à plusieurs / A plusieurs
+Une relation un-à-plusieurs permet de définir des relations où un modèle est le parent d'un ou plusieurs modèles enfants. Par exemple, un article de blog peut contenir un nombre infini de commentaires. Comme toutes les autres relations Eloquent, les relations un-à-plusieurs sont définies en définissant une méthode sur votre modèle Eloquent :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+ 
+class Post extends Model
+{
+    /**
+     * Get the comments for the blog post.
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+}
+
+N'oubliez pas qu'Eloquent détermine automatiquement la colonne de clé étrangère appropriée pour le Commentmodèle. Par convention, Eloquent utilise le nom « snake case » du modèle parent et le complète avec _id. Dans cet exemple, Eloquent considère donc que la colonne de clé étrangère du Commentmodèle est post_id.
+
+Une fois la méthode de relation définie, nous pouvons accéder à la collection de commentaires associés en accédant à la commentspropriété. N'oubliez pas qu'Eloquent fournissant des « propriétés de relation dynamiques », nous pouvons accéder aux méthodes de relation comme si elles étaient définies comme des propriétés du modèle :
+
+use App\Models\Post;
+ 
+$comments = Post::find(1)->comments;
+ 
+foreach ($comments as $comment) {
+    // ...
+}
+
+Étant donné que toutes les relations servent également de générateurs de requêtes, vous pouvez ajouter des contraintes supplémentaires à la requête de relation en appelant la commentsméthode et en continuant à enchaîner les conditions sur la requête :
+
+$comment = Post::find(1)->comments()
+    ->where('title', 'foo')
+    ->first();
+
+Comme la hasOneméthode, vous pouvez également remplacer les clés étrangères et locales en passant des arguments supplémentaires à la hasManyméthode :
+
+return $this->hasMany(Comment::class, 'foreign_key');
+ 
+return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
+
+Modèles parentaux hydratants automatiquement sur les enfants
+Même en utilisant le chargement rapide Eloquent, des problèmes de requête « N + 1 » peuvent survenir si vous essayez d'accéder au modèle parent à partir d'un modèle enfant tout en parcourant les modèles enfants :
+
+$posts = Post::with('comments')->get();
+ 
+foreach ($posts as $post) {
+    foreach ($post->comments as $comment) {
+        echo $comment->post->title;
+    }
+}
+
+Dans l'exemple ci-dessus, un problème de requête « N + 1 » a été introduit car, même si les commentaires ont été chargés rapidement pour chaque Postmodèle, Eloquent n'hydrate pas automatiquement le parent Postsur chaque Commentmodèle enfant.
+
+Si vous souhaitez qu'Eloquent hydrate automatiquement les modèles parents sur leurs enfants, vous pouvez invoquer la chaperoneméthode lors de la définition d'une hasManyrelation :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+ 
+class Post extends Model
+{
+    /**
+     * Get the comments for the blog post.
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->chaperone();
+    }
+}
+
+Ou, si vous souhaitez opter pour l'hydratation automatique des parents au moment de l'exécution, vous pouvez invoquer le chaperonemodèle lors du chargement anticipé de la relation :
+
+use App\Models\Post;
+ 
+$posts = Post::with([
+    'comments' => fn ($comments) => $comments->chaperone(),
+])->get();
+
+Un à plusieurs (inverse) / Appartient à
+Maintenant que nous pouvons accéder à tous les commentaires d'une publication, définissons une relation permettant à un commentaire d'accéder à sa publication parente. Pour définir l'inverse d'une hasManyrelation, définissez une méthode de relation sur le modèle enfant qui appelle la belongsTométhode :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+ 
+class Comment extends Model
+{
+    /**
+     * Get the post that owns the comment.
+     */
+    public function post(): BelongsTo
+    {
+        return $this->belongsTo(Post::class);
+    }
+}
+
+Une fois la relation définie, nous pouvons récupérer la publication parente d'un commentaire en accédant à la post« propriété de relation dynamique » :
+
+use App\Models\Comment;
+ 
+$comment = Comment::find(1);
+ 
+return $comment->post->title;
+
+Dans l'exemple ci-dessus, Eloquent tentera de trouver un Postmodèle qui possède un idqui correspond à la post_idcolonne du Commentmodèle.
+
+Eloquent détermine le nom de la clé étrangère par défaut en examinant le nom de la méthode de relation et en ajoutant au nom de la méthode un suffixe _suivi du nom de la colonne de clé primaire du modèle parent. Dans cet exemple, Eloquent suppose que la Postclé étrangère du modèle sur la commentstable est post_id.
+
+Cependant, si la clé étrangère de votre relation ne respecte pas ces conventions, vous pouvez transmettre un nom de clé étrangère personnalisé comme deuxième argument à la belongsTométhode :
+
+/**
+ * Get the post that owns the comment.
+ */
+public function post(): BelongsTo
+{
+    return $this->belongsTo(Post::class, 'foreign_key');
+}
+
+Si votre modèle parent n'utilise pas idcomme clé primaire, ou si vous souhaitez trouver le modèle associé à l'aide d'une colonne différente, vous pouvez passer un troisième argument à la belongsTométhode spécifiant la clé personnalisée de votre table parent :
+
+/**
+ * Get the post that owns the comment.
+ */
+public function post(): BelongsTo
+{
+    return $this->belongsTo(Post::class, 'foreign_key', 'owner_key');
+}
+
+Modèles par défaut
+Les relations belongsTo, hasOne, hasOneThroughet morphOnepermettent de définir un modèle par défaut qui sera renvoyé si la relation donnée est null. Ce modèle, souvent appelé « modèle d'objet nul » , permet de supprimer les vérifications conditionnelles de votre code. Dans l'exemple suivant, la userrelation renvoie un App\Models\Usermodèle vide si aucun utilisateur n'y est attachéPost :
+
+/**
+ * Get the author of the post.
+ */
+public function user(): BelongsTo
+{
+    return $this->belongsTo(User::class)->withDefault();
+}
+
+Pour remplir le modèle par défaut avec des attributs, vous pouvez passer un tableau ou une fermeture à la withDefaultméthode :
+
+/**
+ * Get the author of the post.
+ */
+public function user(): BelongsTo
+{
+    return $this->belongsTo(User::class)->withDefault([
+        'name' => 'Guest Author',
+    ]);
+}
+ 
+/**
+ * Get the author of the post.
+ */
+public function user(): BelongsTo
+{
+    return $this->belongsTo(User::class)->withDefault(function (User $user, Post $post) {
+        $user->name = 'Guest Author';
+    });
+}
+
+Interroger les relations d'appartenance
+Lors de la recherche des enfants d'une relation « appartient à », vous pouvez créer manuellement la whereclause pour récupérer les modèles Eloquent correspondants :
+
+use App\Models\Post;
+ 
+$posts = Post::where('user_id', $user->id)->get();
+
+Cependant, vous trouverez peut-être plus pratique d'utiliser la whereBelongsTométhode qui déterminera automatiquement la relation appropriée et la clé étrangère pour le modèle donné :
+
+$posts = Post::whereBelongsTo($user)->get();
+
+Vous pouvez également fournir une instance de collection à la whereBelongsTométhode. Ce faisant, Laravel récupère les modèles appartenant à l'un des modèles parents de la collection :
+
+$users = User::where('vip', true)->get();
+ 
+$posts = Post::whereBelongsTo($users)->get();
+
+Par défaut, Laravel déterminera la relation associée au modèle donné en fonction du nom de classe du modèle ; cependant, vous pouvez spécifier le nom de la relation manuellement en le fournissant comme deuxième argument de la whereBelongsTométhode :
+
+$posts = Post::whereBelongsTo($user, 'author')->get();
+
+A l'un des nombreux
+Il arrive qu'un modèle soit lié à de nombreux modèles, mais que vous souhaitiez facilement récupérer le modèle le plus récent ou le plus ancien de la relation. Par exemple, un Usermodèle peut être lié à plusieurs Ordermodèles, mais vous souhaitez définir un moyen pratique d'interagir avec la commande la plus récente passée par l'utilisateur. Pour ce faire, utilisez le hasOnetype de relation associé aux ofManyméthodes suivantes :
+
+/**
+ * Get the user's most recent order.
+ */
+public function latestOrder(): HasOne
+{
+    return $this->hasOne(Order::class)->latestOfMany();
+}
+
+De même, vous pouvez définir une méthode pour récupérer le « plus ancien », ou le premier modèle associé d'une relation :
+
+/**
+ * Get the user's oldest order.
+ */
+public function oldestOrder(): HasOne
+{
+    return $this->hasOne(Order::class)->oldestOfMany();
+}
+
+Par défaut, les méthodes latestOfManyet oldestOfManyrécupèrent le modèle associé le plus récent ou le plus ancien en fonction de sa clé primaire, qui doit être triable. Cependant, il peut arriver que vous souhaitiez récupérer un seul modèle d'une relation plus large en utilisant des critères de tri différents.
+
+Par exemple, cette ofManyméthode permet de récupérer la commande la plus chère de l'utilisateur. ofManyElle accepte la colonne triable comme premier argument et la fonction d'agrégation ( minou max) à appliquer lors de l'interrogation du modèle associé :
+
+/**
+ * Get the user's largest order.
+ */
+public function largestOrder(): HasOne
+{
+    return $this->hasOne(Order::class)->ofMany('price', 'max');
+}
+
+Étant donné que PostgreSQL ne prend pas en charge l’exécution de la MAXfonction sur les colonnes UUID, il n’est actuellement pas possible d’utiliser des relations un parmi plusieurs en combinaison avec les colonnes UUID PostgreSQL.
+
+Conversion de relations « plusieurs » en relations « a un »
+Souvent, lors de la récupération d'un modèle unique à l'aide des méthodes latestOfMany, oldestOfManyou ofMany, une relation « a plusieurs » est déjà définie pour ce même modèle. Pour plus de commodité, Laravel vous permet de convertir facilement cette relation en relation « a un » en invoquant la oneméthode sur la relation :
+
+/**
+ * Get the user's orders.
+ */
+public function orders(): HasMany
+{
+    return $this->hasMany(Order::class);
+}
+ 
+/**
+ * Get the user's largest order.
+ */
+public function largestOrder(): HasOne
+{
+    return $this->orders()->one()->ofMany('price', 'max');
+}
+
+Vous pouvez également utiliser la oneméthode pour convertir HasManyThroughdes relations en HasOneThroughrelations :
+
+public function latestDeployment(): HasOneThrough
+{
+    return $this->deployments()->one()->latestOfMany();
+}
+
+Advanced a l'une des nombreuses relations
+Il est possible de construire des relations plus avancées de type « possède un élément parmi plusieurs ». Par exemple, un Productmodèle peut être associé à de nombreux Pricemodèles, conservés dans le système même après la publication d'un nouveau prix. De plus, les nouvelles données de prix du produit peuvent être publiées à l'avance et prendre effet ultérieurement via une published_atcolonne.
+
+En résumé, nous devons récupérer le dernier prix publié lorsque la date de publication n'est pas dans le futur. De plus, si deux prix ont la même date de publication, nous privilégierons le prix ayant l'ID le plus élevé. Pour ce faire, nous devons transmettre à la ofManyméthode un tableau contenant les colonnes triables qui déterminent le dernier prix. De plus, une fermeture sera fournie comme second argument à la ofManyméthode. Cette fermeture permettra d'ajouter des contraintes de date de publication supplémentaires à la requête relationnelle :
+
+/**
+ * Get the current pricing for the product.
+ */
+public function currentPricing(): HasOne
+{
+    return $this->hasOne(Price::class)->ofMany([
+        'published_at' => 'max',
+        'id' => 'max',
+    ], function (Builder $query) {
+        $query->where('published_at', '<', now());
+    });
+}
+
+A un à travers
+La relation « has-one-through » définit une relation biunivoque avec un autre modèle. Cependant, cette relation indique que le modèle déclarant peut être mis en correspondance avec une instance d'un autre modèle en passant par un troisième modèle.
+
+Par exemple, dans une application de réparation automobile, chaque Mechanicmodèle peut être associé à un autre Carmodèle, et chaque Carmodèle peut être associé à un autre Ownermodèle. Bien que le mécanicien et le propriétaire n'aient pas de relation directe dans la base de données, le mécanicien peut accéder au propriétaire via le Carmodèle. Examinons les tables nécessaires à la définition de cette relation :
+
+mechanics
+    id - integer
+    name - string
+cars
+    id - integer
+    model - string
+    mechanic_id - integer
+owners
+    id - integer
+    name - string
+    car_id - integer
+
+Maintenant que nous avons examiné la structure de la table pour la relation, définissons la relation sur le Mechanicmodèle :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+ 
+class Mechanic extends Model
+{
+    /**
+     * Get the car's owner.
+     */
+    public function carOwner(): HasOneThrough
+    {
+        return $this->hasOneThrough(Owner::class, Car::class);
+    }
+}
+
+Le premier argument passé à la hasOneThroughméthode est le nom du modèle final auquel nous souhaitons accéder, tandis que le deuxième argument est le nom du modèle intermédiaire.
+
+Ou, si les relations pertinentes ont déjà été définies sur tous les modèles impliqués dans la relation, vous pouvez facilement définir une relation « has-one-through » en invoquant la throughméthode et en fournissant les noms de ces relations. Par exemple, si le Mechanicmodèle a une carsrelation et que le Carmodèle a une ownerrelation, vous pouvez définir une relation « has-one-through » reliant le mécanicien et le propriétaire comme suit :
+
+// String based syntax...
+return $this->through('cars')->has('owner');
+ 
+// Dynamic syntax...
+return $this->throughCars()->hasOwner();
+
+Conventions clés
+Les conventions de clés étrangères Eloquent standard seront utilisées lors de l'exécution des requêtes de la relation. Si vous souhaitez personnaliser les clés de la relation, vous pouvez les passer comme troisième et quatrième arguments à la hasOneThroughméthode. Le troisième argument correspond au nom de la clé étrangère du modèle intermédiaire. Le quatrième argument correspond au nom de la clé étrangère du modèle final. Le cinquième argument correspond à la clé locale, tandis que le sixième argument correspond à la clé locale du modèle intermédiaire :
+
+class Mechanic extends Model
+{
+    /**
+     * Get the car's owner.
+     */
+    public function carOwner(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Owner::class,
+            Car::class,
+            'mechanic_id', // Foreign key on the cars table...
+            'car_id', // Foreign key on the owners table...
+            'id', // Local key on the mechanics table...
+            'id' // Local key on the cars table...
+        );
+    }
+}
+
+Ou, comme indiqué précédemment, si les relations pertinentes ont déjà été définies sur tous les modèles impliqués dans la relation, vous pouvez facilement définir une relation « has-one-through » en invoquant la throughméthode et en fournissant les noms de ces relations. Cette approche offre l'avantage de réutiliser les conventions clés déjà définies sur les relations existantes :
+
+// String based syntax...
+return $this->through('cars')->has('owner');
+ 
+// Dynamic syntax...
+return $this->throughCars()->hasOwner();
+
+A beaucoup à travers
+La relation « has-many-through » offre un moyen pratique d'accéder à des relations distantes via une relation intermédiaire. Par exemple, supposons que nous développions une plateforme de déploiement comme Laravel Cloud . Un Applicationmodèle pourrait accéder à plusieurs Deploymentmodèles via un Environmentmodèle intermédiaire. Avec cet exemple, vous pourriez facilement rassembler tous les déploiements d'une application donnée. Examinons les tables nécessaires à la définition de cette relation :
+
+applications
+    id - integer
+    name - string
+environments
+    id - integer
+    application_id - integer
+    name - string
+deployments
+    id - integer
+    environment_id - integer
+    commit_hash - string
+
+Maintenant que nous avons examiné la structure de la table pour la relation, définissons la relation sur le Applicationmodèle :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+ 
+class Application extends Model
+{
+    /**
+     * Get all of the deployments for the application.
+     */
+    public function deployments(): HasManyThrough
+    {
+        return $this->hasManyThrough(Deployment::class, Environment::class);
+    }
+}
+
+Le premier argument passé à la hasManyThroughméthode est le nom du modèle final auquel nous souhaitons accéder, tandis que le deuxième argument est le nom du modèle intermédiaire.
+
+Ou, si les relations pertinentes ont déjà été définies sur tous les modèles impliqués, vous pouvez facilement définir une relation « a-plusieurs-passants » en invoquant la throughméthode et en fournissant les noms de ces relations. Par exemple, si le Applicationmodèle a une environmentsrelation et que le Environmentmodèle a une deploymentsrelation, vous pouvez définir une relation « a-plusieurs-passants » reliant l'application et les déploiements comme suit :
+
+// String based syntax...
+return $this->through('environments')->has('deployments');
+ 
+// Dynamic syntax...
+return $this->throughEnvironments()->hasDeployments();
+
+Bien que la Deploymenttable du modèle ne contienne pas de application_idcolonne, la hasManyThroughrelation permet d'accéder aux déploiements d'une application via $application->deployments. Pour récupérer ces modèles, Eloquent inspecte la application_idcolonne de la Environmenttable du modèle intermédiaire. Après avoir trouvé les identifiants d'environnement pertinents, ils sont utilisés pour interroger la Deploymenttable du modèle.
+
+Conventions clés
+Les conventions de clés étrangères Eloquent standard seront utilisées lors de l'exécution des requêtes de la relation. Si vous souhaitez personnaliser les clés de la relation, vous pouvez les passer comme troisième et quatrième arguments à la hasManyThroughméthode. Le troisième argument correspond au nom de la clé étrangère du modèle intermédiaire. Le quatrième argument correspond au nom de la clé étrangère du modèle final. Le cinquième argument correspond à la clé locale, tandis que le sixième argument correspond à la clé locale du modèle intermédiaire :
+
+class Application extends Model
+{
+    public function deployments(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Deployment::class,
+            Environment::class,
+            'application_id', // Foreign key on the environments table...
+            'environment_id', // Foreign key on the deployments table...
+            'id', // Local key on the applications table...
+            'id' // Local key on the environments table...
+        );
+    }
+}
+
+Ou, comme indiqué précédemment, si les relations pertinentes ont déjà été définies sur tous les modèles impliqués dans la relation, vous pouvez facilement définir une relation « a-plusieurs-passants » en invoquant la throughméthode et en fournissant les noms de ces relations. Cette approche offre l'avantage de réutiliser les conventions clés déjà définies sur les relations existantes :
+
+// String based syntax...
+return $this->through('environments')->has('deployments');
+ 
+// Dynamic syntax...
+return $this->throughEnvironments()->hasDeployments();
+
+Relations délimitées
+Il est courant d'ajouter des méthodes supplémentaires aux modèles pour contraindre les relations. Par exemple, vous pouvez ajouter une featuredPostsméthode à un Usermodèle qui contraint la postsrelation globale avec une wherecontrainte supplémentaire :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+ 
+class User extends Model
+{
+    /**
+     * Get the user's posts.
+     */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class)->latest();
+    }
+ 
+    /**
+     * Get the user's featured posts.
+     */
+    public function featuredPosts(): HasMany
+    {
+        return $this->posts()->where('featured', true);
+    }
+}
+
+Cependant, si vous tentez de créer un modèle via cette featuredPostsméthode, son featuredattribut ne sera pas défini sur true. Si vous souhaitez créer des modèles via des méthodes de relation et spécifier les attributs à ajouter à tous les modèles créés via cette relation, vous pouvez utiliser cette withAttributesméthode lors de la création de la requête de relation :
+
+/**
+ * Get the user's featured posts.
+ */
+public function featuredPosts(): HasMany
+{
+    return $this->posts()->withAttributes(['featured' => true]);
+}
+
+La withAttributesméthode ajoutera wheredes conditions à la requête en utilisant les attributs donnés, et elle ajoutera également les attributs donnés à tous les modèles créés via la méthode de relation :
+
+$post = $user->featuredPosts()->create(['title' => 'Featured Post']);
+ 
+$post->featured; // true
+
+Pour indiquer à la withAttributesméthode de ne pas ajouter wherede conditions à la requête, vous pouvez définir l' asConditionsargument surfalse :
+
+return $this->posts()->withAttributes(['featured' => true], asConditions: false);
+
+Relations plusieurs à plusieurs
+Les relations plusieurs-à-plusieurs sont légèrement plus complexes que les relations hasOneet hasMany. Un exemple de relation plusieurs-à-plusieurs est un utilisateur possédant plusieurs rôles, partagés par d'autres utilisateurs de l'application. Par exemple, un utilisateur peut se voir attribuer les rôles « Auteur » et « Éditeur », mais ces rôles peuvent également être attribués à d'autres utilisateurs. Ainsi, un utilisateur possède plusieurs rôles et un rôle possède plusieurs utilisateurs.
+
+Structure du tableau
+Pour définir cette relation, trois tables de base de données sont nécessaires : users, roleset role_user. La role_usertable est dérivée de l'ordre alphabétique des noms de modèles associés et contient user_idet role_iddes colonnes. Cette table sert de table intermédiaire reliant les utilisateurs et les rôles.
+
+N'oubliez pas qu'un rôle pouvant appartenir à plusieurs utilisateurs, il est impossible de simplement placer une user_idcolonne dans la rolestable. Cela signifierait qu'un rôle ne pourrait appartenir qu'à un seul utilisateur. Pour permettre l'attribution de rôles à plusieurs utilisateurs, la role_usertable est nécessaire. La structure de la table de relation peut être résumée ainsi :
+
+users
+    id - integer
+    name - string
+roles
+    id - integer
+    name - string
+role_user
+    user_id - integer
+    role_id - integer
+
+Structure du modèle
+Les relations plusieurs-à-plusieurs sont définies par l'écriture d'une méthode qui renvoie son résultat belongsToMany. Cette belongsToManyméthode est fournie par la Illuminate\Database\Eloquent\Modelclasse de base utilisée par tous les modèles Eloquent de votre application. Par exemple, définissons une rolesméthode sur notre Usermodèle. Le premier argument passé à cette méthode est le nom de la classe du modèle concerné :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+ 
+class User extends Model
+{
+    /**
+     * The roles that belong to the user.
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class);
+    }
+}
+
+Une fois la relation définie, vous pouvez accéder aux rôles de l'utilisateur à l'aide de la rolespropriété de relation dynamique :
+
+use App\Models\User;
+ 
+$user = User::find(1);
+ 
+foreach ($user->roles as $role) {
+    // ...
+}
+
+Étant donné que toutes les relations servent également de générateurs de requêtes, vous pouvez ajouter des contraintes supplémentaires à la requête de relation en appelant la rolesméthode et en continuant à enchaîner les conditions sur la requête :
+
+$roles = User::find(1)->roles()->orderBy('name')->get();
+
+Pour déterminer le nom de la table intermédiaire de la relation, Eloquent joint les noms des deux modèles associés par ordre alphabétique. Vous pouvez toutefois outrepasser cette convention en passant un second argument à la belongsToManyméthode :
+
+return $this->belongsToMany(Role::class, 'role_user');
+
+Outre la personnalisation du nom de la table intermédiaire, vous pouvez également personnaliser les noms de colonnes des clés de la table en passant des arguments supplémentaires à la belongsToManyméthode. Le troisième argument correspond au nom de la clé étrangère du modèle sur lequel vous définissez la relation, tandis que le quatrième argument correspond au nom de la clé étrangère du modèle auquel vous effectuez la jointure :
+
+return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
+
+Définir l'inverse de la relation
+Pour définir l'« inverse » d'une relation plusieurs-à-plusieurs, vous devez définir une méthode sur le modèle associé, qui renvoie également son résultat belongsToMany. Pour compléter notre exemple utilisateur/rôle, définissons la usersméthode sur le Rolemodèle :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+ 
+class Role extends Model
+{
+    /**
+     * The users that belong to the role.
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+}
+
+Comme vous pouvez le constater, la relation est définie exactement de la même manière que son Userhomologue du modèle, à l'exception du référencement du App\Models\Usermodèle. Puisque nous réutilisons la belongsToManyméthode, toutes les options habituelles de personnalisation des tables et des clés sont disponibles lors de la définition de l'« inverse » des relations plusieurs-à-plusieurs.
+
+Récupération des colonnes de la table intermédiaire
+Comme vous l'avez déjà appris, travailler avec des relations plusieurs-à-plusieurs nécessite la présence d'une table intermédiaire. Eloquent propose des moyens très utiles d'interagir avec cette table. Par exemple, supposons que notre Usermodèle soit Rolelié à de nombreux modèles. Après avoir accédé à cette relation, nous pouvons accéder à la table intermédiaire grâce à l' pivotattribut des modèles :
+
+use App\Models\User;
+ 
+$user = User::find(1);
+ 
+foreach ($user->roles as $role) {
+    echo $role->pivot->created_at;
+}
+
+Notez qu'un attribut Roleest automatiquement attribué à chaque modèle récupéré pivot. Cet attribut contient un modèle représentant la table intermédiaire.
+
+Par défaut, seules les clés du modèle sont présentes dans le pivotmodèle. Si votre table intermédiaire contient des attributs supplémentaires, vous devez les spécifier lors de la définition de la relation :
+
+return $this->belongsToMany(Role::class)->withPivot('active', 'created_by');
+
+Si vous souhaitez que votre table intermédiaire dispose created_atd' updated_athorodatages automatiquement maintenus par Eloquent, appelez la withTimestampsméthode lors de la définition de la relation :
+
+return $this->belongsToMany(Role::class)->withTimestamps();
+
+Les tables intermédiaires qui utilisent les horodatages gérés automatiquement par Eloquent doivent avoir à la fois des colonnes d'horodatage created_atet updated_atd'horodatage.
+
+Personnalisation du pivotnom de l'attribut
+Comme indiqué précédemment, les attributs de la table intermédiaire sont accessibles sur les modèles via l' pivotattribut. Vous pouvez toutefois personnaliser le nom de cet attribut pour mieux refléter son rôle dans votre application.
+
+Par exemple, si votre application contient des utilisateurs susceptibles de s'abonner à des podcasts, il existe probablement une relation plusieurs-à-plusieurs entre les utilisateurs et les podcasts. Dans ce cas, vous pouvez renommer l'attribut de votre table intermédiaire en subscriptionplutôt qu'en pivot. Pour ce faire, utilisez la asméthode suivante lors de la définition de la relation :
+
+return $this->belongsToMany(Podcast::class)
+    ->as('subscription')
+    ->withTimestamps();
+
+Une fois l'attribut de table intermédiaire personnalisé spécifié, vous pouvez accéder aux données de la table intermédiaire en utilisant le nom personnalisé :
+
+$users = User::with('podcasts')->get();
+ 
+foreach ($users->flatMap->podcasts as $podcast) {
+    echo $podcast->subscription->created_at;
+}
+
+Filtrage des requêtes via les colonnes de la table intermédiaire
+Vous pouvez également filtrer les résultats renvoyés par belongsToManyles requêtes de relation à l'aide des méthodes wherePivot, wherePivotIn, wherePivotNotIn, wherePivotBetween, wherePivotNotBetween, wherePivotNullet wherePivotNotNulllors de la définition de la relation :
+
+return $this->belongsToMany(Role::class)
+    ->wherePivot('approved', 1);
+ 
+return $this->belongsToMany(Role::class)
+    ->wherePivotIn('priority', [1, 2]);
+ 
+return $this->belongsToMany(Role::class)
+    ->wherePivotNotIn('priority', [1, 2]);
+ 
+return $this->belongsToMany(Podcast::class)
+    ->as('subscriptions')
+    ->wherePivotBetween('created_at', ['2020-01-01 00:00:00', '2020-12-31 00:00:00']);
+ 
+return $this->belongsToMany(Podcast::class)
+    ->as('subscriptions')
+    ->wherePivotNotBetween('created_at', ['2020-01-01 00:00:00', '2020-12-31 00:00:00']);
+ 
+return $this->belongsToMany(Podcast::class)
+    ->as('subscriptions')
+    ->wherePivotNull('expired_at');
+ 
+return $this->belongsToMany(Podcast::class)
+    ->as('subscriptions')
+    ->wherePivotNotNull('expired_at');
+
+La méthode wherePivotajoute une contrainte de clause WHERE à la requête, mais n'ajoute pas la valeur spécifiée lors de la création de nouveaux modèles via la relation définie. Si vous devez à la fois interroger et créer des relations avec une valeur pivot particulière, vous pouvez utiliser la withPivotValueméthode suivante :
+
+return $this->belongsToMany(Role::class)
+    ->withPivotValue('approved', 1);
+
+Ordonner des requêtes via des colonnes de table intermédiaires
+Vous pouvez trier les résultats renvoyés par belongsToManyles requêtes relationnelles à l'aide de la orderByPivotméthode suivante. Dans l'exemple suivant, nous allons récupérer tous les derniers badges de l'utilisateur :
+
+return $this->belongsToMany(Badge::class)
+    ->where('rank', 'gold')
+    ->orderByPivot('created_at', 'desc');
+
+Définition de modèles de tables intermédiaires personnalisées
+Si vous souhaitez définir un modèle personnalisé pour représenter la table intermédiaire de votre relation plusieurs-à-plusieurs, vous pouvez appeler la usingméthode lors de la définition de la relation. Les modèles pivot personnalisés vous permettent de définir des comportements supplémentaires, tels que des méthodes et des conversions.
+
+Les modèles pivots plusieurs-à-plusieurs personnalisés doivent étendre la Illuminate\Database\Eloquent\Relations\Pivotclasse, tandis que les modèles pivots plusieurs-à-plusieurs polymorphes personnalisés doivent étendre la Illuminate\Database\Eloquent\Relations\MorphPivotclasse. Par exemple, nous pouvons définir un Rolemodèle utilisant un RoleUsermodèle pivot personnalisé :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+ 
+class Role extends Model
+{
+    /**
+     * The users that belong to the role.
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)->using(RoleUser::class);
+    }
+}
+
+Lors de la définition du RoleUsermodèle, vous devez étendre la Illuminate\Database\Eloquent\Relations\Pivotclasse :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Relations\Pivot;
+ 
+class RoleUser extends Pivot
+{
+    // ...
+}
+
+Les modèles pivot ne peuvent pas utiliser cette SoftDeletescaractéristique. Si vous devez supprimer des enregistrements pivot de manière réversible, pensez à convertir votre modèle pivot en modèle Eloquent.
+
+Modèles de pivot personnalisés et identifiants incrémentiels
+Si vous avez défini une relation plusieurs-à-plusieurs qui utilise un modèle pivot personnalisé et que ce modèle pivot possède une clé primaire à incrémentation automatique, vous devez vous assurer que votre classe de modèle pivot personnalisé définit une incrementingpropriété définie sur true.
+
+/**
+ * Indicates if the IDs are auto-incrementing.
+ *
+ * @var bool
+ */
+public $incrementing = true;
+
+Relations polymorphes
+Une relation polymorphe permet au modèle enfant d'appartenir à plusieurs types de modèles via une seule association. Imaginez, par exemple, que vous développiez une application permettant aux utilisateurs de partager des articles de blog et des vidéos. Dans une telle application, un Commentmodèle pourrait appartenir aux modèles Postet Video.
+
+Un à un (polymorphe)
+Structure du tableau
+Une relation polymorphe biunivoque est similaire à une relation biunivoque classique ; toutefois, le modèle enfant peut appartenir à plusieurs types de modèles via une seule association. Par exemple, un blog Postet un modèle Userpeuvent partager une relation polymorphe Image. L'utilisation d'une relation polymorphe biunivoque permet de disposer d'une table unique d'images uniques pouvant être associées à des publications et à des utilisateurs. Commençons par examiner la structure de la table :
+
+posts
+    id - integer
+    name - string
+users
+    id - integer
+    name - string
+images
+    id - integer
+    url - string
+    imageable_id - integer
+    imageable_type - string
+
+Notez les colonnes imageable_idet imageable_typedu imagestableau. Chaque imageable_idcolonne contient l'identifiant de la publication ou de l'utilisateur, tandis que l' imageable_typeautre contient le nom de la classe du modèle parent. imageable_typeEloquent utilise cette colonne pour déterminer le type de modèle parent à renvoyer lors de l'accès à la imageablerelation. Dans ce cas, la colonne contiendrait soit ` App\Models\Postor` App\Models\User.
+
+Structure du modèle
+Ensuite, examinons les définitions de modèle nécessaires pour construire cette relation :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+ 
+class Image extends Model
+{
+    /**
+     * Get the parent imageable model (user or post).
+     */
+    public function imageable(): MorphTo
+    {
+        return $this->morphTo();
+    }
+}
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+ 
+class Post extends Model
+{
+    /**
+     * Get the post's image.
+     */
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+}
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+ 
+class User extends Model
+{
+    /**
+     * Get the user's image.
+     */
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+}
+
+Récupérer la relation
+Une fois votre table de base de données et vos modèles définis, vous pouvez accéder aux relations via vos modèles. Par exemple, pour récupérer l'image d'un article, nous pouvons accéder à la imagepropriété de relation dynamique :
+
+use App\Models\Post;
+ 
+$post = Post::find(1);
+ 
+$image = $post->image;
+
+Vous pouvez récupérer le parent du modèle polymorphe en accédant au nom de la méthode qui effectue l'appel à morphTo. Dans ce cas, il s'agit de la imageableméthode du Imagemodèle. Nous y accéderons donc comme une propriété de relation dynamique :
+
+use App\Models\Image;
+ 
+$image = Image::find(1);
+ 
+$imageable = $image->imageable;
+
+La imageablerelation sur le Imagemodèle renverra soit une instance, Postsoit une Userinstance, selon le type de modèle propriétaire de l'image.
+
+Conventions clés
+Si nécessaire, vous pouvez spécifier le nom des colonnes « id » et « type » utilisées par votre modèle enfant polymorphe. Dans ce cas, veillez à toujours transmettre le nom de la relation comme premier argument de la morphTométhode. En général, cette valeur doit correspondre au nom de la méthode ; vous pouvez donc utiliser la constante PHP__FUNCTION__ :
+
+/**
+ * Get the model that the image belongs to.
+ */
+public function imageable(): MorphTo
+{
+    return $this->morphTo(__FUNCTION__, 'imageable_type', 'imageable_id');
+}
+
+Un à plusieurs (polymorphe)
+Structure du tableau
+Une relation polymorphe un-à-plusieurs est similaire à une relation un-à-plusieurs classique ; toutefois, le modèle enfant peut appartenir à plusieurs types de modèles via une seule association. Par exemple, imaginez que les utilisateurs de votre application puissent commenter des publications et des vidéos. Grâce aux relations polymorphes, vous pouvez utiliser une seule commentstable pour contenir les commentaires des publications et des vidéos. Examinons d'abord la structure de table nécessaire à la construction de cette relation :
+
+posts
+    id - integer
+    title - string
+    body - text
+videos
+    id - integer
+    title - string
+    url - string
+comments
+    id - integer
+    body - text
+    commentable_id - integer
+    commentable_type - string
+
+Structure du modèle
+Ensuite, examinons les définitions de modèle nécessaires pour construire cette relation :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+ 
+class Comment extends Model
+{
+    /**
+     * Get the parent commentable model (post or video).
+     */
+    public function commentable(): MorphTo
+    {
+        return $this->morphTo();
+    }
+}
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+ 
+class Post extends Model
+{
+    /**
+     * Get all of the post's comments.
+     */
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+}
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+ 
+class Video extends Model
+{
+    /**
+     * Get all of the video's comments.
+     */
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+}
+
+Récupérer la relation
+Une fois votre table de base de données et vos modèles définis, vous pouvez accéder aux relations via les propriétés de relations dynamiques de votre modèle. Par exemple, pour accéder à tous les commentaires d'un article, nous pouvons utiliser la commentspropriété dynamique :
+
+use App\Models\Post;
+ 
+$post = Post::find(1);
+ 
+foreach ($post->comments as $comment) {
+    // ...
+}
+
+Vous pouvez également récupérer le parent d'un modèle enfant polymorphe en accédant au nom de la méthode qui effectue l'appel à morphTo. Dans ce cas, il s'agit de la commentableméthode du Commentmodèle. Nous accéderons donc à cette méthode comme propriété de relation dynamique afin d'accéder au modèle parent du commentaire :
+
+use App\Models\Comment;
+ 
+$comment = Comment::find(1);
+ 
+$commentable = $comment->commentable;
+
+La commentablerelation sur le Commentmodèle renverra soit une instance, Postsoit une Videoinstance, selon le type de modèle parent du commentaire.
+
+Modèles parentaux hydratants automatiquement sur les enfants
+Même en utilisant le chargement rapide Eloquent, des problèmes de requête « N + 1 » peuvent survenir si vous essayez d'accéder au modèle parent à partir d'un modèle enfant tout en parcourant les modèles enfants :
+
+$posts = Post::with('comments')->get();
+ 
+foreach ($posts as $post) {
+    foreach ($post->comments as $comment) {
+        echo $comment->commentable->title;
+    }
+}
+
+Dans l'exemple ci-dessus, un problème de requête « N + 1 » a été introduit car, même si les commentaires ont été chargés rapidement pour chaque Postmodèle, Eloquent n'hydrate pas automatiquement le parent Postsur chaque Commentmodèle enfant.
+
+Si vous souhaitez qu'Eloquent hydrate automatiquement les modèles parents sur leurs enfants, vous pouvez invoquer la chaperoneméthode lors de la définition d'une morphManyrelation :
+
+class Post extends Model
+{
+    /**
+     * Get all of the post's comments.
+     */
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable')->chaperone();
+    }
+}
+
+Ou, si vous souhaitez opter pour l'hydratation automatique des parents au moment de l'exécution, vous pouvez invoquer le chaperonemodèle lors du chargement anticipé de la relation :
+
+use App\Models\Post;
+ 
+$posts = Post::with([
+    'comments' => fn ($comments) => $comments->chaperone(),
+])->get();
+
+Un parmi tant d'autres (polymorphe)
+Il arrive qu'un modèle soit lié à de nombreux modèles, mais que vous souhaitiez facilement récupérer le modèle le plus récent ou le plus ancien de la relation. Par exemple, un Usermodèle peut être lié à plusieurs Imagemodèles, mais vous souhaitez définir un moyen pratique d'interagir avec l'image la plus récente téléchargée par l'utilisateur. Pour ce faire, utilisez le morphOnetype de relation associé aux ofManyméthodes suivantes :
+
+/**
+ * Get the user's most recent image.
+ */
+public function latestImage(): MorphOne
+{
+    return $this->morphOne(Image::class, 'imageable')->latestOfMany();
+}
+
+De même, vous pouvez définir une méthode pour récupérer le « plus ancien », ou le premier modèle associé d'une relation :
+
+/**
+ * Get the user's oldest image.
+ */
+public function oldestImage(): MorphOne
+{
+    return $this->morphOne(Image::class, 'imageable')->oldestOfMany();
+}
+
+Par défaut, les méthodes latestOfManyet oldestOfManyrécupèrent le modèle associé le plus récent ou le plus ancien en fonction de sa clé primaire, qui doit être triable. Cependant, il peut arriver que vous souhaitiez récupérer un seul modèle d'une relation plus large en utilisant des critères de tri différents.
+
+Par exemple, cette ofManyméthode permet de récupérer l'image la plus appréciée de l'utilisateur. ofManyElle accepte la colonne triable comme premier argument et la fonction d'agrégation ( minou max) à appliquer lors de l'interrogation du modèle associé :
+
+/**
+ * Get the user's most popular image.
+ */
+public function bestImage(): MorphOne
+{
+    return $this->morphOne(Image::class, 'imageable')->ofMany('likes', 'max');
+}
+
+Il est possible de construire des relations « un parmi plusieurs » plus avancées. Pour plus d'informations, veuillez consulter la documentation « a un parmi plusieurs » .
+
+Plusieurs à plusieurs (polymorphe)
+Structure du tableau
+Les relations polymorphes plusieurs-à-plusieurs sont légèrement plus complexes que les relations « morph one » et « morph many ». Par exemple, un Postmodèle et Videoun modèle pourraient partager une relation polymorphe avec un autre Tagmodèle. Dans ce cas, l'utilisation d'une relation polymorphe plusieurs-à-plusieurs permettrait à votre application de disposer d'une table unique de balises uniques pouvant être associées à des publications ou des vidéos. Examinons d'abord la structure de table nécessaire à la construction de cette relation :
+
+posts
+    id - integer
+    name - string
+videos
+    id - integer
+    name - string
+tags
+    id - integer
+    name - string
+taggables
+    tag_id - integer
+    taggable_id - integer
+    taggable_type - string
+
+Avant de vous plonger dans les relations plusieurs-à-plusieurs polymorphes, vous pourriez bénéficier de la lecture de la documentation sur les relations plusieurs-à-plusieurs typiques .
+
+Structure du modèle
+Nous sommes maintenant prêts à définir les relations entre les modèles. Les modèles Postet Videocontiendront tous deux une tagsméthode appelant la morphToManyméthode fournie par la classe de base du modèle Eloquent.
+
+La morphToManyméthode accepte le nom du modèle associé ainsi que le nom de la relation. En fonction du nom attribué à notre table intermédiaire et des clés qu'elle contient, nous qualifierons la relation de « taggable » :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+ 
+class Post extends Model
+{
+    /**
+     * Get all of the tags for the post.
+     */
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
+}
+
+Définir l'inverse de la relation
+Ensuite, sur le Tagmodèle, vous devez définir une méthode pour chacun de ses modèles parents possibles. Dans cet exemple, nous allons définir une postsméthode et une videosméthode. Ces deux méthodes doivent renvoyer le résultat de la morphedByManyméthode.
+
+La morphedByManyméthode accepte le nom du modèle associé ainsi que le nom de la relation. En fonction du nom attribué à notre table intermédiaire et des clés qu'elle contient, nous qualifierons la relation de « taggable » :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+ 
+class Tag extends Model
+{
+    /**
+     * Get all of the posts that are assigned this tag.
+     */
+    public function posts(): MorphToMany
+    {
+        return $this->morphedByMany(Post::class, 'taggable');
+    }
+ 
+    /**
+     * Get all of the videos that are assigned this tag.
+     */
+    public function videos(): MorphToMany
+    {
+        return $this->morphedByMany(Video::class, 'taggable');
+    }
+}
+
+Récupérer la relation
+Une fois votre table de base de données et vos modèles définis, vous pouvez accéder aux relations via vos modèles. Par exemple, pour accéder à toutes les balises d'un article, vous pouvez utiliser la tagspropriété de relation dynamique :
+
+use App\Models\Post;
+ 
+$post = Post::find(1);
+ 
+foreach ($post->tags as $tag) {
+    // ...
+}
+
+Vous pouvez récupérer le parent d'une relation polymorphe à partir du modèle enfant polymorphe en accédant au nom de la méthode qui appelle morphedByMany. Dans ce cas, il s'agit des méthodes postsou videosdu Tagmodèle :
+
+use App\Models\Tag;
+ 
+$tag = Tag::find(1);
+ 
+foreach ($tag->posts as $post) {
+    // ...
+}
+ 
+foreach ($tag->videos as $video) {
+    // ...
+}
+
+Types polymorphes personnalisés
+Par défaut, Laravel utilise le nom de classe complet pour stocker le « type » du modèle associé. Par exemple, dans l'exemple de relation un-à-plusieurs ci-dessus, où un Commentmodèle peut appartenir à un modèle Postou à un Videomodèle, la valeur par défaut commentable_typeserait respectivement « aApp\Models\Post » ou « aApp\Models\Video ». Cependant, vous pouvez souhaiter dissocier ces valeurs de la structure interne de votre application.
+
+Par exemple, au lieu d'utiliser les noms de modèles comme « type », nous pouvons utiliser des chaînes simples telles que postet video. Ainsi, les valeurs polymorphes de la colonne « type » de notre base de données resteront valides même si les modèles sont renommés :
+
+use Illuminate\Database\Eloquent\Relations\Relation;
+ 
+Relation::enforceMorphMap([
+    'post' => 'App\Models\Post',
+    'video' => 'App\Models\Video',
+]);
+
+Vous pouvez appeler la enforceMorphMapméthode dans la bootméthode de votre App\Providers\AppServiceProviderclasse ou créer un fournisseur de services distinct si vous le souhaitez.
+
+Vous pouvez déterminer l'alias de morphing d'un modèle donné à l'exécution grâce à la getMorphClassméthode du modèle. Inversement, vous pouvez déterminer le nom de classe complet associé à un alias de morphing grâce à la Relation::getMorphedModelméthode suivante :
+
+use Illuminate\Database\Eloquent\Relations\Relation;
+ 
+$alias = $post->getMorphClass();
+ 
+$class = Relation::getMorphedModel($alias);
+
+Lorsque vous ajoutez une « carte morph » à votre application existante, chaque *_typevaleur de colonne morphable dans votre base de données qui contient toujours une classe entièrement qualifiée devra être convertie en son nom de « carte ».
+
+Relations dynamiques
+Vous pouvez utiliser cette resolveRelationUsingméthode pour définir les relations entre les modèles Eloquent lors de l'exécution. Bien que généralement déconseillée pour le développement d'applications classiques, elle peut parfois s'avérer utile lors du développement de packages Laravel.
+
+La resolveRelationUsingméthode accepte le nom de la relation souhaitée comme premier argument. Le second argument transmis à la méthode doit être une fermeture acceptant l'instance de modèle et renvoyant une définition de relation Eloquent valide. En règle générale, vous devez configurer des relations dynamiques dans la méthode de démarrage d'un fournisseur de services :
+
+use App\Models\Order;
+use App\Models\Customer;
+ 
+Order::resolveRelationUsing('customer', function (Order $orderModel) {
+    return $orderModel->belongsTo(Customer::class, 'customer_id');
+});
+
+Lors de la définition de relations dynamiques, fournissez toujours des arguments de nom de clé explicites aux méthodes de relation Eloquent.
+
+Interrogation des relations
+Comme toutes les relations Eloquent sont définies via des méthodes, vous pouvez appeler ces méthodes pour obtenir une instance de la relation sans exécuter de requête pour charger les modèles associés. De plus, tous les types de relations Eloquent servent également de générateurs de requêtes , vous permettant d'enchaîner des contraintes sur la requête de relation avant d'exécuter la requête SQL sur votre base de données.
+
+Par exemple, imaginez une application de blog dans laquelle un Usermodèle a de nombreux Postmodèles associés :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+ 
+class User extends Model
+{
+    /**
+     * Get all of the posts for the user.
+     */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+}
+
+Vous pouvez interroger la postsrelation et ajouter des contraintes supplémentaires à la relation comme suit :
+
+use App\Models\User;
+ 
+$user = User::find(1);
+ 
+$user->posts()->where('active', 1)->get();
+
+Vous pouvez utiliser n'importe laquelle des méthodes du générateur de requêtes Laravel sur la relation, alors assurez-vous d'explorer la documentation du générateur de requêtes pour en savoir plus sur toutes les méthodes qui sont à votre disposition.
+
+Enchaînement orWherede clauses après les relations
+Comme illustré dans l'exemple ci-dessus, vous pouvez ajouter des contraintes supplémentaires aux relations lors de leur interrogation. Cependant, soyez prudent lorsque vous enchaînez orWheredes clauses sur une relation, car orWhereelles seront logiquement regroupées au même niveau que la contrainte de relation :
+
+$user->posts()
+    ->where('active', 1)
+    ->orWhere('votes', '>=', 100)
+    ->get();
+
+L'exemple ci-dessus génère le code SQL suivant. Comme vous pouvez le constater, la orclause indique à la requête de renvoyer tout message ayant obtenu plus de 100 votes. La requête n'est plus limitée à un utilisateur spécifique :
+
+select *
+from posts
+where user_id = ? and active = 1 or votes >= 100
+
+Dans la plupart des situations, vous devez utiliser des groupes logiques pour regrouper les vérifications conditionnelles entre parenthèses :
+
+use Illuminate\Database\Eloquent\Builder;
+ 
+$user->posts()
+    ->where(function (Builder $query) {
+        return $query->where('active', 1)
+            ->orWhere('votes', '>=', 100);
+    })
+    ->get();
+
+L'exemple ci-dessus produira le code SQL suivant. Notez que le regroupement logique a correctement regroupé les contraintes et que la requête reste limitée à un utilisateur spécifique :
+
+select *
+from posts
+where user_id = ? and (active = 1 or votes >= 100)
+
+Méthodes relationnelles vs propriétés dynamiques
+Si vous n'avez pas besoin d'ajouter de contraintes supplémentaires à une requête de relation Eloquent, vous pouvez accéder à la relation comme s'il s'agissait d'une propriété. Par exemple, en utilisant nos modèles Useret Postles exemples, nous pouvons accéder à toutes les publications d'un utilisateur comme suit :
+
+use App\Models\User;
+ 
+$user = User::find(1);
+ 
+foreach ($user->posts as $post) {
+    // ...
+}
+
+Les propriétés de relation dynamiques effectuent un « chargement différé », ce qui signifie qu'elles ne chargent leurs données relationnelles que lorsque vous y accédez réellement. C'est pourquoi les développeurs utilisent souvent le chargement anticipé pour précharger les relations auxquelles ils savent qu'elles seront accessibles après le chargement du modèle. Le chargement anticipé permet de réduire considérablement le nombre de requêtes SQL nécessaires au chargement des relations d'un modèle.
+
+Interroger l'existence d'une relation
+Lors de la récupération d'enregistrements de modèles, vous pouvez limiter vos résultats en fonction de l'existence d'une relation. Par exemple, imaginons que vous souhaitiez récupérer tous les articles de blog contenant au moins un commentaire. Pour ce faire, vous pouvez transmettre le nom de la relation aux hasméthodes etorHas :
+
+use App\Models\Post;
+ 
+// Retrieve all posts that have at least one comment...
+$posts = Post::has('comments')->get();
+
+Vous pouvez également spécifier un opérateur et une valeur de comptage pour personnaliser davantage la requête :
+
+// Retrieve all posts that have three or more comments...
+$posts = Post::has('comments', '>=', 3)->get();
+
+Les instructions imbriquées haspeuvent être construites en utilisant la notation par points. Par exemple, vous pouvez récupérer tous les articles contenant au moins un commentaire contenant au moins une image :
+
+// Retrieve posts that have at least one comment with images...
+$posts = Post::has('comments.images')->get();
+
+Si vous avez besoin d'encore plus de puissance, vous pouvez utiliser les méthodes whereHaset orWhereHaspour définir des contraintes de requête supplémentaires sur vos hasrequêtes, telles que l'inspection du contenu d'un commentaire :
+
+use Illuminate\Database\Eloquent\Builder;
+ 
+// Retrieve posts with at least one comment containing words like code%...
+$posts = Post::whereHas('comments', function (Builder $query) {
+    $query->where('content', 'like', 'code%');
+})->get();
+ 
+// Retrieve posts with at least ten comments containing words like code%...
+$posts = Post::whereHas('comments', function (Builder $query) {
+    $query->where('content', 'like', 'code%');
+}, '>=', 10)->get();
+
+Eloquent ne prend actuellement pas en charge l'interrogation des relations entre bases de données. Ces relations doivent exister au sein d'une même base de données.
+
+Questions sur l'existence de relations plusieurs à plusieurs
+La whereAttachedTométhode peut être utilisée pour interroger des modèles qui ont une connexion plusieurs à plusieurs à un modèle ou à une collection de modèles :
+
+$users = User::whereAttachedTo($role)->get();
+
+Vous pouvez également fournir une instance de collection à la whereAttachedTométhode. Ce faisant, Laravel récupérera les modèles attachés à l'un des modèles de la collection :
+
+$tags = Tag::whereLike('name', '%laravel%')->get();
+ 
+$posts = Post::whereAttachedTo($tags)->get();
+
+Requêtes d'existence de relations en ligne
+Si vous souhaitez interroger l'existence d'une relation avec une seule condition « where » simple, il peut être plus pratique d'utiliser les méthodes whereRelation, orWhereRelation, whereMorphRelationet orWhereMorphRelation. Par exemple, nous pouvons interroger tous les messages contenant des commentaires non approuvés :
+
+use App\Models\Post;
+ 
+$posts = Post::whereRelation('comments', 'is_approved', false)->get();
+
+Bien sûr, comme pour les appels à la méthode du générateur de requêtes where, vous pouvez également spécifier un opérateur :
+
+$posts = Post::whereRelation(
+    'comments', 'created_at', '>=', now()->subHour()
+)->get();
+
+Interroger l'absence de relation
+Lors de la récupération d'enregistrements de modèles, vous pouvez limiter vos résultats en fonction de l'absence de relation. Par exemple, imaginez que vous souhaitiez récupérer tous les articles de blog sans commentaires. Pour ce faire, vous pouvez transmettre le nom de la relation aux méthodes doesntHaveet :orDoesntHave
+
+use App\Models\Post;
+ 
+$posts = Post::doesntHave('comments')->get();
+
+Si vous avez besoin d'encore plus de puissance, vous pouvez utiliser les méthodes whereDoesntHaveet orWhereDoesntHavepour ajouter des contraintes de requête supplémentaires à vos doesntHaverequêtes, comme l'inspection du contenu d'un commentaire :
+
+use Illuminate\Database\Eloquent\Builder;
+ 
+$posts = Post::whereDoesntHave('comments', function (Builder $query) {
+    $query->where('content', 'like', 'code%');
+})->get();
+
+Vous pouvez utiliser la notation par points pour exécuter une requête sur une relation imbriquée. Par exemple, la requête suivante récupérera tous les articles sans commentaires ; en revanche, les articles dont les commentaires proviennent d'auteurs non bannis seront inclus dans les résultats :
+
+use Illuminate\Database\Eloquent\Builder;
+ 
+$posts = Post::whereDoesntHave('comments.author', function (Builder $query) {
+    $query->where('banned', 0);
+})->get();
+
+Interrogation des relations de morphing vers
+Pour interroger l'existence de relations de « morphing to », vous pouvez utiliser les méthodes whereHasMorphet whereDoesntHaveMorph. Ces méthodes acceptent le nom de la relation comme premier argument. Elles acceptent ensuite les noms des modèles associés à inclure dans la requête. Enfin, vous pouvez fournir une fermeture pour personnaliser la requête de relation :
+
+use App\Models\Comment;
+use App\Models\Post;
+use App\Models\Video;
+use Illuminate\Database\Eloquent\Builder;
+ 
+// Retrieve comments associated to posts or videos with a title like code%...
+$comments = Comment::whereHasMorph(
+    'commentable',
+    [Post::class, Video::class],
+    function (Builder $query) {
+        $query->where('title', 'like', 'code%');
+    }
+)->get();
+ 
+// Retrieve comments associated to posts with a title not like code%...
+$comments = Comment::whereDoesntHaveMorph(
+    'commentable',
+    Post::class,
+    function (Builder $query) {
+        $query->where('title', 'like', 'code%');
+    }
+)->get();
+
+Il peut être parfois nécessaire d'ajouter des contraintes de requête basées sur le type du modèle polymorphe associé. La fermeture passée à la whereHasMorphméthode peut recevoir une $typevaleur comme second argument. Cet argument permet d'inspecter le type de la requête en cours de construction :
+
+use Illuminate\Database\Eloquent\Builder;
+ 
+$comments = Comment::whereHasMorph(
+    'commentable',
+    [Post::class, Video::class],
+    function (Builder $query, string $type) {
+        $column = $type === Post::class ? 'content' : 'title';
+ 
+        $query->where($column, 'like', 'code%');
+    }
+)->get();
+
+Il peut arriver que vous souhaitiez interroger les enfants du parent d'une relation de morphing. Pour ce faire, utilisez les méthodes whereMorphedToet whereNotMorphedTo, qui déterminent automatiquement le mappage de type de morphing approprié pour le modèle donné. Ces méthodes acceptent le nom de la morphTorelation comme premier argument et le modèle parent associé comme second argument :
+
+$comments = Comment::whereMorphedTo('commentable', $post)
+    ->orWhereMorphedTo('commentable', $video)
+    ->get();
+
+Interrogation de tous les modèles associés
+Au lieu de transmettre un tableau de modèles polymorphes possibles, vous pouvez utiliser *un caractère générique. Cela demandera à Laravel de récupérer tous les types polymorphes possibles dans la base de données. Laravel exécutera une requête supplémentaire pour effectuer cette opération :
+
+use Illuminate\Database\Eloquent\Builder;
+ 
+$comments = Comment::whereHasMorph('commentable', '*', function (Builder $query) {
+    $query->where('title', 'like', 'foo%');
+})->get();
+
+Agrégation de modèles connexes
+Comptage des modèles liés
+Il peut arriver que vous souhaitiez compter le nombre de modèles liés pour une relation donnée sans les charger. Pour ce faire, vous pouvez utiliser la méthode withCountsuivante :withCount{relation}_count
+
+use App\Models\Post;
+ 
+$posts = Post::withCount('comments')->get();
+ 
+foreach ($posts as $post) {
+    echo $post->comments_count;
+}
+
+En passant un tableau à la withCountméthode, vous pouvez ajouter les « comptes » pour plusieurs relations ainsi qu'ajouter des contraintes supplémentaires aux requêtes :
+
+use Illuminate\Database\Eloquent\Builder;
+ 
+$posts = Post::withCount(['votes', 'comments' => function (Builder $query) {
+    $query->where('content', 'like', 'code%');
+}])->get();
+ 
+echo $posts[0]->votes_count;
+echo $posts[0]->comments_count;
+
+Vous pouvez également créer un alias pour le résultat du comptage des relations, autorisant ainsi plusieurs comptages sur la même relation :
+
+use Illuminate\Database\Eloquent\Builder;
+ 
+$posts = Post::withCount([
+    'comments',
+    'comments as pending_comments_count' => function (Builder $query) {
+        $query->where('approved', false);
+    },
+])->get();
+ 
+echo $posts[0]->comments_count;
+echo $posts[0]->pending_comments_count;
+
+Chargement différé
+En utilisant cette loadCountméthode, vous pouvez charger un nombre de relations après que le modèle parent a déjà été récupéré :
+
+$book = Book::first();
+ 
+$book->loadCount('genres');
+
+Si vous devez définir des contraintes supplémentaires pour la requête de comptage, vous pouvez transmettre un tableau indexé par les relations à compter. Les valeurs du tableau doivent être des fermetures recevant l'instance du générateur de requêtes :
+
+$book->loadCount(['reviews' => function (Builder $query) {
+    $query->where('rating', 5);
+}])
+
+Comptage des relations et instructions de sélection personnalisées
+Si vous combinez withCountavec une selectinstruction, assurez-vous d'appeler withCountaprès la selectméthode :
+
+$posts = Post::select(['title', 'body'])
+    ->withCount('comments')
+    ->get();
+
+Autres fonctions d'agrégation
+En plus de la withCountméthode, Eloquent fournit les méthodes withMin, withMax, withAvg, withSumet withExists. Ces méthodes placeront un {relation}_{function}_{column}attribut sur vos modèles résultants :
+
+use App\Models\Post;
+ 
+$posts = Post::withSum('comments', 'votes')->get();
+ 
+foreach ($posts as $post) {
+    echo $post->comments_sum_votes;
+}
+
+Si vous souhaitez accéder au résultat de la fonction d'agrégation en utilisant un autre nom, vous pouvez spécifier votre propre alias :
+
+$posts = Post::withSum('comments as total_comments', 'votes')->get();
+ 
+foreach ($posts as $post) {
+    echo $post->total_comments;
+}
+
+Comme pour la loadCountméthode, des versions différées de ces méthodes sont également disponibles. Ces opérations d'agrégation supplémentaires peuvent être effectuées sur des modèles Eloquent déjà récupérés :
+
+$post = Post::first();
+ 
+$post->loadSum('comments', 'votes');
+
+Si vous combinez ces méthodes d'agrégation avec une selectinstruction, assurez-vous d'appeler les méthodes d'agrégation après la selectméthode :
+
+$posts = Post::select(['title', 'body'])
+    ->withExists('comments')
+    ->get();
+
+Comptage des modèles liés aux relations de morphing vers
+Si vous souhaitez charger rapidement une relation « morph to », ainsi que les nombres de modèles associés pour les différentes entités qui peuvent être renvoyées par cette relation, vous pouvez utiliser la withméthode en combinaison avec la méthode morphTode la relation .morphWithCount
+
+Dans cet exemple, supposons que Photodes Postmodèles peuvent créer ActivityFeeddes modèles. Nous supposerons que le ActivityFeedmodèle définit une relation de « morphing to » nommée parentablepermettant de récupérer le parent Photoou Postle modèle d'une ActivityFeedinstance donnée. De plus, supposons que Photoles modèles « ont plusieurs » Tagmodèles et Postque les modèles « ont plusieurs » Commentmodèles.
+
+Imaginons maintenant que nous souhaitions récupérer ActivityFeeddes instances et charger rapidement les parentablemodèles parents de chaque ActivityFeedinstance. Nous souhaitons également récupérer le nombre de tags associés à chaque photo parente et le nombre de commentaires associés à chaque publication parente :
+
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+ 
+$activities = ActivityFeed::with([
+    'parentable' => function (MorphTo $morphTo) {
+        $morphTo->morphWithCount([
+            Photo::class => ['tags'],
+            Post::class => ['comments'],
+        ]);
+    }])->get();
+
+Chargement différé
+Supposons que nous ayons déjà récupéré un ensemble de ActivityFeedmodèles et que nous souhaitions maintenant charger le nombre de relations imbriquées pour les différents parentablemodèles associés aux flux d'activités. loadMorphCountPour ce faire, vous pouvez utiliser la méthode suivante :
+
+$activities = ActivityFeed::with('parentable')->get();
+ 
+$activities->loadMorphCount('parentable', [
+    Photo::class => ['tags'],
+    Post::class => ['comments'],
+]);
+
+Chargement impatient
+Lors de l'accès aux relations Eloquent en tant que propriétés, les modèles associés sont chargés en différé. Cela signifie que les données de la relation ne sont réellement chargées qu'au premier accès à la propriété. Cependant, Eloquent peut charger les relations en différé au moment de l'interrogation du modèle parent. Le chargement en différé atténue le problème des requêtes « N + 1 ». Pour illustrer ce problème, considérons un Bookmodèle qui « appartient à » un autre Authormodèle :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+ 
+class Book extends Model
+{
+    /**
+     * Get the author that wrote the book.
+     */
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(Author::class);
+    }
+}
+
+Maintenant, récupérons tous les livres et leurs auteurs :
+
+use App\Models\Book;
+ 
+$books = Book::all();
+ 
+foreach ($books as $book) {
+    echo $book->author->name;
+}
+
+Cette boucle exécutera une requête pour récupérer tous les livres de la table de base de données, puis une autre pour chaque livre afin d'en extraire l'auteur. Ainsi, si nous avons 25 livres, le code ci-dessus exécutera 26 requêtes : une pour le livre original et 25 requêtes supplémentaires pour extraire l'auteur de chaque livre.
+
+Heureusement, le chargement anticipé permet de réduire cette opération à seulement deux requêtes. Lors de la création d'une requête, vous pouvez spécifier les relations à charger rapidement grâce à la withméthode suivante :
+
+$books = Book::with('author')->get();
+ 
+foreach ($books as $book) {
+    echo $book->author->name;
+}
+
+Pour cette opération, seules deux requêtes seront exécutées : une requête pour récupérer tous les livres et une requête pour récupérer tous les auteurs de tous les livres :
+
+select * from books
+ 
+select * from authors where id in (1, 2, 3, 4, 5, ...)
+
+Chargement rapide de plusieurs relations
+Il peut parfois être nécessaire de charger plusieurs relations différentes. Pour ce faire, il suffit de transmettre un tableau de relations à la withméthode :
+
+$books = Book::with(['author', 'publisher'])->get();
+
+Chargement imbriqué rapide
+Pour charger rapidement les relations d'une relation, vous pouvez utiliser la syntaxe « point ». Par exemple, chargeons rapidement tous les auteurs du livre et tous leurs contacts personnels :
+
+$books = Book::with('author.contacts')->get();
+
+Alternativement, vous pouvez spécifier des relations chargées avec empressement imbriquées en fournissant un tableau imbriqué à la withméthode, ce qui peut être pratique lors du chargement avec empressement de plusieurs relations imbriquées :
+
+$books = Book::with([
+    'author' => [
+        'contacts',
+        'publisher',
+    ],
+])->get();
+
+morphToRelations de chargement imbriquées
+Si vous souhaitez charger rapidement une morphTorelation, ainsi que des relations imbriquées sur les différentes entités susceptibles d'être renvoyées par cette relation, vous pouvez utiliser cette withméthode en combinaison avec la méthode morphTode la relation morphWith. Pour illustrer cette méthode, considérons le modèle suivant :
+
+<?php
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+ 
+class ActivityFeed extends Model
+{
+    /**
+     * Get the parent of the activity feed record.
+     */
+    public function parentable(): MorphTo
+    {
+        return $this->morphTo();
+    }
+}
+
+Dans cet exemple, supposons que Event, Photoet Postmodels peuvent créer ActivityFeeddes modèles. De plus, supposons que Eventles modèles appartiennent à un Calendarmodèle, Photoque les modèles sont associés à Tagdes modèles et que Postles modèles appartiennent à un Authormodèle.
+
+En utilisant ces définitions et relations de modèle, nous pouvons récupérer ActivityFeeddes instances de modèle et charger rapidement tous parentableles modèles et leurs relations imbriquées respectives :
+
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+ 
+$activities = ActivityFeed::query()
+    ->with(['parentable' => function (MorphTo $morphTo) {
+        $morphTo->morphWith([
+            Event::class => ['calendar'],
+            Photo::class => ['tags'],
+            Post::class => ['author'],
+        ]);
+    }])->get();
+
+Chargement rapide de colonnes spécifiques
+Vous n'aurez peut-être pas toujours besoin de toutes les colonnes des relations que vous récupérez. C'est pourquoi Eloquent vous permet de spécifier les colonnes de la relation à récupérer :
+
+$books = Book::with('author:id,name,book_id')->get();
+
+Lorsque vous utilisez cette fonctionnalité, vous devez toujours inclure la idcolonne et toutes les colonnes de clé étrangère pertinentes dans la liste des colonnes que vous souhaitez récupérer.
+
+Chargement rapide par défaut
+Il peut être parfois utile de charger systématiquement certaines relations lors de la récupération d'un modèle. Pour ce faire, vous pouvez définir une $withpropriété sur le modèle :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+ 
+class Book extends Model
+{
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['author'];
+ 
+    /**
+     * Get the author that wrote the book.
+     */
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(Author::class);
+    }
+ 
+    /**
+     * Get the genre of the book.
+     */
+    public function genre(): BelongsTo
+    {
+        return $this->belongsTo(Genre::class);
+    }
+}
+
+Si vous souhaitez supprimer un élément de la $withpropriété pour une seule requête, vous pouvez utiliser la withoutméthode :
+
+$books = Book::without('author')->get();
+
+Si vous souhaitez remplacer tous les éléments de la $withpropriété pour une seule requête, vous pouvez utiliser la withOnlyméthode :
+
+$books = Book::withOnly('genre')->get();
+
+Contraintes de charges avides
+Il peut arriver que vous souhaitiez charger une relation en mode anticipé, tout en spécifiant des conditions de requête supplémentaires. Pour ce faire, passez un tableau de relations à la withméthode, où la clé est le nom de la relation et la valeur est une fermeture qui ajoute des contraintes supplémentaires à la requête :
+
+use App\Models\User;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+ 
+$users = User::with(['posts' => function (Builder $query) {
+    $query->where('title', 'like', '%code%');
+}])->get();
+
+Dans cet exemple, Eloquent chargera uniquement les articles dont la titlecolonne contient le mot code. Vous pouvez appeler d'autres méthodes du générateur de requêtes pour personnaliser davantage le chargement :
+
+$users = User::with(['posts' => function (Builder $query) {
+    $query->orderBy('created_at', 'desc');
+}])->get();
+
+Contraintes de chargement rapide des morphTorelations
+Si vous chargez une morphTorelation en mode anticipé, Eloquent exécutera plusieurs requêtes pour récupérer chaque type de modèle associé. Vous pouvez ajouter des contraintes supplémentaires à chacune de ces requêtes en utilisant la méthode MorphTode la relationconstrain :
+
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+ 
+$comments = Comment::with(['commentable' => function (MorphTo $morphTo) {
+    $morphTo->constrain([
+        Post::class => function ($query) {
+            $query->whereNull('hidden_at');
+        },
+        Video::class => function ($query) {
+            $query->where('type', 'educational');
+        },
+    ]);
+}])->get();
+
+Dans cet exemple, Eloquent chargera uniquement les publications qui n'ont pas été masquées et les vidéos qui ont une typevaleur « éducative ».
+
+Limiter les charges avides avec la vie relationnelle
+Il peut arriver que vous ayez besoin de vérifier l'existence d'une relation tout en la chargeant selon les mêmes conditions. Par exemple, vous pouvez souhaiter récupérer uniquement Userles modèles dont Postles modèles enfants correspondent à une condition de requête donnée, tout en chargeant les publications correspondantes. Pour ce faire, utilisez la withWhereHasméthode suivante :
+
+use App\Models\User;
+ 
+$users = User::withWhereHas('posts', function ($query) {
+    $query->where('featured', true);
+})->get();
+
+Chargement paresseux et impatient
+Il peut parfois être nécessaire de charger une relation après la récupération du modèle parent. Par exemple, cela peut être utile pour décider dynamiquement de charger des modèles liés :
+
+use App\Models\Book;
+ 
+$books = Book::all();
+ 
+if ($someCondition) {
+    $books->load('author', 'publisher');
+}
+
+Si vous devez définir des contraintes supplémentaires pour la requête à chargement rapide, vous pouvez transmettre un tableau indexé par les relations à charger. Les valeurs du tableau doivent être des instances de fermeture recevant l'instance de requête :
+
+$author->load(['books' => function (Builder $query) {
+    $query->orderBy('published_date', 'asc');
+}]);
+
+Pour charger une relation uniquement lorsqu'elle n'a pas déjà été chargée, utilisez la loadMissingméthode :
+
+$book->loadMissing('author');
+
+Chargement imbriqué paresseux et impatientmorphTo
+Si vous souhaitez charger rapidement une morphTorelation, ainsi que des relations imbriquées sur les différentes entités qui peuvent être renvoyées par cette relation, vous pouvez utiliser la loadMorphméthode.
+
+Cette méthode prend le nom de la morphTorelation comme premier argument et un tableau de paires modèle/relation comme second argument. Pour illustrer cette méthode, considérons le modèle suivant :
+
+<?php
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+ 
+class ActivityFeed extends Model
+{
+    /**
+     * Get the parent of the activity feed record.
+     */
+    public function parentable(): MorphTo
+    {
+        return $this->morphTo();
+    }
+}
+
+Dans cet exemple, supposons que Event, Photoet Postmodels peuvent créer ActivityFeeddes modèles. De plus, supposons que Eventles modèles appartiennent à un Calendarmodèle, Photoque les modèles sont associés à Tagdes modèles et que Postles modèles appartiennent à un Authormodèle.
+
+En utilisant ces définitions et relations de modèle, nous pouvons récupérer ActivityFeeddes instances de modèle et charger rapidement tous parentableles modèles et leurs relations imbriquées respectives :
+
+$activities = ActivityFeed::with('parentable')
+    ->get()
+    ->loadMorph('parentable', [
+        Event::class => ['calendar'],
+        Photo::class => ['tags'],
+        Post::class => ['author'],
+    ]);
+
+Chargement automatique
+Cette fonctionnalité est actuellement en version bêta afin de recueillir les retours de la communauté. Son fonctionnement et ses fonctionnalités peuvent évoluer, même lors des mises à jour.
+
+Dans de nombreux cas, Laravel peut charger automatiquement les relations auxquelles vous accédez. Pour activer le chargement automatique, vous devez invoquer la Model::automaticallyEagerLoadRelationshipsméthode dans la bootméthode de votre applicationAppServiceProvider :
+
+use Illuminate\Database\Eloquent\Model;
+ 
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Model::automaticallyEagerLoadRelationships();
+}
+
+Lorsque cette fonctionnalité est activée, Laravel tente de charger automatiquement toutes les relations auxquelles vous accédez et qui n'ont pas encore été chargées. Par exemple, imaginez le scénario suivant :
+
+use App\Models\User;
+ 
+$users = User::all();
+ 
+foreach ($users as $user) {
+    foreach ($user->posts as $post) {
+        foreach ($post->comments as $comment) {
+            echo $comment->content;
+        }
+    }
+}
+
+En règle générale, le code ci-dessus exécute une requête pour chaque utilisateur afin de récupérer ses publications, ainsi qu'une requête pour chaque publication afin de récupérer ses commentaires. Cependant, une fois cette automaticallyEagerLoadRelationshipsfonctionnalité activée, Laravel charge automatiquement les publications de tous les utilisateurs de la collection lorsque vous tentez d'accéder aux publications de l'un des utilisateurs récupérés. De même, lorsque vous tentez d'accéder aux commentaires d'une publication récupérée, tous les commentaires seront chargés en différé pour toutes les publications initialement récupérées.
+
+Si vous ne souhaitez pas activer globalement le chargement automatique rapide, vous pouvez toujours activer cette fonctionnalité pour une seule instance de collection Eloquent en appelant la withRelationshipAutoloadingméthode sur la collection :
+
+$users = User::where('vip', true)->get();
+ 
+return $users->withRelationshipAutoloading();
+
+Prévention du chargement paresseux
+Comme indiqué précédemment, le chargement anticipé des relations peut souvent améliorer considérablement les performances de votre application. Par conséquent, si vous le souhaitez, vous pouvez indiquer à Laravel d'empêcher systématiquement le chargement différé des relations. Pour ce faire, vous pouvez invoquer la preventLazyLoadingméthode proposée par la classe de base du modèle Eloquent. En général, vous devez appeler cette méthode dans la bootméthode de la classe de votre application AppServiceProvider.
+
+La preventLazyLoadingméthode accepte un argument booléen facultatif indiquant si le chargement différé doit être empêché. Par exemple, vous pouvez désactiver le chargement différé uniquement dans les environnements hors production afin que votre environnement de production continue de fonctionner normalement même si une relation de chargement différé est présente accidentellement dans le code de production :
+
+use Illuminate\Database\Eloquent\Model;
+ 
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Model::preventLazyLoading(! $this->app->isProduction());
+}
+
+Après avoir empêché le chargement paresseux, Eloquent lèvera une Illuminate\Database\LazyLoadingViolationExceptionexception lorsque votre application tentera de charger de manière différée une relation Eloquent.
+
+Vous pouvez personnaliser le comportement des violations de chargement différé à l'aide de la handleLazyLoadingViolationsUsingméthode. Par exemple, cette méthode vous permet de consigner uniquement les violations de chargement différé au lieu d'interrompre l'exécution de l'application avec des exceptions :
+
+Model::handleLazyLoadingViolationUsing(function (Model $model, string $relation) {
+    $class = $model::class;
+ 
+    info("Attempted to lazy load [{$relation}] on model [{$class}].");
+});
+
+Insertion et mise à jour de modèles associés
+La saveméthode
+Eloquent propose des méthodes pratiques pour ajouter de nouveaux modèles aux relations. Par exemple, si vous devez ajouter un commentaire à une publication, au lieu de définir manuellement l' post_idattribut sur le Commentmodèle, vous pouvez insérer le commentaire à l'aide de la saveméthode de la relation :
+
+use App\Models\Comment;
+use App\Models\Post;
+ 
+$comment = new Comment(['message' => 'A new comment.']);
+ 
+$post = Post::find(1);
+ 
+$post->comments()->save($comment);
+
+Notez que nous n'avons pas accédé à la commentsrelation en tant que propriété dynamique. Nous avons plutôt appelé la commentsméthode pour obtenir une instance de la relation. La saveméthode ajoutera automatiquement la post_idvaleur appropriée au nouveau Commentmodèle.
+
+Si vous devez enregistrer plusieurs modèles liés, vous pouvez utiliser la saveManyméthode :
+
+$post = Post::find(1);
+ 
+$post->comments()->saveMany([
+    new Comment(['message' => 'A new comment.']),
+    new Comment(['message' => 'Another new comment.']),
+]);
+
+Les méthodes «save andsaveMany » conserveront les instances de modèle données, mais n'ajouteront pas les modèles nouvellement conservés aux relations en mémoire déjà chargées dans le modèle parent. Si vous prévoyez d'accéder à la relation après avoir utilisé les méthodes save« or » saveMany, vous pouvez utiliser la refreshméthode pour recharger le modèle et ses relations :
+
+$post->comments()->save($comment);
+ 
+$post->refresh();
+ 
+// All comments, including the newly saved comment...
+$post->comments;
+
+Sauvegarde récursive des modèles et des relations
+Si vous souhaitez conserver savevotre modèle et toutes ses relations associées, vous pouvez utiliser la pushméthode suivante. Dans cet exemple, le Postmodèle sera enregistré, ainsi que ses commentaires et leurs auteurs :
+
+$post = Post::find(1);
+ 
+$post->comments[0]->message = 'Message';
+$post->comments[0]->author->name = 'Author Name';
+ 
+$post->push();
+
+La pushQuietlyméthode peut être utilisée pour sauvegarder un modèle et ses relations associées sans déclencher aucun événement :
+
+$post->pushQuietly();
+
+La createméthode
+Outre les méthodes saveet , vous pouvez également utiliser la méthode , qui accepte un tableau d'attributs, crée un modèle et l'insère dans la base de données. La différence entre et accepte une instance complète du modèle Eloquent, tandis que accepte un PHP simple . Le modèle nouvellement créé sera renvoyé par la méthode :saveManycreatesavecreatesavecreatearraycreate
+
+use App\Models\Post;
+ 
+$post = Post::find(1);
+ 
+$comment = $post->comments()->create([
+    'message' => 'A new comment.',
+]);
+
+Vous pouvez utiliser la createManyméthode pour créer plusieurs modèles liés :
+
+$post = Post::find(1);
+ 
+$post->comments()->createMany([
+    ['message' => 'A new comment.'],
+    ['message' => 'Another new comment.'],
+]);
+
+Les méthodes createQuietlyet createManyQuietlypeuvent être utilisées pour créer un ou plusieurs modèles sans envoyer d'événements :
+
+$user = User::find(1);
+ 
+$user->posts()->createQuietly([
+    'title' => 'Post title.',
+]);
+ 
+$user->posts()->createManyQuietly([
+    ['title' => 'First post.'],
+    ['title' => 'Second post.'],
+]);
+
+Vous pouvez également utiliser les méthodes findOrNew, firstOrNew, firstOrCreate, et pour créer et mettre à jour des modèles sur les relations .updateOrCreate
+
+Avant d’utiliser la createméthode, assurez-vous de consulter la documentation d’affectation de masse .
+
+Appartient aux relations
+Si vous souhaitez affecter un modèle enfant à un nouveau modèle parent, vous pouvez utiliser la associateméthode suivante. Dans cet exemple, le Usermodèle définit une belongsTorelation avec le Accountmodèle parent. Cette associateméthode définira la clé étrangère du modèle enfant :
+
+use App\Models\Account;
+ 
+$account = Account::find(10);
+ 
+$user->account()->associate($account);
+ 
+$user->save();
+
+Pour supprimer un modèle parent d'un modèle enfant, vous pouvez utiliser la dissociateméthode suivante : Cette méthode définit la clé étrangère de la relation surnull :
+
+$user->account()->dissociate();
+ 
+$user->save();
+
+Relations plusieurs à plusieurs
+Attacher / Détacher
+Eloquent propose également des méthodes facilitant l'utilisation des relations plusieurs-à-plusieurs. Par exemple, imaginons qu'un utilisateur puisse avoir plusieurs rôles et qu'un rôle puisse avoir plusieurs utilisateurs. Vous pouvez utiliser cette attachméthode pour associer un rôle à un utilisateur en insérant un enregistrement dans la table intermédiaire de la relation :
+
+use App\Models\User;
+ 
+$user = User::find(1);
+ 
+$user->roles()->attach($roleId);
+
+Lorsque vous attachez une relation à un modèle, vous pouvez également transmettre un tableau de données supplémentaires à insérer dans la table intermédiaire :
+
+$user->roles()->attach($roleId, ['expires' => $expires]);
+
+Il peut parfois être nécessaire de supprimer le rôle d'un utilisateur. Pour supprimer un enregistrement de relation plusieurs-à-plusieurs, utilisez la detachméthode suivante : . Cette detachméthode supprimera l'enregistrement concerné de la table intermédiaire ; les deux modèles resteront toutefois dans la base de données :
+
+// Detach a single role from the user...
+$user->roles()->detach($roleId);
+ 
+// Detach all roles from the user...
+$user->roles()->detach();
+
+Pour plus de commodité, attachet detachaccepte également des tableaux d'ID en entrée :
+
+$user = User::find(1);
+ 
+$user->roles()->detach([1, 2, 3]);
+ 
+$user->roles()->attach([
+    1 => ['expires' => $expires],
+    2 => ['expires' => $expires],
+]);
+
+Synchronisation des associations
+Vous pouvez également utiliser cette syncméthode pour construire des associations plusieurs-à-plusieurs. La syncméthode accepte un tableau d'identifiants à placer dans la table intermédiaire. Tous les identifiants ne figurant pas dans ce tableau seront supprimés de la table intermédiaire. Ainsi, une fois cette opération terminée, seuls les identifiants du tableau spécifié figureront dans la table intermédiaire :
+
+$user->roles()->sync([1, 2, 3]);
+
+Vous pouvez également transmettre des valeurs de table intermédiaires supplémentaires avec les ID :
+
+$user->roles()->sync([1 => ['expires' => true], 2, 3]);
+
+Si vous souhaitez insérer les mêmes valeurs de table intermédiaires avec chacun des ID de modèle synchronisés, vous pouvez utiliser la syncWithPivotValuesméthode :
+
+$user->roles()->syncWithPivotValues([1, 2, 3], ['active' => true]);
+
+Si vous ne souhaitez pas détacher les identifiants existants qui manquent dans le tableau donné, vous pouvez utiliser la syncWithoutDetachingméthode :
+
+$user->roles()->syncWithoutDetaching([1, 2, 3]);
+
+Basculer les associations
+La relation plusieurs-à-plusieurs fournit également une toggleméthode permettant de modifier l'état d'attachement des identifiants de modèles associés. Si l'identifiant donné est actuellement attaché, il sera détaché. De même, s'il est actuellement détaché, il sera attaché :
+
+$user->roles()->toggle([1, 2, 3]);
+
+Vous pouvez également transmettre des valeurs de table intermédiaires supplémentaires avec les ID :
+
+$user->roles()->toggle([
+    1 => ['expires' => true],
+    2 => ['expires' => true],
+]);
+
+Mise à jour d'un enregistrement sur la table intermédiaire
+Si vous devez mettre à jour une ligne existante dans la table intermédiaire de votre relation, vous pouvez utiliser la updateExistingPivotméthode suivante. Cette méthode accepte la clé étrangère de l'enregistrement intermédiaire et un tableau d'attributs à mettre à jour :
+
+$user = User::find(1);
+ 
+$user->roles()->updateExistingPivot($roleId, [
+    'active' => false,
+]);
+
+Horodatages des parents en contact
+Lorsqu'un modèle définit une relation belongsToou belongsToManyavec un autre modèle, comme un Commentqui appartient à un Post, il est parfois utile de mettre à jour l'horodatage du parent lorsque le modèle enfant est mis à jour.
+
+Par exemple, lors de Commentla mise à jour d'un modèle, vous pouvez modifier automatiquement l' updated_athorodatage du propriétaire Postafin qu'il soit défini sur la date et l'heure actuelles. Pour ce faire, vous pouvez ajouter une touchespropriété à votre modèle enfant contenant les noms des relations dont l' updated_athorodatage doit être mis à jour lors de la mise à jour du modèle enfant :
+
+<?php
+ 
+namespace App\Models;
+ 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+ 
+class Comment extends Model
+{
+    /**
+     * All of the relationships to be touched.
+     *
+     * @var array
+     */
+    protected $touches = ['post'];
+ 
+    /**
+     * Get the post that the comment belongs to.
+     */
+    public function post(): BelongsTo
+    {
+        return $this->belongsTo(Post::class);
+    }
+}
